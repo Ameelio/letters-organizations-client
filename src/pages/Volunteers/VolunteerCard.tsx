@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import Image from 'react-bootstrap/Image';
 import './VolunteerCard.css';
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'react-bootstrap/Image';
 import { formatDate } from '../../utils/utils';
+import './ContactCard.css';
 
 interface ContactCardProps {
   contact: Contact;
@@ -8,7 +9,7 @@ interface ContactCardProps {
 
 const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
   return (
-    <div className="d-flex flex-column py-4 border-bottom">
+    <div className="d-flex flex-column py-4 border-bottom contact-card">
       <div className="d-flex flex-row">
         <Image
           src={contact.profile_img_path}

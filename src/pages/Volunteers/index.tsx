@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import VolunteerCard from './VolunteerCard';
 import LetterCard from './LetterCard';
 import Image from 'react-bootstrap/Image';
@@ -6,6 +6,7 @@ import ContactCard from './ContactCard';
 import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
 import Form from 'react-bootstrap/Form';
+import './index.css';
 
 interface VolunteersProps {}
 
@@ -76,7 +77,20 @@ const Volunteers: React.FC<VolunteersProps> = () => {
 
   const volunteers: Volunteer[] = [dummy, dummy2];
 
-  const [selectedVolunteer, setSelectedVolunteer] = useState(volunteers[0]);
+  const [filteredVolunteers, setFilteredVolunteers] = useState<Volunteer[]>(
+    volunteers,
+  );
+  const [selectedVolunteer, setSelectedVolunteer] = useState<Volunteer>(
+    volunteers[0],
+  );
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  useEffect(() => {
+    const results = volunteers.filter((volunteer) =>
+      volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+    setFilteredVolunteers(results);
+  }, [searchQuery]);
 
   const handleVolunteerClick = (
     event: React.MouseEvent,
@@ -85,48 +99,54 @@ const Volunteers: React.FC<VolunteersProps> = () => {
     setSelectedVolunteer(volunteer);
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
   return (
     <div className="d-flex flex-row">
-      <section className="d-flex flex-column mw-25 border-right pl-4 shadow-sm bg-white rounded vh-100">
+      <section className="volunteers-list-sidebar d-flex flex-column mw-25 border-right pl-4 shadow-sm bg-white rounded vh-100">
         <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
           <span className="black-400 p3">Volunteers</span>
           <Button>Invite</Button>
         </div>
         <Form className="mr-3 mb-3">
-          <FormControl type="text" placeholder="Search" />
+          <FormControl
+            type="text"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
         </Form>
-        {volunteers &&
-          volunteers.map((volunteer) => (
-            <VolunteerCard
-              handleClick={(e) => handleVolunteerClick(e, volunteer)}
-              volunteer={volunteer}
-              key={volunteer.name}
-              isActive={volunteer.id === selectedVolunteer.id}
-            />
-          ))}
+        {filteredVolunteers.map((volunteer) => (
+          <VolunteerCard
+            handleClick={(e) => handleVolunteerClick(e, volunteer)}
+            volunteer={volunteer}
+            key={volunteer.name}
+            isActive={volunteer.id === selectedVolunteer.id}
+          />
+        ))}
       </section>
       <section className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">
         <span className="black-500 p3">Letters</span>
         <div className="d-flex flex-row">
           <div className="d-flex flex-column">
             <span className="black-300 p4">In transit</span>
-            {selectedVolunteer &&
-              selectedVolunteer.letters.map((letter) => (
-                <LetterCard letter={letter} />
-              ))}
+            {selectedVolunteer.letters.map((letter) => (
+              <LetterCard letter={letter} />
+            ))}
           </div>
 
           <div className="d-flex flex-column ml-5">
             <span className="black-300 p4">Delivered</span>
-            {selectedVolunteer &&
-              selectedVolunteer.letters.map((letter) => (
-                <LetterCard letter={letter} />
-              ))}
+            {selectedVolunteer.letters.map((letter) => (
+              <LetterCard letter={letter} />
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="d-flex flex-column mr-4 bg-white p-5 shadow-sm w-33">
+      <section className="volunteer-sidebar d-flex flex-column mr-4 bg-white p-5 shadow-sm">
         <div className="d-flex flex-column align-items-center">
           <Image
             src={selectedVolunteer.image}
@@ -143,7 +163,9 @@ const Volunteers: React.FC<VolunteersProps> = () => {
         </div>
         <hr />
         <div className="d-flex flex-column">
-          <span className="black-400 font-weight-bold">Contacts</span>
+          <span className="black-400 font-weight-bold">
+            Contacts ({selectedVolunteer.contacts.length})
+          </span>
           {selectedVolunteer.contacts.map((contact) => (
             <ContactCard contact={contact} />
           ))}
