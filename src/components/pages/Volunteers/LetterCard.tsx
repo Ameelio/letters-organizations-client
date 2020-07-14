@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatDate } from '../../utils/utils';
+import { formatDate } from '../../../utils/utils';
 import './LetterCard.css';
 
 interface LetterCardProps {
