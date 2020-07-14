@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
 import Form from 'react-bootstrap/Form';
 import './index.css';
+import LetterModal from './LetterModal';
 
 interface VolunteersProps {}
 
@@ -85,12 +86,12 @@ const Volunteers: React.FC<VolunteersProps> = () => {
   );
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  useEffect(() => {
-    const results = volunteers.filter((volunteer) =>
-      volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
-    setFilteredVolunteers(results);
-  }, [searchQuery]);
+  const [show, setShow] = useState(false);
+
+  const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const handleVolunteerClick = (
     event: React.MouseEvent,
@@ -99,9 +100,21 @@ const Volunteers: React.FC<VolunteersProps> = () => {
     setSelectedVolunteer(volunteer);
   };
 
+  const handleLetterClick = (event: React.MouseEvent, letter: Letter) => {
+    setSelectedLetter(letter);
+    handleShow();
+  };
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
+
+  useEffect(() => {
+    const results = volunteers.filter((volunteer) =>
+      volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+    setFilteredVolunteers(results);
+  }, [searchQuery]);
 
   return (
     <div className="d-flex flex-row">
@@ -133,14 +146,20 @@ const Volunteers: React.FC<VolunteersProps> = () => {
           <div className="d-flex flex-column">
             <span className="black-300 p4">In transit</span>
             {selectedVolunteer.letters.map((letter) => (
-              <LetterCard letter={letter} />
+              <LetterCard
+                letter={letter}
+                handleClick={(e) => handleLetterClick(e, letter)}
+              />
             ))}
           </div>
 
           <div className="d-flex flex-column ml-5">
             <span className="black-300 p4">Delivered</span>
             {selectedVolunteer.letters.map((letter) => (
-              <LetterCard letter={letter} />
+              <LetterCard
+                letter={letter}
+                handleClick={(e) => handleLetterClick(e, letter)}
+              />
             ))}
           </div>
         </div>
@@ -171,6 +190,13 @@ const Volunteers: React.FC<VolunteersProps> = () => {
           ))}
         </div>
       </section>
+      {selectedLetter && (
+        <LetterModal
+          letter={selectedLetter}
+          show={show}
+          handleClose={handleClose}
+        />
+      )}
     </div>
   );
 };

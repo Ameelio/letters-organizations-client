@@ -3,3 +3,7 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
+.letter-card:hover {
+  cursor: pointer;
+}
