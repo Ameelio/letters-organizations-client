@@ -7,4 +7,5 @@ interface Volunteer {
   contacts: Contacts[];
   city: string;
   state: string;
+  total_letters_sent: number;
 }

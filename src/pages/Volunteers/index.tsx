@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import VolunteerCard from './VolunteerCard';
 import LetterCard from './LetterCard';
 import Image from 'react-bootstrap/Image';
 import ContactCard from './ContactCard';
+import Button from 'react-bootstrap/Button';
+import FormControl from 'react-bootstrap/FormControl';
+import Form from 'react-bootstrap/Form';
 
 interface VolunteersProps {}
 
@@ -55,6 +58,7 @@ const Volunteers: React.FC<VolunteersProps> = () => {
     contacts: dummy_contacts,
     city: 'São Paulo',
     state: 'SP',
+    total_letters_sent: 2,
   };
 
   const dummy2 = {
@@ -67,6 +71,7 @@ const Volunteers: React.FC<VolunteersProps> = () => {
     contacts: dummy_contacts,
     city: 'New York',
     state: 'NYC',
+    total_letters_sent: 2,
   };
 
   const volunteers: Volunteer[] = [dummy, dummy2];
@@ -83,13 +88,20 @@ const Volunteers: React.FC<VolunteersProps> = () => {
   return (
     <div className="d-flex flex-row">
       <section className="d-flex flex-column mw-25 border-right pl-4 shadow-sm bg-white rounded vh-100">
+        <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
+          <span className="black-400 p3">Volunteers</span>
+          <Button>Invite</Button>
+        </div>
+        <Form className="mr-3 mb-3">
+          <FormControl type="text" placeholder="Search" />
+        </Form>
         {volunteers &&
           volunteers.map((volunteer) => (
             <VolunteerCard
               handleClick={(e) => handleVolunteerClick(e, volunteer)}
               volunteer={volunteer}
               key={volunteer.name}
-              isActive={volunteer.id == selectedVolunteer.id}
+              isActive={volunteer.id === selectedVolunteer.id}
             />
           ))}
       </section>

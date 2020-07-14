@@ -14,13 +14,18 @@ const VolunteerCard: React.FC<VolunteerProps> = ({
   isActive,
 }) => {
   const activeBorder = isActive ? 'volunteer-card-active' : '';
-  const activeFont = isActive ? 'primary' : 'black-400';
+  const fontColor = isActive ? 'primary' : 'black-400';
   return (
     <div
       className={`d-flex flex-row  pr-3 py-4 volunteer-card border-bottom ${activeBorder}`}
       onClick={handleClick}>
       <Image className="small-image p4" src={volunteer.image} roundedCircle />
-      <span className={`ml-5 black ${activeFont}`}>{volunteer.name}</span>
+      <div className="ml-4 d-flex flex-column">
+        <span className={`${fontColor} p4`}>{volunteer.name}</span>
+        <span className="black-300 p6">
+          Total letters sent: {volunteer.total_letters_sent}
+        </span>
+      </div>
       <hr />
     </div>
   );
