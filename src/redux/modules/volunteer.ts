@@ -1,12 +1,12 @@
 import { typedAction } from '../helpers';
 import { Dispatch, AnyAction } from 'redux';
 import { RootState } from '..';
-import { sampleVolunteers, dummy } from '../../data/sampleVolunteers';
+import { sampleVolunteers } from '../../data/sampleVolunteers';
 
 const initialState: VolunteerState = {
   all_volunteers: [],
   loading: false,
-  selected_volunteer: dummy,
+  selected_volunteer: {} as Volunteer,
 };
 
 const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
@@ -43,7 +43,11 @@ export function volunteersReducer(
 ): VolunteerState {
   switch (action.type) {
     case SET_VOLUNTEERS:
-      return { ...state, all_volunteers: action.payload };
+      return {
+        ...state,
+        all_volunteers: action.payload,
+        selected_volunteer: action.payload[0],
+      };
     case SELECT_VOLUNTEER:
       return { ...state, selected_volunteer: action.payload };
     default:
