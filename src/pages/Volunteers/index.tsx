@@ -8,6 +8,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Form from 'react-bootstrap/Form';
 import './index.css';
 import LetterModal from './LetterModal';
+import InviteModal from './InviteModal';
 
 interface VolunteersProps {}
 
@@ -86,12 +87,16 @@ const Volunteers: React.FC<VolunteersProps> = () => {
   );
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const [show, setShow] = useState(false);
+  const [showLetterModal, setShowLetterModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleLetterClose = () => setShowLetterModal(false);
+  const handleLetterShow = () => setShowLetterModal(true);
+
+  const handleInviteClose = () => setShowInviteModal(false);
+  const handleInviteShow = () => setShowInviteModal(true);
 
   const handleVolunteerClick = (
     event: React.MouseEvent,
@@ -102,7 +107,11 @@ const Volunteers: React.FC<VolunteersProps> = () => {
 
   const handleLetterClick = (event: React.MouseEvent, letter: Letter) => {
     setSelectedLetter(letter);
-    handleShow();
+    handleLetterShow();
+  };
+
+  const handleInviteClick = (event: React.MouseEvent) => {
+    handleInviteShow();
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,7 +130,7 @@ const Volunteers: React.FC<VolunteersProps> = () => {
       <section className="volunteers-list-sidebar d-flex flex-column mw-25 border-right pl-4 shadow-sm bg-white rounded vh-100">
         <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
           <span className="black-400 p3">Volunteers</span>
-          <Button>Invite</Button>
+          <Button onClick={handleInviteClick}>Invite</Button>
         </div>
         <Form className="mr-3 mb-3">
           <FormControl
@@ -193,10 +202,15 @@ const Volunteers: React.FC<VolunteersProps> = () => {
       {selectedLetter && (
         <LetterModal
           letter={selectedLetter}
-          show={show}
-          handleClose={handleClose}
+          show={showLetterModal}
+          handleClose={handleLetterClose}
         />
       )}
+      <InviteModal
+        shareLink="www.letters.ameelio.org"
+        show={showInviteModal}
+        handleClose={handleInviteClose}
+      />
     </div>
   );
 };
