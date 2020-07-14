@@ -1,0 +1,5 @@
+.letter-card-preview {
+  max-height: 50px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

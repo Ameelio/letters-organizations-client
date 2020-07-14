@@ -1,3 +1,7 @@
 .volunteer-card:hover {
   cursor: pointer;
 }
+
+.volunteer-card-active {
+  border-right: 3px solid #0089ff;
+}
