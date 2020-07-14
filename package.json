@@ -13,13 +13,14 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/redux": "^3.6.0",
     "bootstrap": "^4.5.0",
+    "eslint": "^6.6.0",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
-    "typescript": "~3.7.2"
+    "typescript": "^3.9.6"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -54,7 +55,6 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^7.4.0",
     "eslint-config-airbnb": "^18.2.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
