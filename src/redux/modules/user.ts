@@ -1,29 +1,43 @@
-import { typedAction } from '../helpers';
+// Constants & Shapes
+const LOGIN = 'user/LOGIN';
+const LOGOUT = 'user/LOGOUT';
 
-type UserState = {
-  username: string | null;
+interface LoginAction {
+  type: typeof LOGIN;
+  payload: string;
+}
+
+interface LogoutAction {
+  type: typeof LOGOUT;
+}
+
+type UserActionTypes = LoginAction | LogoutAction;
+
+// Action Creators
+export const login = (username: string): UserActionTypes => {
+  return {
+    type: LOGIN,
+    payload: username,
+  };
 };
 
+export const logout = (): UserActionTypes => {
+  return {
+    type: LOGOUT,
+  };
+};
+
+// Reducer
 const initialState: UserState = { username: null };
-
-export const login = (username: string) => {
-  return typedAction('user/LOGIN', username);
-};
-
-export const logout = () => {
-  return typedAction('user/LOGOUT');
-};
-
-type UserAction = ReturnType<typeof login | typeof logout>;
 
 export function userReducer(
   state = initialState,
-  action: UserAction,
+  action: UserActionTypes,
 ): UserState {
   switch (action.type) {
-    case 'user/LOGIN':
+    case LOGIN:
       return { username: action.payload };
-    case 'user/LOGOUT':
+    case LOGOUT:
       return { username: null };
     default:
       return state;

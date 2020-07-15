@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { login } from '../../../redux/modules/user';
 import { RootState } from '../../../redux';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 
 import { Redirect } from 'react-router-dom';
 
-type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
+const mapStateToProps = (state: RootState) => ({
+  username: state.user.username,
+});
 
-const UnconnectedLogin: React.FC<Props> = ({ login, username }) => {
+const mapDispatchToProps = { login };
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+const UnconnectedLogin: React.FC<PropsFromRedux> = ({ login, username }) => {
   const [inputName, setInputName] = useState('');
 
   const tryLogin = (e: React.MouseEvent) => {
@@ -43,13 +51,4 @@ const UnconnectedLogin: React.FC<Props> = ({ login, username }) => {
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
-  username: state.user.username,
-});
-
-const mapDispatchToProps = { login };
-
-export const Login = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UnconnectedLogin);
+export default connector(UnconnectedLogin);
