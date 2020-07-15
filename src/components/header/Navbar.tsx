@@ -1,9 +1,12 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
+import { ReactComponent as Logo } from '../../assets/logo.svg';
 
-const NavBar: FunctionComponent = () => {
+interface NavBarProps {}
+
+const NavBar: React.FC<NavBarProps> = () => {
   return (
     <Navbar
       collapseOnSelect
@@ -13,12 +16,7 @@ const NavBar: FunctionComponent = () => {
       sticky="top">
       <Navbar.Brand>
         <Link to="/">
-          <img
-            src={require('../../assets/logo.svg')}
-            width="150px"
-            className="d-inline-block align-top"
-            alt="Ameelio logo"
-          />
+          <Logo width="150" />
         </Link>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />

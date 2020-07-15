@@ -6,12 +6,6 @@ import { Form, Button } from 'react-bootstrap';
 
 import { Redirect } from 'react-router-dom';
 
-const mapStateToProps = (state: RootState) => ({
-  username: state.user.username,
-});
-
-const mapDispatchToProps = { login };
-
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
 const UnconnectedLogin: React.FC<Props> = ({ login, username }) => {
@@ -48,6 +42,12 @@ const UnconnectedLogin: React.FC<Props> = ({ login, username }) => {
     </Form>
   );
 };
+
+const mapStateToProps = (state: RootState) => ({
+  username: state.user.username,
+});
+
+const mapDispatchToProps = { login };
 
 export const Login = connect(
   mapStateToProps,

@@ -17,20 +17,6 @@ import {
 } from '../../../redux/modules/volunteer';
 import { connect } from 'react-redux';
 
-const mapStateToProps = (state: RootState) => ({
-  volunteers: state.volunteers.all_volunteers,
-  selectedVolunteer: state.volunteers.selected_volunteer,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(
-    {
-      loadVolunteers,
-      selectVolunteer,
-    },
-    dispatch,
-  );
-
 type VolunteersProps = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>;
 
@@ -184,6 +170,20 @@ const UnconnectedVolunteers: React.FC<VolunteersProps> = ({
     </div>
   );
 };
+
+const mapStateToProps = (state: RootState) => ({
+  volunteers: state.volunteers.all_volunteers,
+  selectedVolunteer: state.volunteers.selected_volunteer,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(
+    {
+      loadVolunteers,
+      selectVolunteer,
+    },
+    dispatch,
+  );
 
 const VolunteersPage = connect(
   mapStateToProps,
