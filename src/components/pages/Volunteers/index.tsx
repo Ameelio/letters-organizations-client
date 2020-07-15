@@ -15,13 +15,27 @@ import {
   loadVolunteers,
   selectVolunteer,
 } from '../../../redux/modules/volunteer';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 
-type VolunteersProps = ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps>;
+const mapStateToProps = (state: RootState) => ({
+  volunteers: state.volunteers.all_volunteers,
+  selectedVolunteer: state.volunteers.selected_volunteer,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(
+    {
+      loadVolunteers,
+      selectVolunteer,
+    },
+    dispatch,
+  );
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
 
 // TODO move each section to its own container
-const UnconnectedVolunteers: React.FC<VolunteersProps> = ({
+const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   loadVolunteers,
   volunteers,
   selectVolunteer,
@@ -171,23 +185,4 @@ const UnconnectedVolunteers: React.FC<VolunteersProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
-  volunteers: state.volunteers.all_volunteers,
-  selectedVolunteer: state.volunteers.selected_volunteer,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(
-    {
-      loadVolunteers,
-      selectVolunteer,
-    },
-    dispatch,
-  );
-
-const VolunteersPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UnconnectedVolunteers);
-
-export default VolunteersPage;
+export default connector(UnconnectedVolunteers);

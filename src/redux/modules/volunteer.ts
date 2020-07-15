@@ -1,45 +1,47 @@
-import { typedAction } from '../helpers';
-import { Dispatch, AnyAction } from 'redux';
-import { RootState } from '..';
+import { AppThunk } from '../helpers';
 import { sampleVolunteers } from '../../data/sampleVolunteers';
 
+// Action Constants & Shapes
+const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
+const SELECT_VOLUNTEER = 'volunteer/SET_VOLUNTEER';
+
+interface SetVolunteerAction {
+  type: typeof SET_VOLUNTEERS;
+  payload: Volunteer[];
+}
+
+interface SelectVolunteerAction {
+  type: typeof SELECT_VOLUNTEER;
+  payload: Volunteer;
+}
+
+type VolunteerActionTypes = SetVolunteerAction | SelectVolunteerAction;
+
+// Action Creators
+const setVolunteers = (volunteers: Volunteer[]): VolunteerActionTypes => {
+  return {
+    type: SET_VOLUNTEERS,
+    payload: volunteers,
+  };
+};
+
+export const selectVolunteer = (volunteer: Volunteer): VolunteerActionTypes => {
+  return {
+    type: SELECT_VOLUNTEER,
+    payload: volunteer,
+  };
+};
+
+// Reducer
 const initialState: VolunteerState = {
   all_volunteers: [],
   loading: false,
   selected_volunteer: {} as Volunteer,
 };
 
-const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
-const SELECT_VOLUNTEER = 'volunteer/SET_VOLUNTEER';
-
-const setVolunteers = (volunteers: Volunteer[]) => {
-  return typedAction(SET_VOLUNTEERS, volunteers);
-};
-
-export const selectVolunteer = (volunteer: Volunteer) => {
-  return typedAction(SELECT_VOLUNTEER, volunteer);
-};
-
-export const loadVolunteers = () => {
-  return (dispatch: Dispatch<AnyAction>, getState: () => RootState) => {
-    setTimeout(() => {
-      dispatch(
-        setVolunteers([
-          ...getState().volunteers.all_volunteers,
-          ...sampleVolunteers,
-        ]),
-      );
-    }, 500);
-  };
-};
-
-type VolunteerAction = ReturnType<
-  typeof setVolunteers | typeof selectVolunteer
->;
-
 export function volunteersReducer(
   state = initialState,
-  action: VolunteerAction,
+  action: VolunteerActionTypes,
 ): VolunteerState {
   switch (action.type) {
     case SET_VOLUNTEERS:
@@ -54,3 +56,7 @@ export function volunteersReducer(
       return state;
   }
 }
+
+export const loadVolunteers = (): AppThunk => async (dispatch) => {
+  dispatch(setVolunteers(sampleVolunteers));
+};
