@@ -1,0 +1,3 @@
+interface TagState {
+  tags: Tag[];
+}

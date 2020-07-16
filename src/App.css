@@ -9,6 +9,10 @@
   --main-black-200: #f2f2f2;
   --main-black-100: #fbfbfb;
   --main-green: #2eba77;
+  --main-lightred: #f5c3c3;
+  --main-lightyellow: #faf5e3;
+  --main-blue-200: #c3dbf5;
+  --main-lightpurple: ##e7dff0;
 }
 
 html {
@@ -67,6 +71,38 @@ body {
 
 .black-200-bg {
   background-color: var(--main-black-200);
+}
+
+.blue-200 {
+  color: var(--main-blue-200);
+}
+
+.blue-200-bg {
+  background-color: var(--main-blue-200);
+}
+
+.lightyellow {
+  color: var(--main-lightyellow);
+}
+
+.lightyellow-bg {
+  background-color: var(--main-lightyellow);
+}
+
+.lightred {
+  color: var(--main-lightred);
+}
+
+.lightred-bg {
+  background-color: var(--main-lightred);
+}
+
+.lightpurple {
+  color: var(--main-lightpurple);
+}
+
+.lightpurple-bg {
+  background-color: var(--main-lightpurple);
 }
 
 .small-image {

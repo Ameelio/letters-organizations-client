@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RootState } from '../../../redux';
 import Docdrop from './Docdrop';
 import ProgressBar from 'react-bootstrap/ProgressBar';
@@ -11,16 +11,20 @@ import {
   updateFileUploadStep,
 } from '../../../redux/modules/newsletter';
 import Button from 'react-bootstrap/Button';
-import { eventNames } from 'process';
 import './index.css';
+import { loadTags } from '../../../redux/modules/tag';
+import Badge from 'react-bootstrap/Badge';
+import { tagColors } from '../../../data/TagColors';
+import { hashCode } from '../../../utils/utils';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedFile: state.newsletters.uploadedFile,
   uploadStep: state.newsletters.uploadStep,
+  tags: state.tags.tags,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators({ uploadFile, updateFileUploadStep }, dispatch);
+  bindActionCreators({ uploadFile, updateFileUploadStep, loadTags }, dispatch);
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -30,15 +34,31 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   updateFileUploadStep,
   uploadedFile,
   uploadStep,
+  tags,
+  loadTags,
 }) => {
   const [name, setName] = useState<string>('');
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
+  useEffect(() => {
+    console.log(tags);
+    if (tags.length === 0) {
+      loadTags();
+    }
+  }, [uploadFile, updateFileUploadStep, uploadedFile, uploadStep, tags]);
 
   const handleNextClick = (event: React.MouseEvent, step: UploadStep) => {
-    console.log('here');
-    console.log(step);
-
     updateFileUploadStep(step);
   };
+
+  const handleTagClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    tag: Tag,
+  ) => {
+    selectedTags.push(tag);
+    setSelectedTags(tags);
+  };
+
   const docdropBtn: JSX.Element =
     uploadedFile && name ? (
       <Button size="sm" className="ml-auto mt-3">
@@ -109,7 +129,38 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               Search and select tags to classify who you want to send your
               newsletter to.
             </span>
-            <span></span>
+            <div>
+              <div className="black-200-bg w-100 py-4 d-flex-flex-row">
+                {selectedTags.map((tag) => (
+                  <div
+                    className="mb-3"
+                    key={tag.label}
+                    onClick={(e) => handleTagClick(e, tag)}>
+                    <span
+                      className={`p-1 rounded ${
+                        tagColors[hashCode(tag.label) % (tagColors.length - 1)]
+                      }`}>
+                      {tag.label} ({tag.numContacts})
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="d-flex flex-column shadow-sm bg-white p-3">
+                {tags.map((tag) => (
+                  <div
+                    className="mb-3"
+                    key={tag.label}
+                    onClick={(e) => handleTagClick(e, tag)}>
+                    <span
+                      className={`p-1 rounded ${
+                        tagColors[hashCode(tag.label) % (tagColors.length - 1)]
+                      }`}>
+                      {tag.label} ({tag.numContacts})
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
