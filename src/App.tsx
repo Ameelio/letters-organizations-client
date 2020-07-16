@@ -9,8 +9,8 @@ function App() {
   return (
     <Router>
       <NavBar />
-      <Route path="/login" component={Login}></Route>
-      <Route exact path="/" component={VolunteerPage}></Route>
+      <Route exact path="/" component={Login}></Route>
+      <Route exact path="/volunteers" component={VolunteerPage}></Route>
     </Router>
   );
 }

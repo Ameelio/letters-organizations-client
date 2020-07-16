@@ -1,3 +1,9 @@
+interface AuthInfo {
+  isLoadingToken: boolean;
+  isLoggedIn: boolean;
+}
+
 interface UserState {
-  username: string | null;
+  authInfo: AuthInfo;
+  user: User;
 }
