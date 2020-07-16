@@ -14,8 +14,9 @@ import Button from 'react-bootstrap/Button';
 import './index.css';
 import { loadTags } from '../../../redux/modules/tag';
 import Badge from 'react-bootstrap/Badge';
-import { tagColors } from '../../../data/TagColors';
-import { hashCode } from '../../../utils/utils';
+import { sampleTagColors } from '../../../data/TagColors';
+import { generateTagColor } from '../../../utils/utils';
+import TagSelector from './TagSelector';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedFile: state.newsletters.uploadedFile,
@@ -38,10 +39,9 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   loadTags,
 }) => {
   const [name, setName] = useState<string>('');
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  //   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   useEffect(() => {
-    console.log(tags);
     if (tags.length === 0) {
       loadTags();
     }
@@ -51,13 +51,13 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     updateFileUploadStep(step);
   };
 
-  const handleTagClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    tag: Tag,
-  ) => {
-    selectedTags.push(tag);
-    setSelectedTags(tags);
-  };
+  //   const handleTagClick = (
+  //     event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+  //     tag: Tag,
+  //   ) => {
+  //     selectedTags.push(tag);
+  //     setSelectedTags(tags);
+  //   };
 
   const docdropBtn: JSX.Element =
     uploadedFile && name ? (
@@ -77,7 +77,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
 
   return (
     <div className="d-flex flex-column align-items-center justify-content-center mt-5">
-      <div className="newsletter-container d-flex flex-column bg-white w-50 mt-5 align-items-center pb-5">
+      <div className="newsletter-container d-flex flex-column bg-white w-75 mt-5 align-items-center pb-5">
         <div className="w-100">
           <ProgressBar now={(uploadStep + 1) * 33} />
           <div className="d-flex flex-row justify-content-around mt-2">
@@ -124,42 +124,13 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
           </div>
         )}
         {uploadStep == 1 && (
-          <div className="mt-5">
+          <div className="mt-5 w-75">
             <span>
               Search and select tags to classify who you want to send your
               newsletter to.
             </span>
             <div>
-              <div className="black-200-bg w-100 py-4 d-flex-flex-row">
-                {selectedTags.map((tag) => (
-                  <div
-                    className="mb-3"
-                    key={tag.label}
-                    onClick={(e) => handleTagClick(e, tag)}>
-                    <span
-                      className={`p-1 rounded ${
-                        tagColors[hashCode(tag.label) % (tagColors.length - 1)]
-                      }`}>
-                      {tag.label} ({tag.numContacts})
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="d-flex flex-column shadow-sm bg-white p-3">
-                {tags.map((tag) => (
-                  <div
-                    className="mb-3"
-                    key={tag.label}
-                    onClick={(e) => handleTagClick(e, tag)}>
-                    <span
-                      className={`p-1 rounded ${
-                        tagColors[hashCode(tag.label) % (tagColors.length - 1)]
-                      }`}>
-                      {tag.label} ({tag.numContacts})
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <TagSelector tags={tags} />
             </div>
           </div>
         )}

@@ -1,4 +1,4 @@
-export const tagColors: string[] = [
+export const sampleTagColors: TagColor[] = [
   'blue-200-bg',
   'lightred-bg',
   'lightpurple-bg',
