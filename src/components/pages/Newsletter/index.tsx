@@ -63,7 +63,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     if (tags.length === 0) {
       loadTags();
     }
-    if (uploadStep == 2 && uploadedFile) {
+    if (uploadStep === 2 && uploadedFile) {
       setNewsletter({
         title: name,
         file: uploadedFile,
@@ -123,7 +123,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
           </div>
         </div>
 
-        {uploadStep == 0 && (
+        {uploadStep === 0 && (
           <div>
             <div className="d-flex flex-column align-items-center mt-3">
               <span className="p2 black-500 mt-3">Newsletters</span>
@@ -149,7 +149,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             </Form>
           </div>
         )}
-        {uploadStep == 1 && (
+        {uploadStep === 1 && (
           <div className="mt-5 w-75 d-flex flex-column">
             <span>
               Search and select tags to classify who you want to send your
@@ -176,7 +176,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
 
             </div>
         )} */}
-        {uploadStep == 2 && (
+        {uploadStep === 2 && (
           <ConfirmSendModal
             handleClose={handleModalClose}
             show={showModal}

@@ -1,12 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { sampleTagColors } from '../../../data/TagColors';
-import { generateTagColor } from '../../../utils/utils';
-import Form from 'react-bootstrap/Form';
+import React from 'react';
 import Tag from '../../tags/Tag';
-import {
-  addUploadTag,
-  removeUploadTag,
-} from '../../../redux/modules/newsletter';
 
 interface TagSelector {
   availableTags: Tag[];

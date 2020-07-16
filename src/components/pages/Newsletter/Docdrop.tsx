@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import './Docdrop.css';
 import { FileText, CheckCircle } from 'react-feather';
@@ -9,9 +9,8 @@ interface DocdropProps {
 }
 
 const Docdrop: React.FC<DocdropProps> = ({ uploadFile, uploadedFile }) => {
-  // const [files, setFiles] = useState<CustomFile[]>([]);
-
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+  // TODO handle errors
+  const { getRootProps, getInputProps } = useDropzone({
     accept: 'application/pdf/*',
     onDrop: (acceptedFiles) => {
       uploadFile(acceptedFiles[0]);

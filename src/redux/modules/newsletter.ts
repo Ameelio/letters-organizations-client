@@ -118,7 +118,7 @@ export function newsletterReducer(
       return {
         ...state,
         uploadSelectedTags: state.uploadSelectedTags.filter(
-          (selectedTag) => selectedTag.id != action.payload.id,
+          (selectedTag) => selectedTag.id !== action.payload.id,
         ),
       };
     case ADD_NEWSLETTER:
