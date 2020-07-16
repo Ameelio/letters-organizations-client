@@ -2,12 +2,13 @@
 
 :root {
   --main-primary-color: #4884f8;
-  --main-black: #232624;
-  --main-black-500: #393939;
-  --main-black-400: #6d6d6d;
-  --main-black-300: #9a9a9a;
+  --main-black-600: #393939;
+  --main-black-500: #6d6d6d;
+  --main-black-400: #9a9a9a;
+  --main-black-300: #cdcdcd;
   --main-black-200: #f2f2f2;
   --main-black-100: #fbfbfb;
+  --main-green: #2eba77;
 }
 
 html {
@@ -21,12 +22,20 @@ html {
 
 body {
   font-family: 'Poppins', sans-serif !important;
-  color: var(--main-black);
-  background-color: #fbfbfb !important;
+  color: var(--main-black-600) !important;
+  background-color: var(--main-black-200) !important;
 }
 
 .primary {
   color: var(--main-primary-color);
+}
+
+.green {
+  color: var(--main-green);
+}
+
+.green-bg {
+  background-color: var(--main-green);
 }
 
 .black-500 {
