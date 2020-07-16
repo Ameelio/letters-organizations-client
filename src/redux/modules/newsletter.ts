@@ -1,5 +1,6 @@
 import { AppThunk } from '../helpers';
 
+//TODO add contacts logic
 const UPLOAD_FILE = 'newsletter/UPLOAD_FILE';
 const UPDATE_FILE_UPLOAD_STEP = 'newsletter/UPDATE_FILE_UPLOAD_STEP';
 const SET_NEWSLETTERS = 'newsletter/UPLOAD_FILE';
