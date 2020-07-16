@@ -9,23 +9,35 @@ import { bindActionCreators, Dispatch } from 'redux';
 import {
   uploadFile,
   updateFileUploadStep,
+  addUploadTag,
+  removeUploadTag,
+  sendNewsletter,
 } from '../../../redux/modules/newsletter';
 import Button from 'react-bootstrap/Button';
 import './index.css';
 import { loadTags } from '../../../redux/modules/tag';
-import Badge from 'react-bootstrap/Badge';
-import { sampleTagColors } from '../../../data/TagColors';
-import { generateTagColor } from '../../../utils/utils';
+import ConfirmSendModal from './ConfirmSendModal';
 import TagSelector from './TagSelector';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedFile: state.newsletters.uploadedFile,
   uploadStep: state.newsletters.uploadStep,
   tags: state.tags.tags,
+  uploadSelectedTags: state.newsletters.uploadSelectedTags,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators({ uploadFile, updateFileUploadStep, loadTags }, dispatch);
+  bindActionCreators(
+    {
+      uploadFile,
+      updateFileUploadStep,
+      loadTags,
+      addUploadTag,
+      removeUploadTag,
+      sendNewsletter,
+    },
+    dispatch,
+  );
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -37,43 +49,57 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   uploadStep,
   tags,
   loadTags,
+  uploadSelectedTags,
+  addUploadTag,
+  removeUploadTag,
 }) => {
   const [name, setName] = useState<string>('');
-  //   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [newsletter, setNewsletter] = useState<Newsletter>({} as Newsletter);
+  const [showModal, setShowModal] = useState(false);
+  const handleModalClose = () => setShowModal(false);
+  const handleModalShow = () => setShowModal(true);
 
   useEffect(() => {
     if (tags.length === 0) {
       loadTags();
     }
-  }, [uploadFile, updateFileUploadStep, uploadedFile, uploadStep, tags]);
+    if (uploadStep == 2 && uploadedFile) {
+      setNewsletter({
+        title: name,
+        file: uploadedFile,
+        numContacts: 321,
+        tags: uploadSelectedTags,
+        totalCost: 3213,
+      });
+      handleModalShow();
+    }
+  }, [tags, loadTags, uploadStep]);
 
-  const handleNextClick = (event: React.MouseEvent, step: UploadStep) => {
-    updateFileUploadStep(step);
+  const handleNextClick = (event: React.MouseEvent) => {
+    updateFileUploadStep(uploadStep + 1);
   };
-
-  //   const handleTagClick = (
-  //     event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-  //     tag: Tag,
-  //   ) => {
-  //     selectedTags.push(tag);
-  //     setSelectedTags(tags);
-  //   };
 
   const docdropBtn: JSX.Element =
     uploadedFile && name ? (
-      <Button size="sm" className="ml-auto mt-3">
+      <Button size="lg" className="ml-auto mt-3" onClick={handleNextClick}>
         Next &#62;
       </Button>
     ) : (
-      <Button
-        onClick={(e) => handleNextClick(e, 1)}
-        size="sm"
-        className="ml-auto mt-3"
-        disabled>
+      <Button size="lg" className="ml-auto mt-3" disabled>
         Next &#62;
       </Button>
     );
-  console.log(uploadStep);
+
+  const tagSelectorBtn: JSX.Element =
+    uploadSelectedTags.length > 0 ? (
+      <Button size="lg" className="ml-auto mt-3" onClick={handleNextClick}>
+        Next &#62;
+      </Button>
+    ) : (
+      <Button size="lg" className="ml-auto mt-3" disabled>
+        Next &#62;
+      </Button>
+    );
 
   return (
     <div className="d-flex flex-column align-items-center justify-content-center mt-5">
@@ -124,15 +150,39 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
           </div>
         )}
         {uploadStep == 1 && (
-          <div className="mt-5 w-75">
+          <div className="mt-5 w-75 d-flex flex-column">
             <span>
               Search and select tags to classify who you want to send your
               newsletter to.
             </span>
             <div>
-              <TagSelector tags={tags} />
+              <TagSelector
+                availableTags={tags.filter(
+                  (tag) => !uploadSelectedTags.includes(tag),
+                )}
+                selectedTags={uploadSelectedTags}
+                addTag={addUploadTag}
+                removeTag={removeUploadTag}
+              />
             </div>
+            <div className="mt-3">
+              <Form.Check type="checkbox" label="Select all 7311 contacts" />
+            </div>
+            {tagSelectorBtn}
           </div>
+        )}
+        {/* {uploadStep == 2 && (
+            <div>
+
+            </div>
+        )} */}
+        {uploadStep == 2 && (
+          <ConfirmSendModal
+            handleClose={handleModalClose}
+            show={showModal}
+            newsletter={newsletter}
+            sendNewsletter={sendNewsletter}
+          />
         )}
       </div>
     </div>

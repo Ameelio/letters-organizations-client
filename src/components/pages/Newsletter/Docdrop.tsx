@@ -3,14 +3,6 @@ import { useDropzone } from 'react-dropzone';
 import './Docdrop.css';
 import { FileText, CheckCircle } from 'react-feather';
 
-interface CustomFile extends File {
-  path: string;
-  type: string;
-  name: string;
-  lastModified: number;
-  size: number;
-  preview: string;
-}
 interface DocdropProps {
   uploadFile: (file: File) => void;
   uploadedFile: File | null;

@@ -3,39 +3,39 @@ import { sampleTagColors } from '../../../data/TagColors';
 import { generateTagColor } from '../../../utils/utils';
 import Form from 'react-bootstrap/Form';
 import Tag from '../../tags/Tag';
+import {
+  addUploadTag,
+  removeUploadTag,
+} from '../../../redux/modules/newsletter';
 
 interface TagSelector {
-  tags: Tag[];
+  availableTags: Tag[];
+  selectedTags: Tag[];
+  addTag: (tag: Tag) => void;
+  removeTag: (tag: Tag) => void;
+  //   setSelectedTags:
 }
 
 // TODO for select all contacts, we probably want to pass a flag to the sendNewsletter
-const TagSelector: React.FC<TagSelector> = ({ tags }) => {
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  const [availableTags, setAvailableTags] = useState<Tag[]>(tags);
-
+const TagSelector: React.FC<TagSelector> = ({
+  availableTags,
+  selectedTags,
+  addTag,
+  removeTag,
+}) => {
   const handleTagRemoval = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     tag: Tag,
   ) => {
-    setAvailableTags([...availableTags, tag]);
-    setSelectedTags(
-      selectedTags.filter((selectedTag) => selectedTag.label !== tag.label),
-    );
+    removeTag(tag);
   };
 
   const handleTagSelection = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     tag: Tag,
   ) => {
-    setSelectedTags([...selectedTags, tag]);
-    setAvailableTags(
-      availableTags.filter((availableTag) => availableTag.label !== tag.label),
-    );
+    addTag(tag);
   };
-
-  useEffect(() => {
-    setAvailableTags(tags);
-  }, [tags]);
 
   return (
     <div className="mw-100">
@@ -70,7 +70,6 @@ const TagSelector: React.FC<TagSelector> = ({ tags }) => {
           </div>
         ))}
       </div>
-      <Form.Check type="checkbox" label="Select all 7311 contacts" />
     </div>
   );
 };

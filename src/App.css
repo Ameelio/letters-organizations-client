@@ -167,3 +167,8 @@ body {
     font-size: 14px;
   }
 }
+
+/* Override Bootstrap Styles */
+.form-check-label {
+  color: var(--main-black-400);
+}

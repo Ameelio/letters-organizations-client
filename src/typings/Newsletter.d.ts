@@ -1,3 +1,7 @@
-type UploadStep = 0 | 1 | 2;
-
-interface Newsletter {}
+interface Newsletter {
+  title: string;
+  file: File;
+  numContacts: number;
+  tags: Tags[];
+  totalCost: number;
+}
