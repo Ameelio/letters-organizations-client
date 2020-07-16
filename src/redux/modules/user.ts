@@ -4,31 +4,52 @@ const LOGOUT = 'user/LOGOUT';
 
 interface LoginAction {
   type: typeof LOGIN;
-  payload: string;
+  payload: User;
 }
 
 interface LogoutAction {
   type: typeof LOGOUT;
+  payload: null;
 }
 
 type UserActionTypes = LoginAction | LogoutAction;
 
 // Action Creators
-export const login = (username: string): UserActionTypes => {
+export const login = (user: User): UserActionTypes => {
   return {
     type: LOGIN,
-    payload: username,
+    payload: user,
   };
 };
 
 export const logout = (): UserActionTypes => {
   return {
     type: LOGOUT,
+    payload: null,
   };
 };
 
 // Reducer
-const initialState: UserState = { username: null };
+const initialState: UserState = {
+  authInfo: {
+    isLoadingToken: true,
+    isLoggedIn: false,
+  },
+  user: {
+    id: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    address1: '',
+    address2: '',
+    country: '',
+    postal: '',
+    city: '',
+    state: '',
+    token: '',
+  },
+};
 
 export function userReducer(
   state = initialState,
@@ -36,9 +57,34 @@ export function userReducer(
 ): UserState {
   switch (action.type) {
     case LOGIN:
-      return { username: action.payload };
+      return {
+        authInfo: {
+          isLoadingToken: false,
+          isLoggedIn: true,
+        },
+        user: action.payload,
+      };
     case LOGOUT:
-      return { username: null };
+      return {
+        authInfo: {
+          isLoadingToken: false,
+          isLoggedIn: false,
+        },
+        user: {
+          id: '',
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          address1: '',
+          address2: '',
+          country: '',
+          postal: '',
+          city: '',
+          state: '',
+          token: '',
+        },
+      };
     default:
       return state;
   }
