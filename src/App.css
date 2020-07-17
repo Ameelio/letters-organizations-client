@@ -9,6 +9,7 @@
   --main-black-200: #f2f2f2;
   --main-black-100: #fbfbfb;
   --main-green: #2eba77;
+  --main-red: #df6161;
   --main-lightred: #f5c3c3;
   --main-lightyellow: #faf5e3;
   --main-blue-200: #c3dbf5;
@@ -40,6 +41,14 @@ body {
 
 .green-bg {
   background-color: var(--main-green);
+}
+
+.red {
+  color: var(--main-red);
+}
+
+.red-bg {
+  background-color: var(--main-red);
 }
 
 .black-500 {

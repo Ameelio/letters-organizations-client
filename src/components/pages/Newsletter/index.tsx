@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RootState } from '../../../redux';
 import Docdrop from './Docdrop';
-import ProgressBar from 'react-bootstrap/ProgressBar';
 import Form from 'react-bootstrap/Form';
 import './Docdrop.css';
 import { connect, ConnectedProps } from 'react-redux';
@@ -74,7 +73,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
       });
       handleModalShow();
     }
-  }, [tags, loadTags, uploadStep]);
+  }, [tags, loadTags, uploadStep, name, uploadSelectedTags, uploadedFile]);
 
   const handleNextClick = (event: React.MouseEvent) => {
     updateFileUploadStep(uploadStep + 1);
@@ -105,24 +104,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   return (
     <div className="d-flex flex-column align-items-center justify-content-center mt-5">
       <div className="newsletter-container d-flex flex-column bg-white w-75 mt-5 align-items-center pb-5">
-        {/* <div className="w-100">
-          <ProgressBar now={(uploadStep + 1) * 33} />
-          <div className="d-flex flex-row justify-content-around mt-2">
-            <span className="font-weight-bold primary">Upload file</span>
-            <span
-              className={
-                uploadStep > 0 ? 'font-weight-bold primary' : 'black-300'
-              }>
-              Select contacts
-            </span>
-            <span
-              className={
-                uploadStep > 1 ? 'font-weight-bold primary' : 'black-300'
-              }>
-              Confirm to send
-            </span>
-          </div>
-        </div> */}
         <ProgressBarHeader
           step={uploadStep}
           stepLabels={['Upload file', 'Select contacts', 'Confirm to send']}
@@ -148,7 +129,12 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               </Form.Group>
               <Form.Group controlId="formDocdrop">
                 <Form.Label>Attach file</Form.Label>
-                <Docdrop uploadFile={uploadFile} uploadedFile={uploadedFile} />
+                <Docdrop
+                  uploadFile={uploadFile}
+                  uploadedFile={uploadedFile}
+                  acceptedFormat="application/pdf/*"
+                  acceptedFormatLabel="PDF"
+                />
               </Form.Group>
               {docdropBtn}
             </Form>
@@ -177,11 +163,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             {tagSelectorBtn}
           </div>
         )}
-        {/* {uploadStep == 2 && (
-            <div>
-
-            </div>
-        )} */}
         {uploadStep === 2 && (
           <ConfirmSendModal
             handleClose={handleModalClose}

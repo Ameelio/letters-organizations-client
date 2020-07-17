@@ -99,8 +99,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
         <div className="d-flex flex-row justify-content-between">
           <span className="p2 mb-3">Contacts</span>
           <div>
-            <Button variant="outline-primary mr-3">Add Contacts</Button>
-            <Button variant="outline-secondary">Export as CSV</Button>
+            <Button variant="outline-primary mr">Add Contacts</Button>
+            {/* <Button variant="outline-secondary">Export as CSV</Button> */}
           </div>
         </div>
 
