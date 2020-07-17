@@ -5,6 +5,7 @@ import VolunteerPage from './components/pages/Volunteers';
 import NavBar from './components/header/Navbar';
 import Login from './components/pages/Login';
 import Newsletter from './components/pages/Newsletter';
+import ContactsPage from './components/pages/Contacts';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <NavBar />
       <Route path="/login" component={Login}></Route>
       <Route exact path="/newsletter" component={Newsletter} />
+      <Route exact path="/contacts" component={ContactsPage} />
       <Route exact path="/" component={VolunteerPage}></Route>
     </Router>
   );

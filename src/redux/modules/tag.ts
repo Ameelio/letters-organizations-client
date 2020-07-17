@@ -36,6 +36,5 @@ export function tagsReducer(
 }
 
 export const loadTags = (): AppThunk => async (dispatch) => {
-  console.log('here');
   dispatch(setTags(sampleTags));
 };

@@ -1,12 +1,12 @@
 import React from 'react';
-import Tag from '../../tags/Tag';
+import Tag from './Tag';
 
 interface TagSelector {
   availableTags: Tag[];
   selectedTags: Tag[];
   addTag: (tag: Tag) => void;
   removeTag: (tag: Tag) => void;
-  //   setSelectedTags:
+  showTotalCount: boolean;
 }
 
 // TODO for select all contacts, we probably want to pass a flag to the sendNewsletter
@@ -15,6 +15,7 @@ const TagSelector: React.FC<TagSelector> = ({
   selectedTags,
   addTag,
   removeTag,
+  showTotalCount,
 }) => {
   const handleTagRemoval = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -39,19 +40,21 @@ const TagSelector: React.FC<TagSelector> = ({
               className="ml-3 mb-3"
               key={tag.label}
               onClick={(e) => handleTagRemoval(e, tag)}>
-              <Tag tag={tag} canRemove={true} />
+              <Tag tag={tag} canRemove={true} showCount={true} />
             </div>
           ))}
         </div>
 
-        <span className="ml-auto mr-3 font-weight-bold black-400 flex-shrink-0">
-          {selectedTags.reduce(
-            (previousValue: number, currentValue: Tag) =>
-              previousValue + currentValue.numContacts,
-            0,
-          )}{' '}
-          contacts selected
-        </span>
+        {showTotalCount && (
+          <span className="ml-auto mr-3 font-weight-bold black-400 flex-shrink-0">
+            {selectedTags.reduce(
+              (previousValue: number, currentValue: Tag) =>
+                previousValue + currentValue.numContacts,
+              0,
+            )}{' '}
+            contacts selected
+          </span>
+        )}
       </div>
       <div className="d-flex flex-column shadow-sm bg-white p-3">
         {availableTags.map((tag) => (
@@ -59,7 +62,7 @@ const TagSelector: React.FC<TagSelector> = ({
             className="tag mb-3"
             key={tag.label}
             onClick={(e) => handleTagSelection(e, tag)}>
-            <Tag tag={tag} canRemove={false} />
+            <Tag tag={tag} canRemove={false} showCount={true} />
           </div>
         ))}
       </div>

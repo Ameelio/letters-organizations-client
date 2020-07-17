@@ -10,6 +10,5 @@ function hashCode(str: string): number {
 }
 
 export function generateTagColor(colors: TagColor[], tag: Tag): string {
-  console.log(hashCode(tag.label) % colors.length);
   return colors[Math.abs(hashCode(tag.label) % colors.length)];
 }

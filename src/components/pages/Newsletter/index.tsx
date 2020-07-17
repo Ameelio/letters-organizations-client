@@ -17,7 +17,7 @@ import Button from 'react-bootstrap/Button';
 import './index.css';
 import { loadTags } from '../../../redux/modules/tag';
 import ConfirmSendModal from './ConfirmSendModal';
-import TagSelector from './TagSelector';
+import TagSelector from '../../tags/TagSelector';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedFile: state.newsletters.uploadedFile,
@@ -163,6 +163,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 selectedTags={uploadSelectedTags}
                 addTag={addUploadTag}
                 removeTag={removeUploadTag}
+                showTotalCount={true}
               />
             </div>
             <div className="mt-3">
