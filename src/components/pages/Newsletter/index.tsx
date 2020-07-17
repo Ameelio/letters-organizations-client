@@ -18,6 +18,7 @@ import './index.css';
 import { loadTags } from '../../../redux/modules/tag';
 import ConfirmSendModal from './ConfirmSendModal';
 import TagSelector from '../../tags/TagSelector';
+import ProgressBarHeader from '../../progress/ProgressBarHeader';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedFile: state.newsletters.uploadedFile,
@@ -104,7 +105,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   return (
     <div className="d-flex flex-column align-items-center justify-content-center mt-5">
       <div className="newsletter-container d-flex flex-column bg-white w-75 mt-5 align-items-center pb-5">
-        <div className="w-100">
+        {/* <div className="w-100">
           <ProgressBar now={(uploadStep + 1) * 33} />
           <div className="d-flex flex-row justify-content-around mt-2">
             <span className="font-weight-bold primary">Upload file</span>
@@ -121,7 +122,11 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               Confirm to send
             </span>
           </div>
-        </div>
+        </div> */}
+        <ProgressBarHeader
+          step={uploadStep}
+          stepLabels={['Upload file', 'Select contacts', 'Confirm to send']}
+        />
 
         {uploadStep === 0 && (
           <div>
