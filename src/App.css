@@ -181,3 +181,21 @@ body {
 .form-check-label {
   color: var(--main-black-400);
 }
+
+.upload-file-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2em;
+}
+
+.upload-file-container {
+  height: 700px;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  width: 75%;
+  margin-top: 3em;
+  align-items: center;
+  padding-bottom: 3em;
+}

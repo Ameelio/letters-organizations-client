@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RootState } from '../../../redux';
-import Docdrop from './Docdrop';
+import Docdrop from '../../docdrop/Docdrop';
 import Form from 'react-bootstrap/Form';
-import './Docdrop.css';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import {
@@ -12,12 +11,11 @@ import {
   removeUploadTag,
   sendNewsletter,
 } from '../../../redux/modules/newsletter';
-import Button from 'react-bootstrap/Button';
-import './index.css';
 import { loadTags } from '../../../redux/modules/tag';
 import ConfirmSendModal from './ConfirmSendModal';
 import TagSelector from '../../tags/TagSelector';
 import ProgressBarHeader from '../../progress/ProgressBarHeader';
+import FunnelButton from '../../buttons/FunnelButton';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedFile: state.newsletters.uploadedFile,
@@ -79,31 +77,9 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     updateFileUploadStep(uploadStep + 1);
   };
 
-  const docdropBtn: JSX.Element =
-    uploadedFile && name ? (
-      <Button size="lg" className="ml-auto mt-3" onClick={handleNextClick}>
-        Next &#62;
-      </Button>
-    ) : (
-      <Button size="lg" className="ml-auto mt-3" disabled>
-        Next &#62;
-      </Button>
-    );
-
-  const tagSelectorBtn: JSX.Element =
-    uploadSelectedTags.length > 0 ? (
-      <Button size="lg" className="ml-auto mt-3" onClick={handleNextClick}>
-        Next &#62;
-      </Button>
-    ) : (
-      <Button size="lg" className="ml-auto mt-3" disabled>
-        Next &#62;
-      </Button>
-    );
-
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center mt-5">
-      <div className="newsletter-container d-flex flex-column bg-white w-75 mt-5 align-items-center pb-5">
+    <div className="upload-file-wrapper">
+      <div className="upload-file-container">
         <ProgressBarHeader
           step={uploadStep}
           stepLabels={['Upload file', 'Select contacts', 'Confirm to send']}
@@ -136,7 +112,11 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                   acceptedFormatLabel="PDF"
                 />
               </Form.Group>
-              {docdropBtn}
+              <FunnelButton
+                onClick={handleNextClick}
+                cta="Next"
+                enabled={uploadedFile != null && name !== ''}
+              />
             </Form>
           </div>
         )}
@@ -160,7 +140,11 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             <div className="mt-3">
               <Form.Check type="checkbox" label="Select all 7311 contacts" />
             </div>
-            {tagSelectorBtn}
+            <FunnelButton
+              onClick={handleNextClick}
+              cta="Next"
+              enabled={uploadSelectedTags.length > 0}
+            />
           </div>
         )}
         {uploadStep === 2 && (

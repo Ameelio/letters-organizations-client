@@ -16,6 +16,7 @@ const ProgressBarHeader: React.FC<ProgressBarHeaderProps> = ({
       <div className="d-flex flex-row justify-content-around mt-2">
         {stepLabels.map((label, index) => (
           <span
+            key={index}
             className={
               step >= index ? 'font-weight-bold primary' : 'black-300'
             }>

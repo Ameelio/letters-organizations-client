@@ -6,6 +6,7 @@ import NavBar from './components/header/Navbar';
 import Login from './components/pages/Login';
 import Newsletter from './components/pages/Newsletter';
 import ContactsPage from './components/pages/Contacts';
+import UploadContactsPage from './components/pages/UploadContacts';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/login" component={Login}></Route>
       <Route exact path="/newsletter" component={Newsletter} />
       <Route exact path="/contacts" component={ContactsPage} />
+      <Route exact path="/upload" component={UploadContactsPage} />
       <Route exact path="/" component={VolunteerPage}></Route>
     </Router>
   );

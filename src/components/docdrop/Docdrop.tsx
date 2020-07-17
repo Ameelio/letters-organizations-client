@@ -26,7 +26,6 @@ const Docdrop: React.FC<DocdropProps> = ({
       setRejectedFiles([]);
     },
     onDropRejected: (rejectedFiles) => {
-      console.log(rejectedFiles);
       setRejectedFiles(rejectedFiles);
     },
   });
