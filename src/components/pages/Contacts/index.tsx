@@ -61,7 +61,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     );
 
     if (filters.length > 0) {
-      results = orgContacts.filter((contact) =>
+      results = results.filter((contact) =>
         contact.tags.some((tag) => filters.includes(tag)),
       );
     }
@@ -105,7 +105,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
         </div>
 
         <div className="vh-100 w-100 shadow-sm p-5 bg-white overflow-auto">
-          <Table responsive>
+          <Table responsive hover>
             <thead>
               <tr>
                 <th>#</th>

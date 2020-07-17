@@ -1,5 +1,6 @@
 import React from 'react';
 import Tag from './Tag';
+import './TagSelector.css';
 
 interface TagSelector {
   availableTags: Tag[];
@@ -56,10 +57,10 @@ const TagSelector: React.FC<TagSelector> = ({
           </span>
         )}
       </div>
-      <div className="d-flex flex-column shadow-sm bg-white p-3">
+      <div className="d-flex flex-column shadow-sm bg-white py-3">
         {availableTags.map((tag) => (
           <div
-            className="tag mb-3"
+            className="tag-row p-2 w-100"
             key={tag.label}
             onClick={(e) => handleTagSelection(e, tag)}>
             <Tag tag={tag} canRemove={false} showCount={true} />
