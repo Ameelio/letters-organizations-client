@@ -10,6 +10,8 @@ import {
   addUploadTag,
   removeUploadTag,
   sendNewsletter,
+  addAllUploadTags,
+  removeAllUploadTags,
 } from 'src/redux/modules/newsletter';
 import { loadTags } from 'src/redux/modules/tag';
 import ConfirmSendModal from './ConfirmSendModal';
@@ -34,6 +36,8 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       addUploadTag,
       removeUploadTag,
       sendNewsletter,
+      addAllUploadTags,
+      removeAllUploadTags,
     },
     dispatch,
   );
@@ -51,11 +55,14 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   uploadSelectedTags,
   addUploadTag,
   removeUploadTag,
+  addAllUploadTags,
+  removeAllUploadTags,
 }) => {
   const [name, setName] = useState<string>('');
   const [newsletter, setNewsletter] = useState<Newsletter>({} as Newsletter);
-  const [showModal, setShowModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+  const [toggle, setToggle] = useState<boolean>(false);
   const handleModalClose = () => setShowModal(false);
   const handleModalShow = () => setShowModal(true);
 
@@ -67,9 +74,11 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
       setNewsletter({
         title: name,
         file: uploadedFile,
-        numContacts: 321,
+        numContacts: uploadSelectedTags.reduce(
+          (prev: number, next: Tag) => prev + next.numContacts,
+          0,
+        ),
         tags: uploadSelectedTags,
-        totalCost: 3213,
       });
       handleModalShow();
     }
@@ -81,6 +90,11 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
 
   const handleBackClick = (event: React.MouseEvent) => {
     updateFileUploadStep(uploadStep - 1);
+  };
+
+  const handleSelectAllClick = (event: React.MouseEvent) => {
+    toggle ? removeAllUploadTags() : addAllUploadTags(tags);
+    setToggle(!toggle);
   };
 
   const handleSubmission = (event: React.MouseEvent) => {
@@ -155,7 +169,11 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               />
             </div>
             <div className="mt-3">
-              <Form.Check type="checkbox" label="Select all 7311 contacts" />
+              <Form.Check
+                onClick={handleSelectAllClick}
+                type="checkbox"
+                label="Select all contacts"
+              />
             </div>
             <FunnelButton
               onClick={handleNextClick}

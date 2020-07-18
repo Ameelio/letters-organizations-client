@@ -3,5 +3,4 @@ interface Newsletter {
   file: File;
   numContacts: number;
   tags: Tags[];
-  totalCost: number;
 }

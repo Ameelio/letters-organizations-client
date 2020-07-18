@@ -43,6 +43,8 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   uploadedCsvData,
   uploadedCsvHeader,
 }) => {
+  const [csvMapping, setCsvMapping] = useState<CsvHeaderMapping | null>(null);
+
   const handleNextClick = (event: React.MouseEvent) => {
     updateCsvUploadStep(uploadStep + 1);
   };
@@ -52,6 +54,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   };
 
   let fileReader: FileReader;
+
   const handFileRead = (e: any) => {
     const content = fileReader.result;
     if (typeof content == 'string') {

@@ -22,7 +22,7 @@ const FunnelButton: React.FC<FunnelButtonProps> = ({
           variant="outline-primary"
           className=""
           onClick={onBack}>
-          Back;
+          Back
         </Button>
       )}
       {enabled ? (

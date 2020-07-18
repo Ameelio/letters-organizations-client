@@ -7,6 +7,8 @@ const SET_NEWSLETTERS = 'newsletter/UPLOAD_FILE';
 const ADD_UPLOAD_TAG = 'newsletter/UPDATE_UPLOAD_TAGS';
 const REMOVE_UPLOAD_TAG = 'newsletter/REMOVE_UPLOAD_TAG';
 const ADD_NEWSLETTER = 'newsletter/SEND_NEWSLETTER';
+const REMOVE_ALL_UPLOAD_TAG = 'newsletter/RESET_UPLOAD_TAG';
+const ADD_ALL_UPLOAD_TAGS = 'newsletter/ADD_ALL_UPLOAD_TAGS';
 
 interface UploadFileAction {
   type: typeof UPLOAD_FILE;
@@ -37,11 +39,22 @@ interface AddNewsletterAction {
   payload: Newsletter;
 }
 
+interface RemoveAllUploadTagsAction {
+  type: typeof REMOVE_ALL_UPLOAD_TAG;
+}
+
+interface AddAllUploadTagsAction {
+  type: typeof ADD_ALL_UPLOAD_TAGS;
+  payload: Tag[];
+}
+
 type NewsletterActionTypes =
   | UploadFileAction
   | UpdateUploadStepAction
   | AddUploadTagAction
   | RemoveUploadTagAction
+  | RemoveAllUploadTagsAction
+  | AddAllUploadTagsAction
   | AddNewsletterAction;
 
 // Action creators
@@ -77,6 +90,19 @@ const addNewsletter = (newsletter: Newsletter): NewsletterActionTypes => {
   return {
     type: ADD_NEWSLETTER,
     payload: newsletter,
+  };
+};
+
+export const removeAllUploadTags = (): NewsletterActionTypes => {
+  return {
+    type: REMOVE_ALL_UPLOAD_TAG,
+  };
+};
+
+export const addAllUploadTags = (tags: Tag[]): NewsletterActionTypes => {
+  return {
+    type: ADD_ALL_UPLOAD_TAGS,
+    payload: tags,
   };
 };
 
@@ -125,6 +151,16 @@ export function newsletterReducer(
       return {
         ...state,
         newsletters: [...state.newsletters, action.payload],
+      };
+    case REMOVE_ALL_UPLOAD_TAG:
+      return {
+        ...state,
+        uploadSelectedTags: [],
+      };
+    case ADD_ALL_UPLOAD_TAGS:
+      return {
+        ...state,
+        uploadSelectedTags: action.payload,
       };
     default:
       return state;

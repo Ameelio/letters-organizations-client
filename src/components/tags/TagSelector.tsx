@@ -57,7 +57,7 @@ const TagSelector: React.FC<TagSelector> = ({
           </span>
         )}
       </div>
-      <div className="d-flex flex-column shadow-sm bg-white py-3">
+      <div className="overflow-auto tag-selector-container d-flex flex-column shadow-sm bg-white py-3">
         {availableTags.map((tag) => (
           <div
             className="tag-row p-2 w-100"
