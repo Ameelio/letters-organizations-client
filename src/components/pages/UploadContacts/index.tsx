@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { RootState } from '../../../redux';
-import Docdrop from '../../docdrop/Docdrop';
+import { RootState } from 'src/redux';
+import Docdrop from 'src/components/docdrop/Docdrop';
 import Form from 'react-bootstrap/Form';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
@@ -8,11 +8,11 @@ import {
   uploadCsv,
   updateCsvUploadStep,
   updateCsvRows,
-} from '../../../redux/modules/orgcontacts';
-import FunnelButton from '../../buttons/FunnelButton';
-import ProgressBarHeader from '../../progress/ProgressBarHeader';
+} from 'src/redux/modules/orgcontacts';
+import FunnelButton from 'src/components/buttons/FunnelButton';
+import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
 import Image from 'react-bootstrap/Image';
-import Template from '../../../assets/template.png'; // Tell webpack this JS file uses this image
+import Template from 'src/assets/template.png';
 import { readString } from 'react-papaparse';
 
 const mapStateToProps = (state: RootState) => ({

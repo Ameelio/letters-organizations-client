@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RootState } from '../../../redux';
+import { RootState } from 'src/redux';
 
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
@@ -7,14 +7,14 @@ import {
   loadOrgContacts,
   addFilter,
   removeFilter,
-} from '../../../redux/modules/orgcontacts';
-import { loadTags } from '../../../redux/modules/tag';
+} from 'src/redux/modules/orgcontacts';
+import { loadTags } from 'src/redux/modules/tag';
 
-import TagSelector from '../../tags/TagSelector';
+import TagSelector from 'src/components/tags/TagSelector';
 import FormControl from 'react-bootstrap/FormControl';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
-import Tag from '../../tags/Tag';
+import Tag from 'src/components/tags/Tag';
 import './index.css';
 import Button from 'react-bootstrap/Button';
 

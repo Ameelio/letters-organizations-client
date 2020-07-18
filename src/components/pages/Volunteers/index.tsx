@@ -9,12 +9,9 @@ import Form from 'react-bootstrap/Form';
 import './index.css';
 import LetterModal from './LetterModal';
 import InviteModal from './InviteModal';
-import { RootState } from '../../../redux';
+import { RootState } from 'src/redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import {
-  loadVolunteers,
-  selectVolunteer,
-} from '../../../redux/modules/volunteer';
+import { loadVolunteers, selectVolunteer } from 'src/redux/modules/volunteer';
 import { connect, ConnectedProps } from 'react-redux';
 
 const mapStateToProps = (state: RootState) => ({

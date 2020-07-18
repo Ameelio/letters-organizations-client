@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { ReactComponent as Illustration } from '../../../assets/mail.svg';
+import { ReactComponent as Illustration } from 'src/assets/mail.svg';
 
 interface ConfirmSendModalProps {
   show: boolean;

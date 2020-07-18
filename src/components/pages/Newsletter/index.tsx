@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { RootState } from '../../../redux';
-import Docdrop from '../../docdrop/Docdrop';
+import { RootState } from 'src/redux';
+import Docdrop from 'src/components/docdrop/Docdrop';
 import Form from 'react-bootstrap/Form';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
@@ -10,13 +10,13 @@ import {
   addUploadTag,
   removeUploadTag,
   sendNewsletter,
-} from '../../../redux/modules/newsletter';
-import { loadTags } from '../../../redux/modules/tag';
+} from 'src/redux/modules/newsletter';
+import { loadTags } from 'src/redux/modules/tag';
 import ConfirmSendModal from './ConfirmSendModal';
 import SuccessModal from './SuccessModal';
-import TagSelector from '../../tags/TagSelector';
-import ProgressBarHeader from '../../progress/ProgressBarHeader';
-import FunnelButton from '../../buttons/FunnelButton';
+import TagSelector from 'src/components/tags/TagSelector';
+import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
+import FunnelButton from 'src/components/buttons/FunnelButton';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedFile: state.newsletters.uploadedFile,

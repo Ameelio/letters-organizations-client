@@ -1,5 +1,5 @@
-import { AppThunk } from '../helpers';
-import { sampleTags } from '../../data/sampleTags';
+import { AppThunk } from 'src/redux/helpers';
+import { sampleTags } from 'src/data/sampleTags';
 
 // Constants & Shapes
 const SET_TAGS = 'tag/GET_TAGS';

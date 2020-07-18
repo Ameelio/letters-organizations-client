@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
-import { ReactComponent as Illustration } from '../../../assets/skate.svg';
+import { ReactComponent as Illustration } from 'src/assets/skate.svg';
 import { Link } from 'react-router-dom';
 
 interface SuccessModalProps {

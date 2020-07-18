@@ -1,5 +1,5 @@
-import { AppThunk } from '../helpers';
-import { sampleOrgContacts } from '../../data/sampleOrgContacts';
+import { AppThunk } from 'src/redux/helpers';
+import { sampleOrgContacts } from 'src/data/sampleOrgContacts';
 
 const SET_ORG_CONTACTS = 'orgContacts/SET_ORG_CONTACTS';
 const ADD_FILTER = 'orgContacts/ADD_FILTER';

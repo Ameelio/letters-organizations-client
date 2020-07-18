@@ -1,4 +1,4 @@
-import { AppThunk } from '../helpers';
+import { AppThunk } from 'src/redux/helpers';
 
 //TODO add contacts logic
 const UPLOAD_FILE = 'newsletter/UPLOAD_FILE';

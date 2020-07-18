@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'react-bootstrap/Image';
-import { formatDate } from '../../../utils/utils';
+import { formatDate } from 'src/utils/utils';
 import './ContactCard.css';
 
 interface ContactCardProps {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { login } from '../../../redux/modules/user';
-import { RootState } from '../../../redux';
+import { login } from 'src/redux/modules/user';
+import { RootState } from 'src/redux';
 import { connect, ConnectedProps } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 
