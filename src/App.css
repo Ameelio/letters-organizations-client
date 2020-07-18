@@ -12,6 +12,7 @@
   --main-red: #df6161;
   --main-lightred: #f5c3c3;
   --main-lightyellow: #faf5e3;
+  --main-blue-600: #0f4d92;
   --main-blue-200: #c3dbf5;
   --main-lightpurple: #e7dff0;
 }
@@ -80,6 +81,14 @@ body {
 
 .black-200-bg {
   background-color: var(--main-black-200);
+}
+
+.blue-600 {
+  color: var(--main-blue-600);
+}
+
+.blue-600-bg {
+  background-color: var(--main-blue-600);
 }
 
 .blue-200 {
@@ -180,6 +189,11 @@ body {
 /* Override Bootstrap Styles */
 .form-check-label {
   color: var(--main-black-400);
+}
+
+.form-control:focus {
+  border: 2px solid var(--main-primary-color) !important;
+  box-shadow: none;
 }
 
 .upload-file-wrapper {

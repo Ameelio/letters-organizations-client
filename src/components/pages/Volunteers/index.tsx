@@ -93,7 +93,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     <div className="d-flex flex-row">
       <section className="volunteers-list-sidebar d-flex flex-column mw-25 border-right pl-4 shadow-sm bg-white rounded vh-100">
         <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
-          <span className="black-400 p3">Volunteers</span>
+          <span className="black-500 p3">Volunteers</span>
           <Button onClick={handleInviteClick}>Invite</Button>
         </div>
         <Form className="mr-3 mb-3">
@@ -116,10 +116,10 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
       {selectedVolunteer.letters && (
         <section className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">
-          <span className="black-500 p3">Letters</span>
+          <span className="p3">Letters</span>
           <div className="d-flex flex-row">
             <div className="d-flex flex-column">
-              <span className="black-300 p4">In transit</span>
+              <span className="black-400 p4">In transit</span>
               {selectedVolunteer.letters.map((letter) => (
                 <LetterCard
                   letter={letter}
@@ -129,7 +129,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
             </div>
 
             <div className="d-flex flex-column ml-5">
-              <span className="black-300 p4">Delivered</span>
+              <span className="black-400 p4">Delivered</span>
               {selectedVolunteer.letters.map((letter) => (
                 <LetterCard
                   letter={letter}
@@ -149,17 +149,17 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
               className="large-image"
               roundedCircle
             />
-            <span className="black-400 font-weight-bold p3">
+            <span className="black-500 font-weight-bold p3">
               {selectedVolunteer.name}
             </span>
-            <span className="black-300">{selectedVolunteer.email}</span>
-            <span className="black-300">
+            <span className="black-400">{selectedVolunteer.email}</span>
+            <span className="black-400">
               {selectedVolunteer.city}, {selectedVolunteer.state}
             </span>
           </div>
           <hr />
           <div className="d-flex flex-column">
-            <span className="black-400 font-weight-bold">
+            <span className="black-500 font-weight-bold">
               Contacts ({selectedVolunteer.contacts.length})
             </span>
             {selectedVolunteer.contacts.map((contact) => (

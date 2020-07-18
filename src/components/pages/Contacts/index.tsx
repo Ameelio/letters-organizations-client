@@ -57,7 +57,9 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     }
 
     let results = orgContacts.filter((contact) =>
-      contact.first_name.toLowerCase().includes(searchQuery.toLowerCase()),
+      `${contact.first_name} ${contact.last_name}`
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()),
     );
 
     if (filters.length > 0) {
@@ -79,7 +81,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           <Form className="mr-3 mb-3 ">
             <FormControl
               type="text"
-              placeholder="Search"
+              placeholder="Search name"
               value={searchQuery}
               onChange={handleSearchChange}
             />
@@ -100,6 +102,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           <span className="p2 mb-3">Contacts</span>
           <div>
             <Button variant="outline-primary mr">Add Contacts</Button>
+            {/* TODO: Implement export CSV functionality */}
             {/* <Button variant="outline-secondary">Export as CSV</Button> */}
           </div>
         </div>

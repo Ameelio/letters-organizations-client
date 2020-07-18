@@ -2,24 +2,26 @@ import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { ReactComponent as Illustration } from '../../../assets/mail.svg';
-import { AppThunk } from '../../../redux/helpers';
-import { sendNewsletter } from '../../../redux/modules/newsletter';
 
 interface ConfirmSendModalProps {
   show: boolean;
   newsletter: Newsletter;
   handleClose: () => void;
-  sendNewsletter: (newsletter: Newsletter) => AppThunk;
+  handleSubmission: (event: React.MouseEvent) => void;
+  handleBackClick: (event: React.MouseEvent) => void;
 }
 
 const ConfirmSendModal: React.FC<ConfirmSendModalProps> = ({
-  newsletter,
   show,
+  newsletter,
   handleClose,
+  handleBackClick,
+  handleSubmission,
 }) => {
   return (
     <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
+      <div className="blue-600-bg w-100 py-2"></div>
+      <Modal.Header>
         <Modal.Title>
           Send newsletter to {newsletter.numContacts} contacts?
         </Modal.Title>
@@ -27,14 +29,15 @@ const ConfirmSendModal: React.FC<ConfirmSendModalProps> = ({
       <Modal.Body>
         <div className="d-flex flex-column align-items-center">
           <Illustration />
-          <div className="d-flex flex-row mt-3">
-            <Button className="mr-3" size="lg" variant="outline-secondary">
-              Cancel
-            </Button>
+          <div className="d-flex flex-row mt-5">
             <Button
-              className="ml-3"
+              onClick={handleBackClick}
+              className="mr-3"
               size="lg"
-              onClick={(e) => sendNewsletter(newsletter)}>
+              variant="outline-secondary">
+              Back
+            </Button>
+            <Button className="ml-3" size="lg" onClick={handleSubmission}>
               Send
             </Button>
           </div>

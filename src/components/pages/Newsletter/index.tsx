@@ -13,6 +13,7 @@ import {
 } from '../../../redux/modules/newsletter';
 import { loadTags } from '../../../redux/modules/tag';
 import ConfirmSendModal from './ConfirmSendModal';
+import SuccessModal from './SuccessModal';
 import TagSelector from '../../tags/TagSelector';
 import ProgressBarHeader from '../../progress/ProgressBarHeader';
 import FunnelButton from '../../buttons/FunnelButton';
@@ -54,6 +55,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   const [name, setName] = useState<string>('');
   const [newsletter, setNewsletter] = useState<Newsletter>({} as Newsletter);
   const [showModal, setShowModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const handleModalClose = () => setShowModal(false);
   const handleModalShow = () => setShowModal(true);
 
@@ -77,12 +79,27 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     updateFileUploadStep(uploadStep + 1);
   };
 
+  const handleBackClick = (event: React.MouseEvent) => {
+    updateFileUploadStep(uploadStep - 1);
+  };
+
+  const handleSubmission = (event: React.MouseEvent) => {
+    sendNewsletter(newsletter);
+    setShowSuccessModal(true);
+    updateFileUploadStep(uploadStep + 1);
+  };
+
   return (
     <div className="upload-file-wrapper">
       <div className="upload-file-container">
         <ProgressBarHeader
           step={uploadStep}
-          stepLabels={['Upload file', 'Select contacts', 'Confirm to send']}
+          stepLabels={[
+            'Upload file',
+            'Select contacts',
+            'Confirm to send',
+            'Success',
+          ]}
         />
 
         {uploadStep === 0 && (
@@ -142,6 +159,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             </div>
             <FunnelButton
               onClick={handleNextClick}
+              onBack={handleBackClick}
               cta="Next"
               enabled={uploadSelectedTags.length > 0}
             />
@@ -152,9 +170,11 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             handleClose={handleModalClose}
             show={showModal}
             newsletter={newsletter}
-            sendNewsletter={sendNewsletter}
+            handleSubmission={handleSubmission}
+            handleBackClick={handleBackClick}
           />
         )}
+        {uploadStep === 3 && <SuccessModal show={showSuccessModal} />}
       </div>
     </div>
   );

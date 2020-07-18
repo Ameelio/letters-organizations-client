@@ -12,9 +12,11 @@
   color: #bdbdbd;
   outline: none;
   transition: border 0.24s ease-in-out;
-  width: 500px;
 }
 
+.docdrop:hover {
+  cursor: pointer;
+}
 .docdrop-active {
   border-color: #2196f3;
 }

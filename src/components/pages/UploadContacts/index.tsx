@@ -47,13 +47,16 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     updateCsvUploadStep(uploadStep + 1);
   };
 
+  const handleBackClick = (event: React.MouseEvent) => {
+    updateCsvUploadStep(uploadStep - 1);
+  };
+
   let fileReader: FileReader;
   const handFileRead = (e: any) => {
     const content = fileReader.result;
     if (typeof content == 'string') {
       const results = readString(content);
       updateCsvRows(results.data as string[][]);
-      // console.log(results.data as string[][]);
     }
   };
 
@@ -79,7 +82,14 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
         <div className="mt-5 p-5">
           {uploadStep == 0 && (
             <div className="d-flex flex-column">
-              <span>Follow this templatae for your CSV</span>
+              <span>
+                Upload a CSV file in this format. Need Help?{' '}
+                <a
+                  href="https://docs.google.com/spreadsheets/d/1PVDV_hBleSmkeNQ36-U0RUldqWLFyeuz-SufGbNMHHg/edit?usp=sharing"
+                  target="_blank">
+                  Download our CSV template
+                </a>
+              </span>
               <Image src={Template} className="mb-5" />
               <Docdrop
                 uploadFile={uploadCsv}
