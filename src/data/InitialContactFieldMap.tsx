@@ -7,6 +7,6 @@ export const initialContactFieldMap: ContactFieldMap = {
   facilityState: { field: 'State', index: 5 },
   facilityCity: { field: 'City', index: 6 },
   facilityAddress: { field: 'Address', index: 7 },
-  unit: { field: 'Unit', index: null },
-  dorm: { field: 'Dorm', index: null },
+  unit: { field: 'Unit', index: 8 },
+  dorm: { field: 'Dorm', index: 9 },
 };

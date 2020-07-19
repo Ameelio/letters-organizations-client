@@ -149,10 +149,8 @@ export const removeUploadTag = (tag: Tag): OrgContactsActionTypes => {
 const initialState: OrgContactsState = {
   contacts: [],
   selectedFilters: [],
-  uploadedCsv: null,
+  uploadedCsv: { file: null, data: [[]], header: [] },
   uploadStep: 0,
-  uploadedCsvData: [[]],
-  uploadedCsvHeader: [],
   uploadSelectedTags: [],
 };
 
@@ -180,12 +178,12 @@ export function orgContactsReducer(
     case UPLOAD_CSV:
       return {
         ...state,
-        uploadedCsv: action.payload,
+        uploadedCsv: { ...state.uploadedCsv, file: action.payload },
       };
     case REMOVE_CSV:
       return {
         ...state,
-        uploadedCsv: null,
+        uploadedCsv: { file: null, data: [[]], header: [] },
       };
     case UPDATE_FILE_UPLOAD_STEP:
       return {
@@ -196,8 +194,7 @@ export function orgContactsReducer(
       const [header, ...data] = action.payload;
       return {
         ...state,
-        uploadedCsvData: data,
-        uploadedCsvHeader: header,
+        uploadedCsv: { ...state.uploadedCsv, data: data, header: header },
       };
     case ADD_UPLOAD_TAG:
       return {
@@ -220,6 +217,26 @@ export const loadOrgContacts = (): AppThunk => async (dispatch) => {
   dispatch(setOrgContacts(sampleOrgContacts));
 };
 
-// export const addOrgContacts = (): AppThunk => async (dispatch) => {
-//   dispatch(addOrgContacts())
-// }
+// TOO: make actual API calls
+export const createContacts = (
+  mapping: ContactFieldMap,
+  uploadedCsv: CSV,
+  tags: Tag[],
+): AppThunk => async (dispatch) => {
+  const newContacts: OrgContact[] = uploadedCsv.data.map((row) => {
+    return <OrgContact>{
+      first_name: row[mapping.firstName.index],
+      last_name: row[mapping.lastName.index],
+      inmate_number: row[mapping.inmateNumber.index],
+      facility_name: row[mapping.facilityName.index],
+      facility_state: row[mapping.facilityState.index],
+      facility_city: row[mapping.facilityCity.index],
+      facility_address: row[mapping.facilityAddress.index],
+      facility_postal: row[mapping.facilityPostal.index],
+      unit: row[mapping.unit.index],
+      dorm: row[mapping.dorm.index],
+      tags: tags,
+    };
+  });
+  dispatch(addOrgContacts(newContacts));
+};

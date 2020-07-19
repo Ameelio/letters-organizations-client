@@ -10,6 +10,7 @@ import {
   updateCsvRows,
   addUploadTag,
   removeUploadTag,
+  createContacts,
 } from 'src/redux/modules/orgcontacts';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
@@ -29,8 +30,6 @@ import { Link } from 'react-router-dom';
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
   uploadStep: state.orgContacts.uploadStep,
-  uploadedCsvData: state.orgContacts.uploadedCsvData,
-  uploadedCsvHeader: state.orgContacts.uploadedCsvHeader,
   tags: state.tags.tags,
   selectedTags: state.orgContacts.uploadSelectedTags,
 });
@@ -46,6 +45,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       addUploadTag,
       removeUploadTag,
       removeCsv,
+      createContacts,
     },
     dispatch,
   );
@@ -59,14 +59,13 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   uploadStep,
   updateCsvUploadStep,
   updateCsvRows,
-  uploadedCsvData,
-  uploadedCsvHeader,
   tags,
   loadTags,
   createTag,
   addUploadTag,
   removeUploadTag,
   selectedTags,
+  createContacts,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
     initialContactFieldMap,
@@ -80,6 +79,11 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
 
   const handleBackClick = (event: React.MouseEvent) => {
     updateCsvUploadStep(uploadStep - 1);
+  };
+
+  const handleSubmission = (event: React.MouseEvent) => {
+    createContacts(mapping, uploadedCsv, selectedTags);
+    updateCsvUploadStep(uploadStep + 1);
   };
 
   useEffect(() => {
@@ -105,6 +109,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
             "It looks like your spreadsheet doesn't have any contacts. Make sure there's at least two rows of data.",
         });
       } else if ((results.data[0] as string[]).length < 8) {
+        // ensure that there are the min number of columns needeed
         removeCsv();
         setError({
           title: "Oops! There's something wrong with the file!",
@@ -125,8 +130,8 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (uploadedCsv) {
-      handleFileChosen(uploadedCsv);
+    if (uploadedCsv.file) {
+      handleFileChosen(uploadedCsv.file);
     }
   });
   return (
@@ -153,7 +158,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
               <Image src={Template} className="mb-5" />
               <Docdrop
                 uploadFile={uploadCsv}
-                uploadedFile={uploadedCsv}
+                uploadedFile={uploadedCsv.file}
                 acceptedFormat="text/csv/*"
                 acceptedFormatLabel="CSV"
               />
@@ -161,7 +166,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 <FunnelButton
                   cta="Next"
                   onNext={handleNextClick}
-                  enabled={uploadedCsv !== null}
+                  enabled={uploadedCsv.file !== null}
                 />
               </div>
             </div>
@@ -175,8 +180,8 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
               </span>
               <div className="w-100 shadow-sm p-3 mt-3">
                 <FieldMappingTable
-                  headers={uploadedCsvHeader}
-                  sample={uploadedCsvData[0]}
+                  headers={uploadedCsv.header}
+                  sample={uploadedCsv.data[0]}
                   mapping={mapping}
                   setMapping={setMapping}
                 />
@@ -185,7 +190,9 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 cta="Next"
                 onNext={handleNextClick}
                 onBack={handleBackClick}
-                enabled={uploadedCsv !== null}
+                enabled={Object.values(mapping).every(
+                  (fieldMap) => (fieldMap as FieldMap).index >= 0,
+                )}
               />
             </div>
           )}
@@ -205,7 +212,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
               />
               <FunnelButton
                 cta="Create contacts"
-                onNext={handleNextClick}
+                onNext={handleSubmission}
                 onBack={handleBackClick}
                 enabled={uploadedCsv !== null}
               />
@@ -225,7 +232,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
               <div className="d-flex flex-column mt-5 align-self-start">
                 <span className="black-500 p4">You're adding</span>
                 <span className="font-weight-bold black-500">
-                  {uploadedCsvData.length} contacts
+                  {uploadedCsv.data.length} contacts
                 </span>
               </div>
               <div className="d-flex flex-column mt-5 align-self-start">
@@ -239,7 +246,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 </div>
               </div>
 
-              <Link to={'/'}>Done</Link>
+              <Link to={'/contacts'}>Done</Link>
             </div>
           )}
         </div>

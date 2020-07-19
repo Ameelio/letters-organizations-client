@@ -25,12 +25,12 @@ const FieldMappingRow: React.FC<Props> = ({
       <td>
         <Form.Control
           as="select"
-          value={typeof map.index === 'number' ? map.index : ''}
+          value={map.index}
           onChange={(e) =>
             onChange(e as React.ChangeEvent<HTMLSelectElement>, objKey)
           }
           custom>
-          <option value=""></option>
+          <option value={-1}></option>
           {options.map((option: string, index: number) => (
             <option value={index} key={index}>
               {option}
@@ -38,7 +38,7 @@ const FieldMappingRow: React.FC<Props> = ({
           ))}
         </Form.Control>
       </td>
-      <td>{typeof map.index === 'number' && sample[map.index]}</td>
+      <td>{map.index !== -1 && sample[map.index]}</td>
     </tr>
   );
 };

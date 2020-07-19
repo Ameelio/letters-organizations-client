@@ -16,7 +16,7 @@ import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import Tag from 'src/components/tags/Tag';
 import './index.css';
-import Button from 'react-bootstrap/Button';
+import { Link } from 'react-router-dom';
 
 const mapStateToProps = (state: RootState) => ({
   tags: state.tags.tags,
@@ -101,7 +101,9 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
         <div className="d-flex flex-row justify-content-between">
           <span className="p2 mb-3">Contacts</span>
           <div>
-            <Button variant="outline-primary mr">Add Contacts</Button>
+            <Link to="/upload" className="btn btn-outline-primary">
+              Add Contacts
+            </Link>
             {/* TODO: Implement export CSV functionality */}
             {/* <Button variant="outline-secondary">Export as CSV</Button> */}
           </div>

@@ -1,6 +1,6 @@
 interface FieldMap {
   field: string;
-  index: number | null;
+  index: number;
 }
 
 interface ContactFieldMap {

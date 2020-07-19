@@ -20,23 +20,18 @@ const FieldMappingTable: React.FC<Props> = ({
     key: keyof ContactFieldMap,
   ) => {
     const { value } = event.currentTarget;
-    const index = value !== '' ? parseInt(value) : null;
+    const index = parseInt(value);
 
-    if (index === null) {
-      mapping[key].index = null;
-    } else {
-      // if value was already selected, remove it
-      const dupIndex = Object.entries(mapping).findIndex(
-        ([, map]) => map.index === index,
-      );
-      if (dupIndex !== -1) {
-        mapping[
-          Object.keys(mapping)[dupIndex] as keyof ContactFieldMap
-        ].index = null;
-      }
-
-      mapping[key].index = index;
+    // if value was already selected, remove it
+    const dupIndex = Object.entries(mapping).findIndex(
+      ([, map]) => map.index === index,
+    );
+    if (dupIndex !== -1) {
+      mapping[
+        Object.keys(mapping)[dupIndex] as keyof ContactFieldMap
+      ].index = -1;
     }
+    mapping[key].index = index;
 
     setMapping(mapping);
   };
