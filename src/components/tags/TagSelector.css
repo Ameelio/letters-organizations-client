@@ -6,3 +6,12 @@
 .tag-selector-container {
   max-height: 300px;
 }
+
+.tag-selector-input {
+  /* background-color: ; */
+  border: 0px;
+}
+
+.tag-selector-input:focus {
+  outline: none;
+}

@@ -88,7 +88,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           </Form>
           <span className="black-500 mt-3">Filter by</span>
           <TagSelector
-            availableTags={tags.filter((tag) => !filters.includes(tag))}
+            tags={tags}
             selectedTags={filters}
             addTag={addFilter}
             removeTag={removeFilter}
@@ -132,7 +132,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                   <td className="d-flex flex-column">
                     {contact.tags.map((tag) => (
                       <div className="mb-3">
-                        <Tag tag={tag} canRemove={false} showCount={false} />
+                        <Tag label={tag.label} />
                       </div>
                     ))}
                   </td>

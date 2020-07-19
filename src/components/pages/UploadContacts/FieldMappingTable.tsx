@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Table from 'react-bootstrap/Table';
-import Form from 'react-bootstrap/Form';
 import FieldMappingRow from './FieldMappingRow';
-import { min } from 'lodash';
 
 interface Props {
   mapping: ContactFieldMap;
@@ -29,7 +27,7 @@ const FieldMappingTable: React.FC<Props> = ({
     } else {
       // if value was already selected, remove it
       const dupIndex = Object.entries(mapping).findIndex(
-        ([key, map]) => map.index === index,
+        ([, map]) => map.index === index,
       );
       if (dupIndex !== -1) {
         mapping[

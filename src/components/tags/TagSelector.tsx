@@ -1,23 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Tag from './Tag';
 import './TagSelector.css';
 
 interface TagSelector {
-  availableTags: Tag[];
+  tags: Tag[];
   selectedTags: Tag[];
   addTag: (tag: Tag) => void;
   removeTag: (tag: Tag) => void;
-  showTotalCount: boolean;
+  showTotalCount?: boolean;
+  showInputField?: boolean;
+  allowTagCreation?: boolean;
 }
 
 // TODO for select all contacts, we probably want to pass a flag to the sendNewsletter
 const TagSelector: React.FC<TagSelector> = ({
-  availableTags,
+  tags,
   selectedTags,
   addTag,
   removeTag,
   showTotalCount,
+  showInputField,
+  allowTagCreation,
 }) => {
+  const [availableTags, setAvailableTags] = useState<Tag[]>(tags);
+  const [inputField, setInputField] = useState<HTMLInputElement | null>();
+  const [query, setQuery] = useState<string>('');
+
   const handleTagRemoval = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     tag: Tag,
@@ -29,7 +37,23 @@ const TagSelector: React.FC<TagSelector> = ({
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     tag: Tag,
   ) => {
+    setQuery('');
     addTag(tag);
+  };
+
+  useEffect(() => {
+    setAvailableTags(
+      tags.filter(
+        (tag) =>
+          !selectedTags.includes(tag) &&
+          tag.label.toLowerCase().includes(query),
+      ),
+    );
+    if (inputField) inputField.focus();
+  }, [selectedTags, tags, inputField, query]);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value.toLowerCase());
   };
 
   return (
@@ -41,9 +65,19 @@ const TagSelector: React.FC<TagSelector> = ({
               className="ml-3 mb-3"
               key={tag.label}
               onClick={(e) => handleTagRemoval(e, tag)}>
-              <Tag tag={tag} canRemove={true} showCount={true} />
+              <Tag label={tag.label} canRemove={true} count={tag.numContacts} />
             </div>
           ))}
+          {showInputField && (
+            <input
+              autoFocus
+              ref={(input) => setInputField(input)}
+              className="tag-selector-input black-200-bg ml-3 mb-3"
+              type="text"
+              value={query}
+              onChange={handleSearchChange}
+            />
+          )}
         </div>
 
         {showTotalCount && (
@@ -63,9 +97,14 @@ const TagSelector: React.FC<TagSelector> = ({
             className="tag-row p-2 w-100"
             key={tag.label}
             onClick={(e) => handleTagSelection(e, tag)}>
-            <Tag tag={tag} canRemove={false} showCount={true} />
+            <Tag label={tag.label} count={tag.numContacts} />
           </div>
         ))}
+        {allowTagCreation && query !== '' && (
+          <div className="tag-row p-2 w-100">
+            Create <Tag label={query} />
+          </div>
+        )}
       </div>
     </div>
   );

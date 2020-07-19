@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RootState } from 'src/redux';
 import Docdrop from 'src/components/docdrop/Docdrop';
-import Form from 'react-bootstrap/Form';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import {
@@ -16,12 +15,15 @@ import Template from 'src/assets/template.png';
 import { readString } from 'react-papaparse';
 import FieldMappingTable from 'src/components/pages/UploadContacts/FieldMappingTable';
 import { initialContactFieldMap } from 'src/data/InitialContactFieldMap';
+import TagSelector from 'src/components/tags/TagSelector';
+import { loadTags } from 'src/redux/modules/tag';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
   uploadStep: state.orgContacts.uploadStep,
   uploadedCsvData: state.orgContacts.uploadedCsvData,
   uploadedCsvHeader: state.orgContacts.uploadedCsvHeader,
+  tags: state.tags.tags,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -30,6 +32,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       uploadCsv,
       updateCsvUploadStep,
       updateCsvRows,
+      loadTags,
     },
     dispatch,
   );
@@ -44,10 +47,14 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   updateCsvRows,
   uploadedCsvData,
   uploadedCsvHeader,
+  tags,
+  loadTags,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
     initialContactFieldMap,
   );
+
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([] as Tag[]);
 
   const handleNextClick = (event: React.MouseEvent) => {
     updateCsvUploadStep(uploadStep + 1);
@@ -57,9 +64,24 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     updateCsvUploadStep(uploadStep - 1);
   };
 
-  // TODO: make this more robust \ edge cases: no rows, no data
-  let fileReader: FileReader;
+  const addTag = (tag: Tag) => {
+    setSelectedTags([...selectedTags, tag]);
+  };
 
+  const removeTag = (tag: Tag) => {
+    setSelectedTags(
+      selectedTags.filter((selectedTag) => selectedTag.id !== tag.id),
+    );
+  };
+  // TODO: make this more robust \ edge cases: no rows, no data
+
+  useEffect(() => {
+    if (tags.length === 0) {
+      loadTags();
+    }
+  });
+
+  let fileReader: FileReader;
   const handFileRead = (e: any) => {
     const content = fileReader.result;
     if (typeof content == 'string') {
@@ -77,10 +99,6 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     fileReader.readAsText(file);
   };
 
-  const updateCsvMapping = (mapping: ContactFieldMap) => {
-    setMapping(mapping);
-  };
-
   useEffect(() => {
     if (uploadedCsv) {
       handleFileChosen(uploadedCsv);
@@ -91,17 +109,18 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
       <div className="upload-file-container">
         <ProgressBarHeader
           step={uploadStep}
-          stepLabels={['Upload contacts', 'Map fields', 'Confirm!']}
+          stepLabels={['Upload contacts', 'Map fields', 'Tagging', 'Confirm!']}
         />
 
-        <div className="mt-5 p-5 overflow-auto">
-          {uploadStep == 0 && (
-            <div className="d-flex flex-column">
+        <div className="mt-5 p-5 overflow-auto w-75">
+          {uploadStep === 0 && (
+            <div className="d-flex flex-column align-items-center">
               <span>
                 Upload a CSV file in this format. Need Help?{' '}
                 <a
                   href="https://docs.google.com/spreadsheets/d/1PVDV_hBleSmkeNQ36-U0RUldqWLFyeuz-SufGbNMHHg/edit?usp=sharing"
-                  target="_blank">
+                  target="_blank"
+                  rel="noopener noreferrer">
                   Download our CSV template
                 </a>
               </span>
@@ -122,17 +141,45 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
             </div>
           )}
 
-          {uploadStep == 1 && (
-            <div className="d-flex flex-column">
+          {uploadStep === 1 && (
+            <div className="d-flex flex-column w-100">
               <span>
                 Let's map the columns in your uploaded csv to your desired
                 fields
               </span>
-              <FieldMappingTable
-                headers={uploadedCsvHeader}
-                sample={uploadedCsvData[0]}
-                mapping={mapping}
-                setMapping={setMapping}
+              <div className="w-100 shadow-sm p-3 mt-3">
+                <FieldMappingTable
+                  headers={uploadedCsvHeader}
+                  sample={uploadedCsvData[0]}
+                  mapping={mapping}
+                  setMapping={setMapping}
+                />
+              </div>
+              <FunnelButton
+                cta="Next"
+                onClick={handleNextClick}
+                onBack={handleBackClick}
+                enabled={uploadedCsv !== null}
+              />
+            </div>
+          )}
+
+          {uploadStep === 2 && (
+            <div className="d-flex flex-column w-100">
+              <span>Assign or create tags to your new contacts.</span>
+              <TagSelector
+                tags={tags}
+                selectedTags={selectedTags}
+                addTag={addTag}
+                removeTag={removeTag}
+                showInputField={true}
+                allowTagCreation={true}
+              />
+              <FunnelButton
+                cta="Next"
+                onClick={handleNextClick}
+                onBack={handleBackClick}
+                enabled={uploadedCsv !== null}
               />
             </div>
           )}

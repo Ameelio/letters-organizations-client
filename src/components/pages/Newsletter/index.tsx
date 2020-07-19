@@ -159,9 +159,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             </span>
             <div>
               <TagSelector
-                availableTags={tags.filter(
-                  (tag) => !uploadSelectedTags.includes(tag),
-                )}
+                tags={tags}
                 selectedTags={uploadSelectedTags}
                 addTag={addUploadTag}
                 removeTag={removeUploadTag}
