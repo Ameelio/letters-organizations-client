@@ -5,8 +5,11 @@ import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import {
   uploadCsv,
+  removeCsv,
   updateCsvUploadStep,
   updateCsvRows,
+  addUploadTag,
+  removeUploadTag,
 } from 'src/redux/modules/orgcontacts';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
@@ -16,14 +19,17 @@ import { readString } from 'react-papaparse';
 import FieldMappingTable from 'src/components/pages/UploadContacts/FieldMappingTable';
 import { initialContactFieldMap } from 'src/data/InitialContactFieldMap';
 import TagSelector from 'src/components/tags/TagSelector';
-import { loadTags } from 'src/redux/modules/tag';
+import { loadTags, createTag } from 'src/redux/modules/tag';
+import ErrorAlert from 'src/components/alerts/ErrorAlert';
 
+//TODO create object with all uploadedCSV properties
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
   uploadStep: state.orgContacts.uploadStep,
   uploadedCsvData: state.orgContacts.uploadedCsvData,
   uploadedCsvHeader: state.orgContacts.uploadedCsvHeader,
   tags: state.tags.tags,
+  selectedTags: state.orgContacts.uploadSelectedTags,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -33,6 +39,10 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       updateCsvUploadStep,
       updateCsvRows,
       loadTags,
+      createTag,
+      addUploadTag,
+      removeUploadTag,
+      removeCsv,
     },
     dispatch,
   );
@@ -41,6 +51,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   uploadCsv,
+  removeCsv,
   uploadedCsv,
   uploadStep,
   updateCsvUploadStep,
@@ -49,12 +60,16 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   uploadedCsvHeader,
   tags,
   loadTags,
+  createTag,
+  addUploadTag,
+  removeUploadTag,
+  selectedTags,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
     initialContactFieldMap,
   );
 
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([] as Tag[]);
+  const [error, setError] = useState<ErrorFeedback | null>();
 
   const handleNextClick = (event: React.MouseEvent) => {
     updateCsvUploadStep(uploadStep + 1);
@@ -64,17 +79,6 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     updateCsvUploadStep(uploadStep - 1);
   };
 
-  const addTag = (tag: Tag) => {
-    setSelectedTags([...selectedTags, tag]);
-  };
-
-  const removeTag = (tag: Tag) => {
-    setSelectedTags(
-      selectedTags.filter((selectedTag) => selectedTag.id !== tag.id),
-    );
-  };
-  // TODO: make this more robust \ edge cases: no rows, no data
-
   useEffect(() => {
     if (tags.length === 0) {
       loadTags();
@@ -82,14 +86,32 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   });
 
   let fileReader: FileReader;
+
   const handFileRead = (e: any) => {
     const content = fileReader.result;
+
     if (typeof content == 'string') {
       const results = readString(content);
 
-      results.data.length > 2
-        ? updateCsvRows(results.data as string[][])
-        : alert('Your CSV needs to have at least two rows of data');
+      if (results.data.length < 2) {
+        // ensure there are at least two rows of data
+        removeCsv();
+        setError({
+          title: "Oops! There's something wrong with the file!",
+          body:
+            "It looks like your spreadsheet doesn't have any contacts. Make sure there's at least two rows of data.",
+        });
+      } else if ((results.data[0] as string[]).length < 8) {
+        removeCsv();
+        setError({
+          title: "Oops! There's something wrong with the file!",
+          body:
+            "It looks like your spreadsheet doesn't have all the 8 columns that you need to create your contacts. Make sure that you follow the template below.",
+        });
+      } else {
+        setError(null);
+        updateCsvRows(results.data as string[][]);
+      }
     }
   };
 
@@ -106,13 +128,14 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   });
   return (
     <div className="upload-file-wrapper">
+      {error && <ErrorAlert error={error} />}
       <div className="upload-file-container">
         <ProgressBarHeader
           step={uploadStep}
           stepLabels={['Upload contacts', 'Map fields', 'Tagging', 'Confirm!']}
         />
 
-        <div className="mt-5 p-5 overflow-auto w-75">
+        <div className="mt-5 p-5 overflow-auto w-75 d-flex">
           {uploadStep === 0 && (
             <div className="d-flex flex-column align-items-center">
               <span>
@@ -144,8 +167,8 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
           {uploadStep === 1 && (
             <div className="d-flex flex-column w-100">
               <span>
-                Let's map the columns in your uploaded csv to your desired
-                fields
+                Let's make sure that the columns in your uploaded csv map to the
+                appropriate fields.
               </span>
               <div className="w-100 shadow-sm p-3 mt-3">
                 <FieldMappingTable
@@ -166,14 +189,16 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
 
           {uploadStep === 2 && (
             <div className="d-flex flex-column w-100">
-              <span>Assign or create tags to your new contacts.</span>
+              <span>
+                Assign existing tags or create new ones for your contacts.
+              </span>
               <TagSelector
                 tags={tags}
                 selectedTags={selectedTags}
-                addTag={addTag}
-                removeTag={removeTag}
+                addTag={addUploadTag}
+                removeTag={removeUploadTag}
                 showInputField={true}
-                allowTagCreation={true}
+                createTag={createTag}
               />
               <FunnelButton
                 cta="Next"

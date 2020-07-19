@@ -5,8 +5,11 @@ const SET_ORG_CONTACTS = 'orgContacts/SET_ORG_CONTACTS';
 const ADD_FILTER = 'orgContacts/ADD_FILTER';
 const REMOVE_FILTER = 'orgContacts/REMOVE_FILTER';
 const UPLOAD_CSV = 'orgContacts/UPLOAD_CSV';
+const REMOVE_CSV = 'orgContacts/REMOVE_CSV';
 const UPDATE_FILE_UPLOAD_STEP = 'orgContacts/UPDATE_FILE_UPLOAD_STEP';
 const UPDATE_CSV_ROWS = 'orgContacts/UPDATE_CSV_ROWS';
+const ADD_UPLOAD_TAG = 'orgContacts/UPDATE_UPLOAD_TAGS';
+const REMOVE_UPLOAD_TAG = 'orgContacts/REMOVE_UPLOAD_TAG';
 
 interface SetOrgContactsAction {
   type: typeof SET_ORG_CONTACTS;
@@ -38,13 +41,30 @@ interface UpdateCsvRowsAction {
   payload: string[][];
 }
 
+interface AddUploadTagAction {
+  type: typeof ADD_UPLOAD_TAG;
+  payload: Tag;
+}
+
+interface RemoveUploadTagAction {
+  type: typeof REMOVE_UPLOAD_TAG;
+  payload: Tag;
+}
+
+interface RemoveCsvAction {
+  type: typeof REMOVE_CSV;
+}
+
 type OrgContactsActionTypes =
   | SetOrgContactsAction
   | AddFilterAction
   | RemoveFilterAction
   | UploadCsvAction
+  | RemoveCsvAction
   | UpdateUploadStepAction
-  | UpdateCsvRowsAction;
+  | UpdateCsvRowsAction
+  | AddUploadTagAction
+  | RemoveUploadTagAction;
 
 export const setOrgContacts = (
   contacts: OrgContact[],
@@ -76,6 +96,12 @@ export const uploadCsv = (file: File): OrgContactsActionTypes => {
   };
 };
 
+export const removeCsv = (): OrgContactsActionTypes => {
+  return {
+    type: REMOVE_CSV,
+  };
+};
+
 export const updateCsvUploadStep = (step: number): OrgContactsActionTypes => {
   return {
     type: UPDATE_FILE_UPLOAD_STEP,
@@ -90,6 +116,20 @@ export const updateCsvRows = (rows: string[][]): OrgContactsActionTypes => {
   };
 };
 
+export const addUploadTag = (tag: Tag): OrgContactsActionTypes => {
+  return {
+    type: ADD_UPLOAD_TAG,
+    payload: tag,
+  };
+};
+
+export const removeUploadTag = (tag: Tag): OrgContactsActionTypes => {
+  return {
+    type: REMOVE_UPLOAD_TAG,
+    payload: tag,
+  };
+};
+
 const initialState: OrgContactsState = {
   contacts: [],
   selectedFilters: [],
@@ -97,6 +137,7 @@ const initialState: OrgContactsState = {
   uploadStep: 0,
   uploadedCsvData: [[]],
   uploadedCsvHeader: [],
+  uploadSelectedTags: [],
 };
 
 export function orgContactsReducer(
@@ -123,6 +164,11 @@ export function orgContactsReducer(
         ...state,
         uploadedCsv: action.payload,
       };
+    case REMOVE_CSV:
+      return {
+        ...state,
+        uploadedCsv: null,
+      };
     case UPDATE_FILE_UPLOAD_STEP:
       return {
         ...state,
@@ -134,6 +180,18 @@ export function orgContactsReducer(
         ...state,
         uploadedCsvData: data,
         uploadedCsvHeader: header,
+      };
+    case ADD_UPLOAD_TAG:
+      return {
+        ...state,
+        uploadSelectedTags: [...state.uploadSelectedTags, action.payload],
+      };
+    case REMOVE_UPLOAD_TAG:
+      return {
+        ...state,
+        uploadSelectedTags: state.uploadSelectedTags.filter(
+          (selectedTag) => selectedTag.id !== action.payload.id,
+        ),
       };
     default:
       return state;

@@ -2,6 +2,8 @@ import { AppThunk } from 'src/redux/helpers';
 
 //TODO add contacts logic
 const UPLOAD_FILE = 'newsletter/UPLOAD_FILE';
+const REMOVE_FILE = 'newsletter/REMOVE_FILE';
+
 const UPDATE_FILE_UPLOAD_STEP = 'newsletter/UPDATE_FILE_UPLOAD_STEP';
 const SET_NEWSLETTERS = 'newsletter/UPLOAD_FILE';
 const ADD_UPLOAD_TAG = 'newsletter/UPDATE_UPLOAD_TAGS';
@@ -13,6 +15,10 @@ const ADD_ALL_UPLOAD_TAGS = 'newsletter/ADD_ALL_UPLOAD_TAGS';
 interface UploadFileAction {
   type: typeof UPLOAD_FILE;
   payload: File;
+}
+
+interface RemoveFileAction {
+  type: typeof REMOVE_FILE;
 }
 
 interface UpdateUploadStepAction {
@@ -55,13 +61,20 @@ type NewsletterActionTypes =
   | RemoveUploadTagAction
   | RemoveAllUploadTagsAction
   | AddAllUploadTagsAction
-  | AddNewsletterAction;
+  | AddNewsletterAction
+  | RemoveFileAction;
 
 // Action creators
 export const uploadFile = (file: File): NewsletterActionTypes => {
   return {
     type: UPLOAD_FILE,
     payload: file,
+  };
+};
+
+export const removeFile = (): NewsletterActionTypes => {
+  return {
+    type: REMOVE_FILE,
   };
 };
 
@@ -127,6 +140,11 @@ export function newsletterReducer(
       return {
         ...state,
         uploadedFile: action.payload,
+      };
+    case REMOVE_FILE:
+      return {
+        ...state,
+        uploadedFile: null,
       };
     // case SET_NEWSLETTERS:
     //   return { ...state, newsletters: action.payload };

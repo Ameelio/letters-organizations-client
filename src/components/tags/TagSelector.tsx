@@ -9,7 +9,7 @@ interface TagSelector {
   removeTag: (tag: Tag) => void;
   showTotalCount?: boolean;
   showInputField?: boolean;
-  allowTagCreation?: boolean;
+  createTag?: (label: string) => void;
 }
 
 // TODO for select all contacts, we probably want to pass a flag to the sendNewsletter
@@ -20,7 +20,7 @@ const TagSelector: React.FC<TagSelector> = ({
   removeTag,
   showTotalCount,
   showInputField,
-  allowTagCreation,
+  createTag,
 }) => {
   const [availableTags, setAvailableTags] = useState<Tag[]>(tags);
   const [inputField, setInputField] = useState<HTMLInputElement | null>();
@@ -51,6 +51,14 @@ const TagSelector: React.FC<TagSelector> = ({
     );
     if (inputField) inputField.focus();
   }, [selectedTags, tags, inputField, query]);
+
+  const handleTagCreation = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    label: string,
+  ) => {
+    if (createTag) createTag(label);
+    setQuery('');
+  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value.toLowerCase());
@@ -100,8 +108,10 @@ const TagSelector: React.FC<TagSelector> = ({
             <Tag label={tag.label} count={tag.numContacts} />
           </div>
         ))}
-        {allowTagCreation && query !== '' && (
-          <div className="tag-row p-2 w-100">
+        {createTag && query !== '' && (
+          <div
+            className="tag-row p-2 w-100"
+            onClick={(e) => handleTagCreation(e, query)}>
             Create <Tag label={query} />
           </div>
         )}

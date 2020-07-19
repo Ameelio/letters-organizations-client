@@ -31,7 +31,7 @@ const Docdrop: React.FC<DocdropProps> = ({
   });
 
   return (
-    <section className="d-flex flex-column flex-align-items text-center">
+    <section className="d-flex flex-column flex-align-items text-center w-100">
       {uploadedFile && rejectedFiles.length === 0 && (
         <div className="d-flex flex-column align-items-center mb-3">
           {' '}

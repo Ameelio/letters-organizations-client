@@ -5,4 +5,5 @@ interface OrgContactsState {
   uploadStep: number;
   uploadedCsvHeader: string[];
   uploadedCsvData: string[][];
+  uploadSelectedTags: Tag[];
 }
