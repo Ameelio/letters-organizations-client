@@ -14,6 +14,8 @@ import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
 import Image from 'react-bootstrap/Image';
 import Template from 'src/assets/template.png';
 import { readString } from 'react-papaparse';
+import FieldMappingTable from 'src/components/pages/UploadContacts/FieldMappingTable';
+import { initialContactFieldMap } from 'src/data/InitialContactFieldMap';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
@@ -43,7 +45,9 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   uploadedCsvData,
   uploadedCsvHeader,
 }) => {
-  const [csvMapping, setCsvMapping] = useState<CsvHeaderMapping | null>(null);
+  const [mapping, setMapping] = useState<ContactFieldMap>(
+    initialContactFieldMap,
+  );
 
   const handleNextClick = (event: React.MouseEvent) => {
     updateCsvUploadStep(uploadStep + 1);
@@ -53,13 +57,17 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     updateCsvUploadStep(uploadStep - 1);
   };
 
+  // TODO: make this more robust \ edge cases: no rows, no data
   let fileReader: FileReader;
 
   const handFileRead = (e: any) => {
     const content = fileReader.result;
     if (typeof content == 'string') {
       const results = readString(content);
-      updateCsvRows(results.data as string[][]);
+
+      results.data.length > 2
+        ? updateCsvRows(results.data as string[][])
+        : alert('Your CSV needs to have at least two rows of data');
     }
   };
 
@@ -67,6 +75,10 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     fileReader = new FileReader();
     fileReader.onloadend = handFileRead;
     fileReader.readAsText(file);
+  };
+
+  const updateCsvMapping = (mapping: ContactFieldMap) => {
+    setMapping(mapping);
   };
 
   useEffect(() => {
@@ -82,7 +94,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
           stepLabels={['Upload contacts', 'Map fields', 'Confirm!']}
         />
 
-        <div className="mt-5 p-5">
+        <div className="mt-5 p-5 overflow-auto">
           {uploadStep == 0 && (
             <div className="d-flex flex-column">
               <span>
@@ -107,6 +119,21 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                   enabled={uploadedCsv !== null}
                 />
               </div>
+            </div>
+          )}
+
+          {uploadStep == 1 && (
+            <div className="d-flex flex-column">
+              <span>
+                Let's map the columns in your uploaded csv to your desired
+                fields
+              </span>
+              <FieldMappingTable
+                headers={uploadedCsvHeader}
+                sample={uploadedCsvData[0]}
+                mapping={mapping}
+                setMapping={setMapping}
+              />
             </div>
           )}
         </div>

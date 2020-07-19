@@ -64,7 +64,7 @@ const Docdrop: React.FC<DocdropProps> = ({
           </div>
         ) : (
           <p className="mt-3">
-            Drag and drop your PDF file here or{' '}
+            Drag and drop your {acceptedFormatLabel} file here or{' '}
             <span className="primary">select a file to upload</span>
           </p>
         )}
