@@ -10,6 +10,7 @@ const UPDATE_FILE_UPLOAD_STEP = 'orgContacts/UPDATE_FILE_UPLOAD_STEP';
 const UPDATE_CSV_ROWS = 'orgContacts/UPDATE_CSV_ROWS';
 const ADD_UPLOAD_TAG = 'orgContacts/UPDATE_UPLOAD_TAGS';
 const REMOVE_UPLOAD_TAG = 'orgContacts/REMOVE_UPLOAD_TAG';
+const ADD_ORG_CONTACTS = 'orgContacts/ADD_ORG_CONTACTS';
 
 interface SetOrgContactsAction {
   type: typeof SET_ORG_CONTACTS;
@@ -55,8 +56,14 @@ interface RemoveCsvAction {
   type: typeof REMOVE_CSV;
 }
 
+interface AddOrgContactsAction {
+  type: typeof ADD_ORG_CONTACTS;
+  payload: OrgContact[];
+}
+
 type OrgContactsActionTypes =
   | SetOrgContactsAction
+  | AddOrgContactsAction
   | AddFilterAction
   | RemoveFilterAction
   | UploadCsvAction
@@ -71,6 +78,15 @@ export const setOrgContacts = (
 ): OrgContactsActionTypes => {
   return {
     type: SET_ORG_CONTACTS,
+    payload: contacts,
+  };
+};
+
+export const addOrgContacts = (
+  contacts: OrgContact[],
+): OrgContactsActionTypes => {
+  return {
+    type: ADD_ORG_CONTACTS,
     payload: contacts,
   };
 };
@@ -147,6 +163,8 @@ export function orgContactsReducer(
   switch (action.type) {
     case SET_ORG_CONTACTS:
       return { ...state, contacts: action.payload };
+    case ADD_ORG_CONTACTS:
+      return { ...state, contacts: [...state.contacts, ...action.payload] };
     case ADD_FILTER:
       return {
         ...state,
@@ -201,3 +219,7 @@ export function orgContactsReducer(
 export const loadOrgContacts = (): AppThunk => async (dispatch) => {
   dispatch(setOrgContacts(sampleOrgContacts));
 };
+
+// export const addOrgContacts = (): AppThunk => async (dispatch) => {
+//   dispatch(addOrgContacts())
+// }

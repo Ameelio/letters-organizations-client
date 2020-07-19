@@ -144,7 +144,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 />
               </Form.Group>
               <FunnelButton
-                onClick={handleNextClick}
+                onNext={handleNextClick}
                 cta="Next"
                 enabled={uploadedFile != null && name !== ''}
               />
@@ -174,7 +174,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               />
             </div>
             <FunnelButton
-              onClick={handleNextClick}
+              onNext={handleNextClick}
               onBack={handleBackClick}
               cta="Next"
               enabled={uploadSelectedTags.length > 0}

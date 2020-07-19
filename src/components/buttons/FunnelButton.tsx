@@ -2,14 +2,14 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 
 interface FunnelButtonProps {
-  onClick: (event: React.MouseEvent) => void;
+  onNext: (event: React.MouseEvent) => void;
   onBack?: (event: React.MouseEvent) => void;
   cta: string;
   enabled: boolean;
 }
 
 const FunnelButton: React.FC<FunnelButtonProps> = ({
-  onClick,
+  onNext,
   onBack,
   cta,
   enabled,
@@ -26,7 +26,7 @@ const FunnelButton: React.FC<FunnelButtonProps> = ({
         </Button>
       )}
       {enabled ? (
-        <Button size="lg" className="ml-auto" onClick={onClick}>
+        <Button size="lg" className="ml-auto" onClick={onNext}>
           {cta} &#62;
         </Button>
       ) : (

@@ -160,6 +160,14 @@ body {
   font-size: 12px;
 }
 
+.font-weight-semibold {
+  font-weight: 600;
+}
+
+.font-weight-medium {
+  font-weight: 500;
+}
+
 @media (min-width: 768px) {
   .p1 {
     font-size: 48px;
@@ -213,4 +221,11 @@ body {
   margin-top: 3em;
   align-items: center;
   padding-bottom: 3em;
+}
+
+.upload-file-step-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

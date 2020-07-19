@@ -21,6 +21,9 @@ import { initialContactFieldMap } from 'src/data/InitialContactFieldMap';
 import TagSelector from 'src/components/tags/TagSelector';
 import { loadTags, createTag } from 'src/redux/modules/tag';
 import ErrorAlert from 'src/components/alerts/ErrorAlert';
+import { Clock } from 'react-feather';
+import Tag from 'src/components/tags/Tag';
+import { Link } from 'react-router-dom';
 
 //TODO create object with all uploadedCSV properties
 const mapStateToProps = (state: RootState) => ({
@@ -137,7 +140,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
 
         <div className="mt-5 p-5 overflow-auto w-75 d-flex">
           {uploadStep === 0 && (
-            <div className="d-flex flex-column align-items-center">
+            <div className="upload-file-step-container ">
               <span>
                 Upload a CSV file in this format. Need Help?{' '}
                 <a
@@ -157,7 +160,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
               <div className="ml-auto">
                 <FunnelButton
                   cta="Next"
-                  onClick={handleNextClick}
+                  onNext={handleNextClick}
                   enabled={uploadedCsv !== null}
                 />
               </div>
@@ -165,7 +168,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
           )}
 
           {uploadStep === 1 && (
-            <div className="d-flex flex-column w-100">
+            <div className="upload-file-step-container">
               <span>
                 Let's make sure that the columns in your uploaded csv map to the
                 appropriate fields.
@@ -180,7 +183,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
               </div>
               <FunnelButton
                 cta="Next"
-                onClick={handleNextClick}
+                onNext={handleNextClick}
                 onBack={handleBackClick}
                 enabled={uploadedCsv !== null}
               />
@@ -188,7 +191,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
           )}
 
           {uploadStep === 2 && (
-            <div className="d-flex flex-column w-100">
+            <div className="upload-file-step-container">
               <span>
                 Assign existing tags or create new ones for your contacts.
               </span>
@@ -201,11 +204,42 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 createTag={createTag}
               />
               <FunnelButton
-                cta="Next"
-                onClick={handleNextClick}
+                cta="Create contacts"
+                onNext={handleNextClick}
                 onBack={handleBackClick}
                 enabled={uploadedCsv !== null}
               />
+            </div>
+          )}
+          {uploadStep === 3 && (
+            <div className="upload-file-step-container">
+              <span className="black-500 p3 mb-3 font-weight-semibold">
+                We're adding your contacts!
+              </span>
+              <Clock size={60} color="#C3DBF5" />
+              <span className="mt-3 text-center">
+                Depending on the number of contacts you've uploaded, this may
+                take several minutes. You can move on to your next tasks in the
+                mean time.
+              </span>
+              <div className="d-flex flex-column mt-5 align-self-start">
+                <span className="black-500 p4">You're adding</span>
+                <span className="font-weight-bold black-500">
+                  {uploadedCsvData.length} contacts
+                </span>
+              </div>
+              <div className="d-flex flex-column mt-5 align-self-start">
+                <span className="black-500 p4">Tags</span>
+                <div className="d-flex flex-row mt-2">
+                  {selectedTags.map((tag) => (
+                    <div className="mb-3 mr-3">
+                      <Tag label={tag.label} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Link to={'/'}>Done</Link>
             </div>
           )}
         </div>

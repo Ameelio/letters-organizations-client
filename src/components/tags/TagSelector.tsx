@@ -65,7 +65,7 @@ const TagSelector: React.FC<TagSelector> = ({
   };
 
   return (
-    <div className="mw-100">
+    <div className="w-100 mw-100">
       <div className="black-200-bg w-100 py-4 d-flex flex-row align-items-start">
         <div className="d-flex flex-row w-75 flex-wrap">
           {selectedTags.map((tag) => (
