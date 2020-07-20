@@ -130,8 +130,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
               </tr>
             </thead>
             <tbody>
-              {filteredOrgContact.map((contact) => (
-                <tr>
+              {filteredOrgContact.map((contact, index) => (
+                <tr key={index}>
                   <td>{contact.first_name}</td>
                   <td>{contact.first_name}</td>
                   <td>{contact.last_name}</td>
@@ -140,7 +140,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                   <td>{contact.facility_state}</td>
                   <td className="d-flex flex-column">
                     {contact.tags.map((tag) => (
-                      <div className="mb-3">
+                      <div className="mb-3" key={tag.label}>
                         <Tag label={tag.label} />
                       </div>
                     ))}

@@ -123,6 +123,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
               <span className="black-400 p4">In transit</span>
               {selectedVolunteer.letters.map((letter) => (
                 <LetterCard
+                  key={letter.id}
                   letter={letter}
                   handleClick={(e) => handleLetterClick(e, letter)}
                 />
@@ -131,9 +132,10 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
             <div className="d-flex flex-column ml-5">
               <span className="black-400 p4">Delivered</span>
-              {selectedVolunteer.letters.map((letter) => (
+              {selectedVolunteer.letters.map((letter, index) => (
                 <LetterCard
                   letter={letter}
+                  key={letter.id}
                   handleClick={(e) => handleLetterClick(e, letter)}
                 />
               ))}
@@ -163,8 +165,8 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
             <span className="black-500 font-weight-bold">
               Contacts ({selectedVolunteer.contacts.length})
             </span>
-            {selectedVolunteer.contacts.map((contact) => (
-              <ContactCard contact={contact} />
+            {selectedVolunteer.contacts.map((contact, index) => (
+              <ContactCard key={index} contact={contact} />
             ))}
           </div>
         </section>

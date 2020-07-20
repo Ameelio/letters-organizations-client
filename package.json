@@ -1,5 +1,6 @@
 {
   "name": "letters-organizations",
+  "homepage": "http://ameelio.github.io/letters-organizations-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -38,7 +39,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -67,6 +71,7 @@
   },
   "devDependencies": {
     "eslint-config-airbnb": "^18.2.0",
+    "gh-pages": "^3.1.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.5"
