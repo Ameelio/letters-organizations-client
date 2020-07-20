@@ -48,6 +48,9 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   const [showInviteModal, setShowInviteModal] = useState(false);
 
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
+  const [hasFetchedVolunteers, setHasFetchedVolunteers] = useState<boolean>(
+    false,
+  );
 
   const handleLetterClose = () => setShowLetterModal(false);
   const handleLetterShow = () => setShowLetterModal(true);
@@ -76,15 +79,16 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (volunteers.length === 0) {
+    if (!hasFetchedVolunteers) {
       loadVolunteers();
+      setHasFetchedVolunteers(true);
     }
 
     const results = volunteers.filter((volunteer) =>
       volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredVolunteers(results);
-  }, [loadVolunteers, volunteers, searchQuery]);
+  }, [hasFetchedVolunteers, loadVolunteers, volunteers, searchQuery]);
 
   return (
     <div className="d-flex flex-row">

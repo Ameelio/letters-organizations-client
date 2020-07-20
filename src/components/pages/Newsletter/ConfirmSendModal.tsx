@@ -5,7 +5,7 @@ import { ReactComponent as Illustration } from 'src/assets/mail.svg';
 
 interface ConfirmSendModalProps {
   show: boolean;
-  newsletter: Newsletter;
+  newsletter: DraftNewsletter;
   handleClose: () => void;
   handleSubmission: (event: React.MouseEvent) => void;
   handleBackClick: (event: React.MouseEvent) => void;

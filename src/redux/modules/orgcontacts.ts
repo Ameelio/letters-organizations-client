@@ -162,7 +162,7 @@ export function orgContactsReducer(
     case SET_ORG_CONTACTS:
       return { ...state, contacts: action.payload };
     case ADD_ORG_CONTACTS:
-      return { ...state, contacts: [...state.contacts, ...action.payload] };
+      return { ...state, contacts: [...action.payload, ...state.contacts] };
     case ADD_FILTER:
       return {
         ...state,
@@ -224,7 +224,7 @@ export const createContacts = (
   tags: Tag[],
 ): AppThunk => async (dispatch) => {
   const newContacts: OrgContact[] = uploadedCsv.data.map((row) => {
-    return <OrgContact>{
+    return {
       first_name: row[mapping.firstName.index],
       last_name: row[mapping.lastName.index],
       inmate_number: row[mapping.inmateNumber.index],
@@ -236,7 +236,7 @@ export const createContacts = (
       unit: row[mapping.unit.index],
       dorm: row[mapping.dorm.index],
       tags: tags,
-    };
+    } as OrgContact;
   });
   dispatch(addOrgContacts(newContacts));
 };

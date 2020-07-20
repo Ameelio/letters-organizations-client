@@ -19,6 +19,7 @@ import SuccessModal from './SuccessModal';
 import TagSelector from 'src/components/tags/TagSelector';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
 import FunnelButton from 'src/components/buttons/FunnelButton';
+import { updateCsvUploadStep } from 'src/redux/modules/orgcontacts';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedFile: state.newsletters.uploadedFile,
@@ -59,16 +60,20 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   removeAllUploadTags,
 }) => {
   const [name, setName] = useState<string>('');
-  const [newsletter, setNewsletter] = useState<Newsletter>({} as Newsletter);
+  const [newsletter, setNewsletter] = useState<DraftNewsletter>(
+    {} as DraftNewsletter,
+  );
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
   const [toggle, setToggle] = useState<boolean>(false);
+  const [hasFetchedTags, setHasFetchedTags] = useState<boolean>(false);
   const handleModalClose = () => setShowModal(false);
   const handleModalShow = () => setShowModal(true);
 
   useEffect(() => {
-    if (tags.length === 0) {
+    if (!hasFetchedTags) {
       loadTags();
+      setHasFetchedTags(true);
     }
     if (uploadStep === 2 && uploadedFile) {
       setNewsletter({
@@ -82,7 +87,21 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
       });
       handleModalShow();
     }
-  }, [tags, loadTags, uploadStep, name, uploadSelectedTags, uploadedFile]);
+    // reset all state values once we're done
+    else if (uploadStep === 3) {
+      // removeAllUploadTags();
+      updateCsvUploadStep(0);
+    }
+  }, [
+    removeAllUploadTags,
+    hasFetchedTags,
+    tags,
+    loadTags,
+    uploadStep,
+    name,
+    uploadSelectedTags,
+    uploadedFile,
+  ]);
 
   const handleNextClick = (event: React.MouseEvent) => {
     updateFileUploadStep(uploadStep + 1);
@@ -97,8 +116,8 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     setToggle(!toggle);
   };
 
-  const handleSubmission = (event: React.MouseEvent) => {
-    sendNewsletter(newsletter);
+  const handleSubmission = async (event: React.MouseEvent) => {
+    await sendNewsletter(newsletter);
     setShowSuccessModal(true);
     updateFileUploadStep(uploadStep + 1);
   };

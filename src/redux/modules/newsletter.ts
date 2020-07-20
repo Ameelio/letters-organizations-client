@@ -1,14 +1,15 @@
 import { AppThunk } from 'src/redux/helpers';
+import { sampleNewsletters } from 'src/data/sampleNewsletters';
 
 //TODO add contacts logic
 const UPLOAD_FILE = 'newsletter/UPLOAD_FILE';
 const REMOVE_FILE = 'newsletter/REMOVE_FILE';
 
 const UPDATE_FILE_UPLOAD_STEP = 'newsletter/UPDATE_FILE_UPLOAD_STEP';
-const SET_NEWSLETTERS = 'newsletter/UPLOAD_FILE';
+const SET_NEWSLETTERS = 'newsletter/SET_NEWSLETTERS';
 const ADD_UPLOAD_TAG = 'newsletter/UPDATE_UPLOAD_TAGS';
 const REMOVE_UPLOAD_TAG = 'newsletter/REMOVE_UPLOAD_TAG';
-const ADD_NEWSLETTER = 'newsletter/SEND_NEWSLETTER';
+const ADD_NEWSLETTER = 'newsletter/ADD_NEWSLETTER';
 const REMOVE_ALL_UPLOAD_TAG = 'newsletter/RESET_UPLOAD_TAG';
 const ADD_ALL_UPLOAD_TAGS = 'newsletter/ADD_ALL_UPLOAD_TAGS';
 
@@ -35,14 +36,15 @@ interface RemoveUploadTagAction {
   type: typeof REMOVE_UPLOAD_TAG;
   payload: Tag;
 }
-// interface SetNewslettersAction {
-//     type: typeof SET_NEWSLETTERS;
-//     payload: Newsletter[]
-// }
+
+interface SetNewslettersAction {
+  type: typeof SET_NEWSLETTERS;
+  payload: NewsletterLog[];
+}
 
 interface AddNewsletterAction {
   type: typeof ADD_NEWSLETTER;
-  payload: Newsletter;
+  payload: NewsletterLog;
 }
 
 interface RemoveAllUploadTagsAction {
@@ -61,6 +63,7 @@ type NewsletterActionTypes =
   | RemoveUploadTagAction
   | RemoveAllUploadTagsAction
   | AddAllUploadTagsAction
+  | SetNewslettersAction
   | AddNewsletterAction
   | RemoveFileAction;
 
@@ -99,7 +102,7 @@ export const removeUploadTag = (tag: Tag): NewsletterActionTypes => {
   };
 };
 
-const addNewsletter = (newsletter: Newsletter): NewsletterActionTypes => {
+const addNewsletter = (newsletter: NewsletterLog): NewsletterActionTypes => {
   return {
     type: ADD_NEWSLETTER,
     payload: newsletter,
@@ -119,13 +122,15 @@ export const addAllUploadTags = (tags: Tag[]): NewsletterActionTypes => {
   };
 };
 
-// export const setNewsletters = (newsletters: Newsletter[]) : NewsletterActionTypes => {
-//     return{ type: SET_NEWSLETTERS, payload: newsletters };
-// }
+const setNewsletters = (
+  newsletters: NewsletterLog[],
+): NewsletterActionTypes => {
+  return { type: SET_NEWSLETTERS, payload: newsletters };
+};
 
 // Reducer
 const initialState: NewsletterState = {
-  newsletters: [] as Newsletter[],
+  newsletters: [] as NewsletterLog[],
   uploadedFile: null,
   uploadStep: 0,
   uploadSelectedTags: [],
@@ -146,8 +151,6 @@ export function newsletterReducer(
         ...state,
         uploadedFile: null,
       };
-    // case SET_NEWSLETTERS:
-    //   return { ...state, newsletters: action.payload };
     case UPDATE_FILE_UPLOAD_STEP:
       return {
         ...state,
@@ -165,7 +168,10 @@ export function newsletterReducer(
           (selectedTag) => selectedTag.id !== action.payload.id,
         ),
       };
+    case SET_NEWSLETTERS:
+      return { ...state, newsletters: action.payload };
     case ADD_NEWSLETTER:
+      console.log(action.payload);
       return {
         ...state,
         newsletters: [...state.newsletters, action.payload],
@@ -185,8 +191,25 @@ export function newsletterReducer(
   }
 }
 
-export const sendNewsletter = (newsletter: Newsletter): AppThunk => async (
+// TODO replace with API calls
+export const sendNewsletter = (newsletter: DraftNewsletter): AppThunk => async (
   dispatch,
 ) => {
-  dispatch(addNewsletter(newsletter));
+  const fakeNewsletterLog: NewsletterLog = {
+    id: Math.random() * 100,
+    title: newsletter.title,
+    fileLink: '',
+    delivered: 0,
+    inTransit: newsletter.numContacts,
+    returned: 0,
+    creationDate: new Date(),
+    estimatedArrival: new Date(),
+    tags: newsletter.tags,
+  };
+  console.log('here');
+  dispatch(addNewsletter(fakeNewsletterLog));
 };
+
+export const loadNewsletters = (): AppThunk => async (dispatch) => [
+  dispatch(setNewsletters(sampleNewsletters)),
+];

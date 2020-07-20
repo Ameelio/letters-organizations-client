@@ -1,5 +1,5 @@
 interface NewsletterState {
-  newsletters: Newsletter[];
+  newsletters: NewsletterLog[];
   uploadedFile: File | null;
   uploadStep: number;
   uploadSelectedTags: Tag[];

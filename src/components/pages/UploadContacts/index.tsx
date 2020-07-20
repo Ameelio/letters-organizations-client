@@ -72,6 +72,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   );
 
   const [error, setError] = useState<ErrorFeedback | null>();
+  const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
   const handleNextClick = (event: React.MouseEvent) => {
     updateCsvUploadStep(uploadStep + 1);
@@ -87,10 +88,11 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (tags.length === 0) {
+    if (!hasFetchedData) {
       loadTags();
+      setHasFetchedData(true);
     }
-  });
+  }, [hasFetchedData, loadTags]);
 
   let fileReader: FileReader;
 

@@ -18,7 +18,9 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ show }) => {
         <div className="d-flex flex-column align-items-center">
           <Illustration />
           <div className="d-flex flex-row mt-5">
-            <Link to="/login">Done!</Link>
+            <Link to="/newsletter" className="btn btn-primary">
+              Done!
+            </Link>
           </div>
         </div>
       </Modal.Body>

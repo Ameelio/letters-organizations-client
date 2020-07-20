@@ -46,14 +46,13 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   const [filteredOrgContact, setFilteredOrgContacts] = useState<OrgContact[]>(
     orgContacts,
   );
+  const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
   useEffect(() => {
-    if (orgContacts.length === 0) {
+    if (!hasFetchedData) {
       loadOrgContacts();
-    }
-
-    if (tags.length === 0) {
       loadTags();
+      setHasFetchedData(true);
     }
 
     let results = orgContacts.filter((contact) =>
@@ -68,7 +67,15 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
       );
     }
     setFilteredOrgContacts(results);
-  }, [filters, orgContacts, tags, loadOrgContacts, loadTags, searchQuery]);
+  }, [
+    hasFetchedData,
+    filters,
+    orgContacts,
+    tags,
+    loadOrgContacts,
+    loadTags,
+    searchQuery,
+  ]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
