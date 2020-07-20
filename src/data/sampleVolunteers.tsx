@@ -33,7 +33,22 @@ const dummy_letter: Letter = {
   contact_name: 'Frankie',
 };
 
-const dummy_letters: Letter[] = [dummy_letter, dummy_letter];
+const dummy_letter2: Letter = {
+  id: 1,
+  created_at: new Date(),
+  type: 'letter',
+  content:
+    'Good to see that you’re well and healthy! We’ve all missed you so much and can...',
+  sent: true,
+  attached_img_src:
+    'https://images.unsplash.com/photo-1508138221679-760a23a2285b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1567&q=80',
+  lob_validation_error: false,
+  page_count: 1,
+  tracking_events: [] as TrackingEvent[],
+  user_name: 'Gabee',
+  contact_name: 'Frankie',
+};
+const dummy_letters: Letter[] = [dummy_letter, dummy_letter2];
 const dummy_contacts: Contact[] = [dummy_contact, dummy_contact];
 
 export const dummy = {

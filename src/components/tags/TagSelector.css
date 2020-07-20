@@ -1,0 +1,17 @@
+.tag-row:hover {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.tag-selector-container {
+  max-height: 300px;
+}
+
+.tag-selector-input {
+  /* background-color: ; */
+  border: 0px;
+}
+
+.tag-selector-input:focus {
+  outline: none;
+}

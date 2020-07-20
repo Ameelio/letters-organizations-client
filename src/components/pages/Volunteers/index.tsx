@@ -9,12 +9,9 @@ import Form from 'react-bootstrap/Form';
 import './index.css';
 import LetterModal from './LetterModal';
 import InviteModal from './InviteModal';
-import { RootState } from '../../../redux';
+import { RootState } from 'src/redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import {
-  loadVolunteers,
-  selectVolunteer,
-} from '../../../redux/modules/volunteer';
+import { loadVolunteers, selectVolunteer } from 'src/redux/modules/volunteer';
 import { connect, ConnectedProps } from 'react-redux';
 
 const mapStateToProps = (state: RootState) => ({
@@ -51,6 +48,9 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   const [showInviteModal, setShowInviteModal] = useState(false);
 
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
+  const [hasFetchedVolunteers, setHasFetchedVolunteers] = useState<boolean>(
+    false,
+  );
 
   const handleLetterClose = () => setShowLetterModal(false);
   const handleLetterShow = () => setShowLetterModal(true);
@@ -79,21 +79,22 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (volunteers.length === 0) {
+    if (!hasFetchedVolunteers) {
       loadVolunteers();
+      setHasFetchedVolunteers(true);
     }
 
     const results = volunteers.filter((volunteer) =>
       volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredVolunteers(results);
-  }, [loadVolunteers, volunteers, searchQuery]);
+  }, [hasFetchedVolunteers, loadVolunteers, volunteers, searchQuery]);
 
   return (
     <div className="d-flex flex-row">
       <section className="volunteers-list-sidebar d-flex flex-column mw-25 border-right pl-4 shadow-sm bg-white rounded vh-100">
         <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
-          <span className="black-400 p3">Volunteers</span>
+          <span className="black-500 p3">Volunteers</span>
           <Button onClick={handleInviteClick}>Invite</Button>
         </div>
         <Form className="mr-3 mb-3">
@@ -116,12 +117,13 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
       {selectedVolunteer.letters && (
         <section className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">
-          <span className="black-500 p3">Letters</span>
+          <span className="p3">Letters</span>
           <div className="d-flex flex-row">
             <div className="d-flex flex-column">
-              <span className="black-300 p4">In transit</span>
+              <span className="black-400 p4">In transit</span>
               {selectedVolunteer.letters.map((letter) => (
                 <LetterCard
+                  key={letter.id}
                   letter={letter}
                   handleClick={(e) => handleLetterClick(e, letter)}
                 />
@@ -129,10 +131,11 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
             </div>
 
             <div className="d-flex flex-column ml-5">
-              <span className="black-300 p4">Delivered</span>
-              {selectedVolunteer.letters.map((letter) => (
+              <span className="black-400 p4">Delivered</span>
+              {selectedVolunteer.letters.map((letter, index) => (
                 <LetterCard
                   letter={letter}
+                  key={letter.id}
                   handleClick={(e) => handleLetterClick(e, letter)}
                 />
               ))}
@@ -149,21 +152,21 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
               className="large-image"
               roundedCircle
             />
-            <span className="black-400 font-weight-bold p3">
+            <span className="black-500 font-weight-bold p3">
               {selectedVolunteer.name}
             </span>
-            <span className="black-300">{selectedVolunteer.email}</span>
-            <span className="black-300">
+            <span className="black-400">{selectedVolunteer.email}</span>
+            <span className="black-400">
               {selectedVolunteer.city}, {selectedVolunteer.state}
             </span>
           </div>
           <hr />
           <div className="d-flex flex-column">
-            <span className="black-400 font-weight-bold">
+            <span className="black-500 font-weight-bold">
               Contacts ({selectedVolunteer.contacts.length})
             </span>
-            {selectedVolunteer.contacts.map((contact) => (
-              <ContactCard contact={contact} />
+            {selectedVolunteer.contacts.map((contact, index) => (
+              <ContactCard key={index} contact={contact} />
             ))}
           </div>
         </section>

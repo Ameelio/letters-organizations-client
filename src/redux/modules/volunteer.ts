@@ -1,5 +1,5 @@
-import { AppThunk } from '../helpers';
-import { sampleVolunteers } from '../../data/sampleVolunteers';
+import { AppThunk } from 'src/redux/helpers';
+import { sampleVolunteers } from 'src/data/sampleVolunteers';
 
 // Action Constants & Shapes
 const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
