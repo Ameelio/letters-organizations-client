@@ -7,13 +7,12 @@ interface TagProps {
   label: string;
   count?: number;
   canRemove?: boolean;
-  // showCount: boolean;
 }
 
 const Tag: React.FC<TagProps> = ({ label, canRemove, count }) => {
   return (
     <span className={`p-1 rounded ${generateTagColor(sampleTagColors, label)}`}>
-      {label} {count && count} {canRemove && <X color="#6d6d6d" size="12" />}
+      {label} {count} {canRemove && <X color="#6d6d6d" size="12" />}
     </span>
   );
 };
