@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/letters-organizations-client/static/css/main.6d9803e0.chunk.css",
+    "main.js": "/letters-organizations-client/static/js/main.f9f6d6f6.chunk.js",
+    "main.js.map": "/letters-organizations-client/static/js/main.f9f6d6f6.chunk.js.map",
+    "runtime-main.js": "/letters-organizations-client/static/js/runtime-main.027d688b.js",
+    "runtime-main.js.map": "/letters-organizations-client/static/js/runtime-main.027d688b.js.map",
+    "static/js/2.9010ce31.chunk.js": "/letters-organizations-client/static/js/2.9010ce31.chunk.js",
+    "static/js/2.9010ce31.chunk.js.map": "/letters-organizations-client/static/js/2.9010ce31.chunk.js.map",
+    "index.html": "/letters-organizations-client/index.html",
+    "precache-manifest.805a4f62c3188329288131ad30f0cc90.js": "/letters-organizations-client/precache-manifest.805a4f62c3188329288131ad30f0cc90.js",
+    "service-worker.js": "/letters-organizations-client/service-worker.js",
+    "static/css/main.6d9803e0.chunk.css.map": "/letters-organizations-client/static/css/main.6d9803e0.chunk.css.map",
+    "static/js/2.9010ce31.chunk.js.LICENSE.txt": "/letters-organizations-client/static/js/2.9010ce31.chunk.js.LICENSE.txt",
+    "static/media/logo.dfd0363d.svg": "/letters-organizations-client/static/media/logo.dfd0363d.svg",
+    "static/media/mail.44a73e0e.svg": "/letters-organizations-client/static/media/mail.44a73e0e.svg",
+    "static/media/skate.0f84cd80.svg": "/letters-organizations-client/static/media/skate.0f84cd80.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.027d688b.js",
+    "static/js/2.9010ce31.chunk.js",
+    "static/css/main.6d9803e0.chunk.css",
+    "static/js/main.f9f6d6f6.chunk.js"
+  ]
+}
