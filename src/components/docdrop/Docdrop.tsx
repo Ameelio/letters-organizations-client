@@ -16,7 +16,6 @@ const Docdrop: React.FC<DocdropProps> = ({
   acceptedFormat,
   acceptedFormatLabel,
 }) => {
-  // TODO handle errors
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
 
   const { getRootProps, getInputProps } = useDropzone({

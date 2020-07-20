@@ -1,4 +1,3 @@
-//TODO: should it be file string? Might need to create separate interface for newsletter upload
 interface DraftNewsletter {
   title: string;
   file: File;

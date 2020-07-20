@@ -7,10 +7,7 @@ interface CSV {
 interface OrgContactsState {
   contacts: OrgContact[];
   selectedFilters: Tag[];
-  // uploadedCsv: File | null;
   uploadStep: number;
-  // uploadedCsvHeader: string[];
-  // uploadedCsvData: string[][];
   uploadedCsv: CSV;
   uploadSelectedTags: Tag[];
 }

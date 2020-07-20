@@ -26,7 +26,6 @@ import { Clock } from 'react-feather';
 import Tag from 'src/components/tags/Tag';
 import { Link } from 'react-router-dom';
 
-//TODO create object with all uploadedCSV properties
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
   uploadStep: state.orgContacts.uploadStep,

@@ -1,7 +1,6 @@
 import { AppThunk } from 'src/redux/helpers';
 import { sampleNewsletters } from 'src/data/sampleNewsletters';
 
-//TODO add contacts logic
 const UPLOAD_FILE = 'newsletter/UPLOAD_FILE';
 const REMOVE_FILE = 'newsletter/REMOVE_FILE';
 

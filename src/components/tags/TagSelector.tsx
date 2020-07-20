@@ -12,7 +12,6 @@ interface TagSelector {
   createTag?: (label: string) => void;
 }
 
-// TODO for select all contacts, we probably want to pass a flag to the sendNewsletter
 const TagSelector: React.FC<TagSelector> = ({
   tags,
   selectedTags,

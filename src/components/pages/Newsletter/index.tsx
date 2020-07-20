@@ -19,7 +19,6 @@ import SuccessModal from './SuccessModal';
 import TagSelector from 'src/components/tags/TagSelector';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
 import FunnelButton from 'src/components/buttons/FunnelButton';
-import { updateCsvUploadStep } from 'src/redux/modules/orgcontacts';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedFile: state.newsletters.uploadedFile,
@@ -87,11 +86,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
       });
       handleModalShow();
     }
-    // reset all state values once we're done
-    else if (uploadStep === 3) {
-      // removeAllUploadTags();
-      updateCsvUploadStep(0);
-    }
+    // TODO reset all state values once we're done
   }, [
     removeAllUploadTags,
     hasFetchedTags,

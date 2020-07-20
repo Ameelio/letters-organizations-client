@@ -31,7 +31,6 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
     NewsletterLog[]
   >([]);
 
-  //TODO make sure that API returns an empty array if no newsletter otherwise it will break this page
   useEffect(() => {
     if (!hasFetched) {
       loadNewsletters();
