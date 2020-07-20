@@ -57,6 +57,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   removeUploadTag,
   addAllUploadTags,
   removeAllUploadTags,
+  sendNewsletter,
 }) => {
   const [name, setName] = useState<string>('');
   const [newsletter, setNewsletter] = useState<DraftNewsletter>(
@@ -111,8 +112,9 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     setToggle(!toggle);
   };
 
-  const handleSubmission = async (event: React.MouseEvent) => {
-    await sendNewsletter(newsletter);
+  const handleSubmission = (event: React.MouseEvent) => {
+    // TODO: make this await and catch errors if something goes wrong with newsletter
+    sendNewsletter(newsletter);
     setShowSuccessModal(true);
     updateFileUploadStep(uploadStep + 1);
   };

@@ -32,7 +32,7 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
   >([]);
 
   useEffect(() => {
-    if (!hasFetched) {
+    if (!hasFetched && newsletters.length === 0) {
       loadNewsletters();
       setHasFetched(true);
     }

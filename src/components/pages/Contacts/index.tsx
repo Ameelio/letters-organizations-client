@@ -44,12 +44,12 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filteredOrgContact, setFilteredOrgContacts] = useState<OrgContact[]>(
-    orgContacts,
+    [],
   );
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!hasFetchedData) {
+    if (!hasFetchedData && orgContacts.length === 0) {
       loadOrgContacts();
       loadTags();
       setHasFetchedData(true);

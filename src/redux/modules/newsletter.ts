@@ -170,7 +170,6 @@ export function newsletterReducer(
     case SET_NEWSLETTERS:
       return { ...state, newsletters: action.payload };
     case ADD_NEWSLETTER:
-      console.log(action.payload);
       return {
         ...state,
         newsletters: [...state.newsletters, action.payload],
@@ -205,7 +204,6 @@ export const sendNewsletter = (newsletter: DraftNewsletter): AppThunk => async (
     estimatedArrival: new Date(),
     tags: newsletter.tags,
   };
-  console.log('here');
   dispatch(addNewsletter(fakeNewsletterLog));
 };
 
