@@ -10,8 +10,8 @@ const dummy_contact: Contact = {
   facility_postal: '06511',
   profile_img_path:
     'https://media-exp1.licdn.com/dms/image/C4E03AQEvHsBEJbQ9dg/profile-displayphoto-shrink_400_400/0?e=1600300800&v=beta&t=Boq-ITjNDiXYumLUoZWkYepKIH9ILrUH2B8is2uszLs',
-  dorm: null,
-  unit: null,
+  dorm: undefined,
+  unit: undefined,
   total_letters_sent: 5,
   last_letter_sent: new Date(),
   letter_streak: 1,
@@ -62,6 +62,7 @@ export const dummy = {
   city: 'São Paulo',
   state: 'SP',
   total_letters_sent: 2,
+  role: 'member',
 };
 
 const dummy2 = {
@@ -75,6 +76,7 @@ const dummy2 = {
   city: 'New York',
   state: 'NYC',
   total_letters_sent: 2,
+  role: 'member',
 };
 
 export const sampleVolunteers: Volunteer[] = [dummy, dummy2];

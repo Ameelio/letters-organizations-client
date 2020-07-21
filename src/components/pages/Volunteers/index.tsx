@@ -9,7 +9,8 @@ import Form from 'react-bootstrap/Form';
 import './index.css';
 import LetterModal from './LetterModal';
 import InviteModal from './InviteModal';
-import { RootState } from 'src/redux';
+import { RootState } from '../../../redux';
+import store from '../../../../src';
 import { bindActionCreators, Dispatch } from 'redux';
 import { loadVolunteers, selectVolunteer } from 'src/redux/modules/volunteer';
 import { connect, ConnectedProps } from 'react-redux';
@@ -79,8 +80,8 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (!hasFetchedVolunteers) {
-      loadVolunteers();
+    if (volunteers.length === 0) {
+      loadVolunteers(store.getState().user.user.token);
       setHasFetchedVolunteers(true);
     }
 

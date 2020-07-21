@@ -10,4 +10,12 @@ export async function fetchVolunteers(token: string): Promise<void> {
       Authorization: `Bearer ${token}`,
     },
   };
+  const fetchOrgUsers = await fetch(
+    url.resolve(API_URL, 'org/users'),
+    requestOptions,
+  );
+  const orgUsers = await fetchOrgUsers.json();
+  if (orgUsers.status === 'ERROR') {
+    throw orgUsers['data'];
+  }
 }

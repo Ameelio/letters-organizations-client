@@ -8,4 +8,5 @@ interface Volunteer {
   city: string;
   state: string;
   total_letters_sent: number;
+  role: string;
 }

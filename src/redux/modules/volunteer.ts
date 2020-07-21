@@ -57,6 +57,6 @@ export function volunteersReducer(
   }
 }
 
-export const loadVolunteers = (): AppThunk => async (dispatch) => {
+export const loadVolunteers = (token: string): AppThunk => async (dispatch) => {
   dispatch(setVolunteers(sampleVolunteers));
 };
