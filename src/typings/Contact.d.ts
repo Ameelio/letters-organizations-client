@@ -9,8 +9,8 @@ interface Contact {
   facility_state: string;
   facility_postal: string;
   profile_img_path: string;
-  dorm?: string;
-  unit?: string;
+  dorm: ?string;
+  unit: ?string;
   total_letters_sent: number;
   last_letter_sent: Date;
   letter_streak: number;

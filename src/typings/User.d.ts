@@ -5,11 +5,11 @@ interface User {
   email: string;
   phone: string;
   address1: string;
-  address2?: string;
+  address2: ?string;
   country: string;
   postal: string;
   city: string;
   state: string;
-  imageUri?: string;
+  imageUri: ?string;
   token: string;
 }

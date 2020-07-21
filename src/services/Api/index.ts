@@ -31,6 +31,7 @@ export async function onLogin(email: string, password: string): Promise<User> {
     city: body.data.city,
     state: body.data.state,
     token: body.data.token,
+    imageUri: body.data.imageUri,
   };
   return userData;
 }

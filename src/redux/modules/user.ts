@@ -48,6 +48,7 @@ const initialState: UserState = {
     city: '',
     state: '',
     token: '',
+    imageUri: '',
   },
 };
 
@@ -83,6 +84,7 @@ export function userReducer(
           city: '',
           state: '',
           token: '',
+          imageUri: '',
         },
       };
     default:
