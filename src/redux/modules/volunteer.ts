@@ -1,5 +1,6 @@
 import { AppThunk } from 'src/redux/helpers';
-import { sampleVolunteers } from 'src/data/sampleVolunteers';
+// import { sampleVolunteers } from 'src/data/sampleVolunteers';
+import { fetchVolunteers } from '../../services/Api/volunteers';
 
 // Action Constants & Shapes
 const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
@@ -37,6 +38,7 @@ const initialState: VolunteerState = {
   all_volunteers: [],
   loading: false,
   selected_volunteer: {} as Volunteer,
+  selected_volunteer_details: {} as VolunteerDetails,
 };
 
 export function volunteersReducer(
@@ -57,6 +59,17 @@ export function volunteersReducer(
   }
 }
 
-export const loadVolunteers = (token: string): AppThunk => async (dispatch) => {
-  dispatch(setVolunteers(sampleVolunteers));
+export const loadVolunteers = (
+  token: string,
+  org_id: number,
+): AppThunk => async (dispatch) => {
+  // dispatch(setVolunteers(sampleVolunteers));
+  fetchVolunteers(token, org_id)
+    .then((volunteersData) => dispatch(setVolunteers(volunteersData)))
+    .catch((error) => console.log(error));
 };
+
+export const loadVolunteerDetails = (
+  token: string,
+  org_user_id: number,
+): AppThunk => async (dispatch) => {};
