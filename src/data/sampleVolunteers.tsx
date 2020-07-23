@@ -18,13 +18,14 @@ const dummy_contact: Contact = {
 
 const dummy_letter: Letter = {
   id: 0,
-  created_at: new Date(),
+  created_at: '2020-07-21T01:18:22.000000Z',
   type: 'letter',
   content:
     'Good to see that you’re well and healthy! We’ve all missed you so much and can...',
   sent: true,
-  attached_img_src:
+  images: [
     'https://images.unsplash.com/photo-1508138221679-760a23a2285b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1567&q=80',
+  ],
   lob_validation_error: false,
   page_count: 1,
   user_name: 'Gabee',
@@ -33,13 +34,14 @@ const dummy_letter: Letter = {
 
 const dummy_letter2: Letter = {
   id: 1,
-  created_at: new Date(),
+  created_at: '2020-07-21T01:18:22.000000Z',
   type: 'letter',
   content:
     'Good to see that you’re well and healthy! We’ve all missed you so much and can...',
   sent: true,
-  attached_img_src:
+  images: [
     'https://images.unsplash.com/photo-1508138221679-760a23a2285b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1567&q=80',
+  ],
   lob_validation_error: false,
   page_count: 1,
   user_name: 'Gabee',
@@ -63,6 +65,7 @@ export const dummy = {
   last_letter_sent: null,
   role: 'member',
   image: 'avatar.svg',
+  details: null,
 };
 
 const dummy2 = {
@@ -80,6 +83,7 @@ const dummy2 = {
   last_letter_sent: null,
   role: 'member',
   image: 'avatar.svg',
+  details: null,
 };
 
 export const sampleVolunteers: Volunteer[] = [dummy, dummy2];

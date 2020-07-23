@@ -1,6 +1,10 @@
 import { AppThunk } from 'src/redux/helpers';
 // import { sampleVolunteers } from 'src/data/sampleVolunteers';
-import { fetchVolunteers } from '../../services/Api/volunteers';
+import {
+  fetchVolunteerDetails,
+  fetchVolunteers,
+} from '../../services/Api/volunteers';
+// import {Simulate} from "react-dom/test-utils";
 
 // Action Constants & Shapes
 const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
@@ -26,7 +30,9 @@ const setVolunteers = (volunteers: Volunteer[]): VolunteerActionTypes => {
   };
 };
 
-export const selectVolunteer = (volunteer: Volunteer): VolunteerActionTypes => {
+export const setSelectedVolunteer = (
+  volunteer: Volunteer,
+): VolunteerActionTypes => {
   return {
     type: SELECT_VOLUNTEER,
     payload: volunteer,
@@ -38,7 +44,6 @@ const initialState: VolunteerState = {
   all_volunteers: [],
   loading: false,
   selected_volunteer: {} as Volunteer,
-  selected_volunteer_details: {} as VolunteerDetails,
 };
 
 export function volunteersReducer(
@@ -50,10 +55,13 @@ export function volunteersReducer(
       return {
         ...state,
         all_volunteers: action.payload,
-        selected_volunteer: action.payload[0],
+        // selected_volunteer: action.payload[0],
       };
     case SELECT_VOLUNTEER:
-      return { ...state, selected_volunteer: action.payload };
+      return {
+        ...state,
+        selected_volunteer: action.payload,
+      };
     default:
       return state;
   }
@@ -63,13 +71,21 @@ export const loadVolunteers = (
   token: string,
   org_id: number,
 ): AppThunk => async (dispatch) => {
-  // dispatch(setVolunteers(sampleVolunteers));
   fetchVolunteers(token, org_id)
     .then((volunteersData) => dispatch(setVolunteers(volunteersData)))
+    .then((action) => {
+      if (action.payload instanceof Array) {
+        dispatch(setSelectedVolunteer(action.payload[0]));
+      }
+    })
     .catch((error) => console.log(error));
 };
 
-export const loadVolunteerDetails = (
+export const selectVolunteer = (
   token: string,
-  org_user_id: number,
-): AppThunk => async (dispatch) => {};
+  volunteer: Volunteer,
+): AppThunk => async (dispatch) => {
+  fetchVolunteerDetails(token, volunteer)
+    .then((volunteer) => setSelectedVolunteer(volunteer))
+    .catch((error) => console.log(error));
+};

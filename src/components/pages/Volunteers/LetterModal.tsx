@@ -20,7 +20,9 @@ const LetterModal: React.FC<LetterModalProps> = ({
       <Modal.Body>
         <div className="d-flex flex-column">
           <span>{letter.content}</span>
-          <Image src={letter.attached_img_src} className="large-image mt-3" />
+          {letter.images.map((image_url) => (
+            <Image src={image_url} className="large-image mt-3" />
+          ))}
         </div>
       </Modal.Body>
     </Modal>

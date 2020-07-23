@@ -2,13 +2,13 @@ type LetterType = 'postcard' | 'letter';
 
 interface Letter {
   id: number;
-  created_at: Date;
+  created_at: string;
   type: LetterType;
   content: string;
   sent: boolean;
-  // attached_img_src: string;
+  images: string[];
   lob_validation_error: boolean;
-  page_count: number;
+  page_count: number | null;
   // tracking_events: TrackingEvent[];
   user_name: string;
   contact_name: string;

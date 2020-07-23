@@ -42,6 +42,7 @@ export async function fetchVolunteers(
       role: volunteer.role,
       total_letters_sent: volunteer.total_letters_sent,
       last_letter_sent: volunteer.last_letter_sent,
+      details: null,
     };
     volunteersData.push(volunteerData);
   });
@@ -50,8 +51,8 @@ export async function fetchVolunteers(
 
 export async function fetchVolunteerDetails(
   token: string,
-  org_user_id: number,
-): Promise<void> {
+  volunteer: Volunteer,
+): Promise<Volunteer> {
   const requestOptions = {
     method: 'GET',
     headers: {
@@ -60,8 +61,9 @@ export async function fetchVolunteerDetails(
       Authorization: `Bearer ${token}`,
     },
   };
+
   const response = await fetch(
-    url.resolve(API_URL, `org/user/${org_user_id}`),
+    url.resolve(API_URL, `org/user/${volunteer.id}`),
     requestOptions,
   );
   const body = await response.json();
@@ -76,6 +78,7 @@ export async function fetchVolunteerDetails(
 
   const contactsResponse = await fetch(
     url.resolve(API_URL, `contacts/${user_id}`),
+    requestOptions,
   );
   const contactsBody = await contactsResponse.json();
   interface c {
@@ -94,7 +97,7 @@ export async function fetchVolunteerDetails(
     total_letters_sent: number;
     last_letter_sent: string;
   }
-  const contactsData = [];
+  const contactsData: Contact[] = [];
   contactsBody.data.data.forEach((contact: c) => {
     const contactData: Contact = {
       first_name: contact.first_name,
@@ -117,23 +120,53 @@ export async function fetchVolunteerDetails(
 
   const lettersResponse = await fetch(
     url.resolve(API_URL, `letters/${user_id}`),
+    requestOptions,
   );
   const lettersBody = await lettersResponse.json();
+  interface image {
+    id: number;
+    letter_id: number;
+    img_src: string;
+    created_at: string;
+    updated_at: string;
+  }
   interface l {
     id: number;
     created_at: string;
-    type: string;
+    type: LetterType;
     content: string;
     sent: boolean;
-    attached_img_src: string;
     lob_validation_error: boolean;
     page_count: number | null;
-    user_id: number;
-    contact_id: number;
     user_name: string;
     contact_name: string;
-    images: Array;
+    images: image[];
   }
-  const lettersData = [];
-  lettersBody.data.data.forEach((letter: l) => {});
+  const lettersData: Letter[] = [];
+  lettersBody.data.data.forEach((letter: l) => {
+    const letterData: Letter = {
+      id: letter.id,
+      created_at: letter.created_at,
+      type: letter.type,
+      content: letter.content,
+      sent: letter.sent,
+      lob_validation_error: letter.lob_validation_error,
+      page_count: letter.page_count,
+      user_name: letter.user_name,
+      contact_name: letter.contact_name,
+      images: [],
+    };
+    letter.images.forEach((image) => letterData.images.push(image.img_src));
+    lettersData.push(letterData);
+  });
+
+  volunteer.details = {
+    email: email,
+    city: city,
+    state: state,
+    letters: lettersData,
+    contacts: contactsData,
+  };
+
+  return volunteer;
 }

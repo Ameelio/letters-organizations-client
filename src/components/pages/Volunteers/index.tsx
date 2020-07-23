@@ -43,6 +43,8 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     volunteers,
   );
 
+  const token = store.getState().user.user.token;
+
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const [showLetterModal, setShowLetterModal] = useState(false);
@@ -63,7 +65,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     event: React.MouseEvent,
     volunteer: Volunteer,
   ) => {
-    selectVolunteer(volunteer);
+    selectVolunteer(token, volunteer);
   };
 
   const handleLetterClick = (event: React.MouseEvent, letter: Letter) => {
@@ -81,7 +83,6 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
   useEffect(() => {
     if (volunteers.length === 0) {
-      const token = store.getState().user.user.token;
       loadVolunteers(token, 1); // TODO: get user's org on login
       setHasFetchedVolunteers(true);
     }
@@ -117,13 +118,13 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         ))}
       </section>
 
-      {/*{selectedVolunteer.letters && (*/}
+      {/*{selectedVolunteer.details && (*/}
       {/*  <section className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">*/}
       {/*    <span className="p3">Letters</span>*/}
       {/*    <div className="d-flex flex-row">*/}
       {/*      <div className="d-flex flex-column">*/}
       {/*        <span className="black-400 p4">In transit</span>*/}
-      {/*        {selectedVolunteer.letters.map((letter) => (*/}
+      {/*        {selectedVolunteer.details.letters.map((letter) => (*/}
       {/*          <LetterCard*/}
       {/*            key={letter.id}*/}
       {/*            letter={letter}*/}
@@ -134,7 +135,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
       {/*      <div className="d-flex flex-column ml-5">*/}
       {/*        <span className="black-400 p4">Delivered</span>*/}
-      {/*        {selectedVolunteer.letters.map((letter, index) => (*/}
+      {/*        {selectedVolunteer.details.letters.map((letter, index) => (*/}
       {/*          <LetterCard*/}
       {/*            letter={letter}*/}
       {/*            key={letter.id}*/}
