@@ -15,8 +15,7 @@ const d1: OrgContact = {
   dorm: null,
   unit: null,
   total_letters_sent: 5,
-  last_letter_sent: new Date(),
-  letter_streak: 1,
+  last_letter_sent: null,
   tags: [sampleTags[1], sampleTags[2]],
 };
 
@@ -35,8 +34,7 @@ const d2: OrgContact = {
   dorm: null,
   unit: null,
   total_letters_sent: 5,
-  last_letter_sent: new Date(),
-  letter_streak: 1,
+  last_letter_sent: null,
   tags: [sampleTags[3], sampleTags[4]],
 };
 
@@ -55,8 +53,7 @@ const d3: OrgContact = {
   dorm: null,
   unit: null,
   total_letters_sent: 5,
-  last_letter_sent: new Date(),
-  letter_streak: 1,
+  last_letter_sent: null,
   tags: [sampleTags[3], sampleTags[4]],
 };
 
@@ -75,10 +72,10 @@ const d4: OrgContact = {
   dorm: null,
   unit: null,
   total_letters_sent: 5,
-  last_letter_sent: new Date(),
-  letter_streak: 1,
+  last_letter_sent: null,
   tags: [sampleTags[3], sampleTags[4]],
 };
+
 export const sampleOrgContacts: OrgContact[] = [
   d1,
   d2,
