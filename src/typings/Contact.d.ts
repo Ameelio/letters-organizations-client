@@ -1,6 +1,6 @@
 interface Contact {
   first_name: string;
-  middle_name?: string;
+  middle_name: ?string;
   last_name: string;
   inmate_number: string;
   facility_name: string;
@@ -12,6 +12,5 @@ interface Contact {
   dorm: ?string;
   unit: ?string;
   total_letters_sent: number;
-  last_letter_sent: Date;
-  letter_streak: number;
+  last_letter_sent: string | null;
 }

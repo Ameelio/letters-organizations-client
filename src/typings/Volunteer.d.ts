@@ -1,12 +1,9 @@
 interface Volunteer {
   id: number;
+  user_id: number;
   name: string;
-  email: string;
-  image: string;
-  letters: Letter[];
-  contacts: Contacts[];
-  city: string;
-  state: string;
-  total_letters_sent: number;
   role: string;
+  image: string;
+  total_letters_sent: number;
+  last_letter_sent: ?string;
 }
