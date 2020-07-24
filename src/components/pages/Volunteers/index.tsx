@@ -118,70 +118,72 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         ))}
       </section>
 
-      {/*{selectedVolunteer.details && (*/}
-      {/*  <section className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">*/}
-      {/*    <span className="p3">Letters</span>*/}
-      {/*    <div className="d-flex flex-row">*/}
-      {/*      <div className="d-flex flex-column">*/}
-      {/*        <span className="black-400 p4">In transit</span>*/}
-      {/*        {selectedVolunteer.details.letters.map((letter) => (*/}
-      {/*          <LetterCard*/}
-      {/*            key={letter.id}*/}
-      {/*            letter={letter}*/}
-      {/*            handleClick={(e) => handleLetterClick(e, letter)}*/}
-      {/*          />*/}
-      {/*        ))}*/}
-      {/*      </div>*/}
+      {selectedVolunteer.details && (
+        <section className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">
+          <span className="p3">Letters</span>
+          <div className="d-flex flex-row">
+            <div className="d-flex flex-column">
+              <span className="black-400 p4">In transit</span>
+              {selectedVolunteer.details.letters.map((letter) => (
+                <LetterCard
+                  key={letter.id}
+                  letter={letter}
+                  handleClick={(e) => handleLetterClick(e, letter)}
+                />
+              ))}
+            </div>
 
-      {/*      <div className="d-flex flex-column ml-5">*/}
-      {/*        <span className="black-400 p4">Delivered</span>*/}
-      {/*        {selectedVolunteer.details.letters.map((letter, index) => (*/}
-      {/*          <LetterCard*/}
-      {/*            letter={letter}*/}
-      {/*            key={letter.id}*/}
-      {/*            handleClick={(e) => handleLetterClick(e, letter)}*/}
-      {/*          />*/}
-      {/*        ))}*/}
-      {/*      </div>*/}
-      {/*    </div>*/}
-      {/*  </section>*/}
-      {/*)}*/}
+            <div className="d-flex flex-column ml-5">
+              <span className="black-400 p4">Delivered</span>
+              {selectedVolunteer.details.letters.map((letter, index) => (
+                <LetterCard
+                  letter={letter}
+                  key={letter.id}
+                  handleClick={(e) => handleLetterClick(e, letter)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-      {/*{selectedVolunteer.contacts && (*/}
-      {/*  <section className="volunteer-sidebar d-flex flex-column mr-4 bg-white p-5 shadow-sm">*/}
-      {/*    <div className="d-flex flex-column align-items-center">*/}
-      {/*      <Image*/}
-      {/*        src={selectedVolunteer.image}*/}
-      {/*        className="large-image"*/}
-      {/*        roundedCircle*/}
-      {/*      />*/}
-      {/*      <span className="black-500 font-weight-bold p3">*/}
-      {/*        {selectedVolunteer.name}*/}
-      {/*      </span>*/}
-      {/*      <span className="black-400">{selectedVolunteer.email}</span>*/}
-      {/*      <span className="black-400">*/}
-      {/*        {selectedVolunteer.city}, {selectedVolunteer.state}*/}
-      {/*      </span>*/}
-      {/*    </div>*/}
-      {/*    <hr />*/}
-      {/*    <div className="d-flex flex-column">*/}
-      {/*      <span className="black-500 font-weight-bold">*/}
-      {/*        Contacts ({selectedVolunteer.contacts.length})*/}
-      {/*      </span>*/}
-      {/*      {selectedVolunteer.contacts.map((contact, index) => (*/}
-      {/*        <ContactCard key={index} contact={contact} />*/}
-      {/*      ))}*/}
-      {/*    </div>*/}
-      {/*  </section>*/}
-      {/*)}*/}
+      {selectedVolunteer.details && (
+        <section className="volunteer-sidebar d-flex flex-column mr-4 bg-white p-5 shadow-sm">
+          <div className="d-flex flex-column align-items-center">
+            <Image
+              src={selectedVolunteer.image}
+              className="large-image"
+              roundedCircle
+            />
+            <span className="black-500 font-weight-bold p3">
+              {selectedVolunteer.name}
+            </span>
+            <span className="black-400">{selectedVolunteer.details.email}</span>
+            <span className="black-400">
+              {selectedVolunteer.details.city},{' '}
+              {selectedVolunteer.details.state}
+            </span>
+          </div>
+          <hr />
+          <div className="d-flex flex-column">
+            <span className="black-500 font-weight-bold">
+              Contacts ({selectedVolunteer.details.contacts.length})
+            </span>
+            {selectedVolunteer.details.contacts.map((contact, index) => (
+              <ContactCard key={index} contact={contact} />
+            ))}
+          </div>
+        </section>
+      )}
 
-      {/*{selectedLetter && (*/}
-      {/*  <LetterModal*/}
-      {/*    letter={selectedLetter}*/}
-      {/*    show={showLetterModal}*/}
-      {/*    handleClose={handleLetterClose}*/}
-      {/*  />*/}
-      {/*)}*/}
+      {selectedLetter && (
+        <LetterModal
+          letter={selectedLetter}
+          show={showLetterModal}
+          handleClose={handleLetterClose}
+        />
+      )}
+
       <InviteModal
         shareLink="www.letters.ameelio.org"
         show={showInviteModal}

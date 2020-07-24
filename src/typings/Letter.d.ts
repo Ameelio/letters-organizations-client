@@ -2,7 +2,7 @@ type LetterType = 'postcard' | 'letter';
 
 interface Letter {
   id: number;
-  created_at: string;
+  created_at: Date;
   type: LetterType;
   content: string;
   sent: boolean;

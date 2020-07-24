@@ -13,12 +13,12 @@ const dummy_contact: Contact = {
   dorm: null,
   unit: null,
   total_letters_sent: 5,
-  last_letter_sent: '2020-07-21T01:18:22.000000Z',
+  last_letter_sent: new Date('2020-07-21T01:18:22.000000Z'),
 };
 
 const dummy_letter: Letter = {
   id: 0,
-  created_at: '2020-07-21T01:18:22.000000Z',
+  created_at: new Date('2020-07-21T01:18:22.000000Z'),
   type: 'letter',
   content:
     'Good to see that you’re well and healthy! We’ve all missed you so much and can...',
@@ -34,7 +34,7 @@ const dummy_letter: Letter = {
 
 const dummy_letter2: Letter = {
   id: 1,
-  created_at: '2020-07-21T01:18:22.000000Z',
+  created_at: new Date('2020-07-21T01:18:22.000000Z'),
   type: 'letter',
   content:
     'Good to see that you’re well and healthy! We’ve all missed you so much and can...',

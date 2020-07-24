@@ -41,9 +41,12 @@ export async function fetchVolunteers(
       image: volunteer.image,
       role: volunteer.role,
       total_letters_sent: volunteer.total_letters_sent,
-      last_letter_sent: volunteer.last_letter_sent,
+      last_letter_sent: null,
       details: null,
     };
+    if (volunteer.last_letter_sent) {
+      volunteerData.last_letter_sent = new Date(volunteer.last_letter_sent);
+    }
     volunteersData.push(volunteerData);
   });
   return volunteersData;
@@ -95,7 +98,7 @@ export async function fetchVolunteerDetails(
     dorm: string | null;
     unit: string | null;
     total_letters_sent: number;
-    last_letter_sent: string;
+    last_letter_sent: string | null;
   }
   const contactsData: Contact[] = [];
   contactsBody.data.data.forEach((contact: c) => {
@@ -113,8 +116,11 @@ export async function fetchVolunteerDetails(
       dorm: contact.dorm,
       unit: contact.unit,
       total_letters_sent: contact.total_letters_sent,
-      last_letter_sent: contact.last_letter_sent,
+      last_letter_sent: null,
     };
+    if (contact.last_letter_sent) {
+      contactData.last_letter_sent = new Date(contact.last_letter_sent);
+    }
     contactsData.push(contactData);
   });
 
@@ -146,7 +152,7 @@ export async function fetchVolunteerDetails(
   lettersBody.data.data.forEach((letter: l) => {
     const letterData: Letter = {
       id: letter.id,
-      created_at: letter.created_at,
+      created_at: new Date(letter.created_at),
       type: letter.type,
       content: letter.content,
       sent: letter.sent,

@@ -31,7 +31,11 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
         </div>
         <div className="d-flex flex-column align-items-center p-2">
           <span className="black-400 p7">Last sent</span>
-          <span className="black-500">{contact.last_letter_sent}</span>
+          <span className="black-500">
+            {contact.last_letter_sent
+              ? formatDate(contact.last_letter_sent)
+              : 'None'}
+          </span>
         </div>
       </div>
     </div>

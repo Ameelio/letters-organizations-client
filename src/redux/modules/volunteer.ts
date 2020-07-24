@@ -1,10 +1,8 @@
 import { AppThunk } from 'src/redux/helpers';
-// import { sampleVolunteers } from 'src/data/sampleVolunteers';
 import {
   fetchVolunteerDetails,
   fetchVolunteers,
 } from '../../services/Api/volunteers';
-// import {Simulate} from "react-dom/test-utils";
 
 // Action Constants & Shapes
 const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
@@ -55,7 +53,6 @@ export function volunteersReducer(
       return {
         ...state,
         all_volunteers: action.payload,
-        // selected_volunteer: action.payload[0],
       };
     case SELECT_VOLUNTEER:
       return {
@@ -75,7 +72,7 @@ export const loadVolunteers = (
     .then((volunteersData) => dispatch(setVolunteers(volunteersData)))
     .then((action) => {
       if (action.payload instanceof Array) {
-        dispatch(setSelectedVolunteer(action.payload[0]));
+        dispatch(selectVolunteer(token, action.payload[0]));
       }
     })
     .catch((error) => console.log(error));
@@ -85,7 +82,11 @@ export const selectVolunteer = (
   token: string,
   volunteer: Volunteer,
 ): AppThunk => async (dispatch) => {
-  fetchVolunteerDetails(token, volunteer)
-    .then((volunteer) => setSelectedVolunteer(volunteer))
-    .catch((error) => console.log(error));
+  if (volunteer.details) {
+    dispatch(setSelectedVolunteer(volunteer));
+  } else {
+    fetchVolunteerDetails(token, volunteer)
+      .then((volunteer) => dispatch(setSelectedVolunteer(volunteer)))
+      .catch((error) => console.log(error));
+  }
 };

@@ -5,6 +5,6 @@ interface Volunteer {
   role: string;
   image: string;
   total_letters_sent: number;
-  last_letter_sent: string | null;
+  last_letter_sent: Date | null;
   details: VolunteerDetails | null;
 }
