@@ -143,6 +143,7 @@ export async function fetchVolunteerDetails(
     content: string;
     sent: boolean;
     lob_validation_error: boolean;
+    lob_status: string | null;
     page_count: number | null;
     user_name: string;
     contact_name: string;
@@ -150,20 +151,23 @@ export async function fetchVolunteerDetails(
   }
   const lettersData: Letter[] = [];
   lettersBody.data.data.forEach((letter: l) => {
-    const letterData: Letter = {
-      id: letter.id,
-      created_at: new Date(letter.created_at),
-      type: letter.type,
-      content: letter.content,
-      sent: letter.sent,
-      lob_validation_error: letter.lob_validation_error,
-      page_count: letter.page_count,
-      user_name: letter.user_name,
-      contact_name: letter.contact_name,
-      images: [],
-    };
-    letter.images.forEach((image) => letterData.images.push(image.img_src));
-    lettersData.push(letterData);
+    if (!letter.lob_validation_error && letter.lob_status) {
+      const letterData: Letter = {
+        id: letter.id,
+        created_at: new Date(letter.created_at),
+        type: letter.type,
+        content: letter.content,
+        sent: letter.sent,
+        lob_validation_error: letter.lob_validation_error,
+        lob_status: letter.lob_status,
+        page_count: letter.page_count,
+        user_name: letter.user_name,
+        contact_name: letter.contact_name,
+        images: [],
+      };
+      letter.images.forEach((image) => letterData.images.push(image.img_src));
+      lettersData.push(letterData);
+    }
   });
 
   volunteer.details = {

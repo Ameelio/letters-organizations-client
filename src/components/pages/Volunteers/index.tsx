@@ -166,24 +166,31 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
           <div className="d-flex flex-row">
             <div className="d-flex flex-column letter-category">
               <span className="black-400 p4">In transit</span>
-              {selectedVolunteer.details.letters.map((letter) => (
-                <LetterCard
-                  key={letter.id}
-                  letter={letter}
-                  handleClick={(e) => handleLetterClick(e, letter)}
-                />
-              ))}
+              {selectedVolunteer.details.letters
+                .filter((letter) => letter.lob_status === 'letter.in_transit')
+                .map((letter) => (
+                  <LetterCard
+                    key={letter.id}
+                    letter={letter}
+                    handleClick={(e) => handleLetterClick(e, letter)}
+                  />
+                ))}
             </div>
 
             <div className="d-flex flex-column ml-5 letter-category">
               <span className="black-400 p4">Delivered</span>
-              {selectedVolunteer.details.letters.map((letter, index) => (
-                <LetterCard
-                  letter={letter}
-                  key={letter.id}
-                  handleClick={(e) => handleLetterClick(e, letter)}
-                />
-              ))}
+              {selectedVolunteer.details.letters
+                .filter(
+                  (letter) =>
+                    letter.lob_status === 'letter.processed_for_delivery',
+                )
+                .map((letter, index) => (
+                  <LetterCard
+                    letter={letter}
+                    key={letter.id}
+                    handleClick={(e) => handleLetterClick(e, letter)}
+                  />
+                ))}
             </div>
           </div>
         </section>

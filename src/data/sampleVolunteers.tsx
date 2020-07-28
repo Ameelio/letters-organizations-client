@@ -29,6 +29,7 @@ const dummy_letter: Letter = {
   lob_validation_error: false,
   page_count: 1,
   user_name: 'Gabee',
+  lob_status: null,
   contact_name: 'Frankie',
 };
 
@@ -45,6 +46,7 @@ const dummy_letter2: Letter = {
   lob_validation_error: false,
   page_count: 1,
   user_name: 'Gabee',
+  lob_status: null,
   contact_name: 'Frankie',
 };
 const dummy_letters: Letter[] = [dummy_letter, dummy_letter2];

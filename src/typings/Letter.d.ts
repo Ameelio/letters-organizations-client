@@ -10,6 +10,7 @@ interface Letter {
   lob_validation_error: boolean;
   page_count: number | null;
   // tracking_events: TrackingEvent[];
+  lob_status: string | null;
   user_name: string;
   contact_name: string;
 }
