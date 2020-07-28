@@ -29,13 +29,17 @@ const UnconnectedLogin: React.FC<PropsFromRedux> = ({
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const onError = (error: Object) => {
+  const onError = (error: Object | string) => {
     logout();
-    if ('email' in error) {
-      setEmailError(error['email'][0]);
-    }
-    if ('password' in error) {
-      setPasswordError(error['password'][0]);
+    if (typeof error === 'string') {
+      setEmailError(error);
+    } else {
+      if ('email' in error) {
+        setEmailError(error['email'][0]);
+      }
+      if ('password' in error) {
+        setPasswordError(error['password'][0]);
+      }
     }
   };
 
