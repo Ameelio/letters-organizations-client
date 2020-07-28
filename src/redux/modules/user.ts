@@ -42,8 +42,14 @@ export const loadingUser = (): UserActionTypes => {
   };
 };
 
+const fromStorage: string | null = sessionStorage.getItem('userState');
+let storedUserState: UserState | null = null;
+if (fromStorage) {
+  storedUserState = JSON.parse(fromStorage);
+}
+
 // Reducer
-const initialState: UserState = {
+let initialState: UserState = storedUserState || {
   authInfo: {
     isLoadingToken: false,
     isLoggedIn: false,
@@ -80,13 +86,15 @@ export function userReducer(
         },
       };
     case LOGIN:
-      return {
+      const userState: UserState = {
         authInfo: {
           isLoadingToken: false,
           isLoggedIn: true,
         },
         user: action.payload,
       };
+      sessionStorage.setItem('userState', JSON.stringify(userState));
+      return userState;
     case LOGOUT:
       return {
         authInfo: {
