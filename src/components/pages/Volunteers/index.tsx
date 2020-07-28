@@ -44,6 +44,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   );
 
   const token = store.getState().user.user.token;
+  const org = store.getState().user.user.org;
 
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -82,8 +83,8 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (volunteers.length === 0) {
-      loadVolunteers(token, 1); // TODO: get user's org on login
+    if (volunteers.length === 0 && org) {
+      loadVolunteers(token, org.id);
       setHasFetchedVolunteers(true);
     }
 

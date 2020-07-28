@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { login } from '../../../redux/modules/user';
-import { onLogin } from '../../../services/Api';
 import { RootState } from '../../../redux';
+import { loadUser, login, logout } from '../../../redux/modules/user';
+import { onLogin } from '../../../services/Api';
 import { connect, ConnectedProps } from 'react-redux';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import './index.css';
 
 import { Redirect } from 'react-router-dom';
@@ -12,19 +12,25 @@ const mapStateToProps = (state: RootState) => ({
   user: state.user,
 });
 
-const mapDispatchToProps = { login };
+const mapDispatchToProps = { loadUser, login, logout };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const UnconnectedLogin: React.FC<PropsFromRedux> = ({ login, user }) => {
+const UnconnectedLogin: React.FC<PropsFromRedux> = ({
+  loadUser,
+  login,
+  logout,
+  user,
+}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
   const onError = (error: Object) => {
+    logout();
     if ('email' in error) {
       setEmailError(error['email'][0]);
     }
@@ -37,17 +43,28 @@ const UnconnectedLogin: React.FC<PropsFromRedux> = ({ login, user }) => {
     e.preventDefault();
     setEmailError('');
     setPasswordError('');
+    loadUser();
     onLogin(email, password)
       .then((userData) => login(userData))
       .catch((error) => onError(error));
   };
 
-  if (user.authInfo.isLoggedIn === true) {
+  if (user.authInfo.isLoadingToken) {
+    return (
+      <Container id="login-spinner">
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      </Container>
+    );
+  }
+
+  if (user.authInfo.isLoggedIn) {
     return <Redirect to="/" />;
   }
 
   return (
-    <Container id="loginForm">
+    <Container id="login-form">
       <Row className="justify-content-lg-center">
         <Col lg={5}>
           <Form>

@@ -1,6 +1,7 @@
 // Constants & Shapes
 const LOGIN = 'user/LOGIN';
 const LOGOUT = 'user/LOGOUT';
+const LOADING = 'user/LOADING';
 
 interface LoginAction {
   type: typeof LOGIN;
@@ -12,7 +13,12 @@ interface LogoutAction {
   payload: null;
 }
 
-type UserActionTypes = LoginAction | LogoutAction;
+interface LoadingAction {
+  type: typeof LOADING;
+  payload: null;
+}
+
+type UserActionTypes = LoginAction | LogoutAction | LoadingAction;
 
 // Action Creators
 export const login = (user: User): UserActionTypes => {
@@ -29,26 +35,34 @@ export const logout = (): UserActionTypes => {
   };
 };
 
+export const loadUser = (): UserActionTypes => {
+  return {
+    type: LOADING,
+    payload: null,
+  };
+};
+
 // Reducer
 const initialState: UserState = {
   authInfo: {
-    isLoadingToken: true,
+    isLoadingToken: false,
     isLoggedIn: false,
   },
   user: {
-    id: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address1: '',
-    address2: '',
-    country: '',
-    postal: '',
-    city: '',
-    state: '',
+    id: -1,
+    // firstName: '',
+    // lastName: '',
+    // email: '',
+    // phone: '',
+    // address1: '',
+    // address2: '',
+    // country: '',
+    // postal: '',
+    // city: '',
+    // state: '',
+    // imageUri: '',
     token: '',
-    imageUri: '',
+    org: null,
   },
 };
 
@@ -57,6 +71,14 @@ export function userReducer(
   action: UserActionTypes,
 ): UserState {
   switch (action.type) {
+    case LOADING:
+      return {
+        ...state,
+        authInfo: {
+          isLoadingToken: true,
+          isLoggedIn: false,
+        },
+      };
     case LOGIN:
       return {
         authInfo: {
@@ -72,19 +94,20 @@ export function userReducer(
           isLoggedIn: false,
         },
         user: {
-          id: '',
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          address1: '',
-          address2: '',
-          country: '',
-          postal: '',
-          city: '',
-          state: '',
+          id: -1,
+          // firstName: '',
+          // lastName: '',
+          // email: '',
+          // phone: '',
+          // address1: '',
+          // address2: '',
+          // country: '',
+          // postal: '',
+          // city: '',
+          // state: '',
+          // imageUri: '',
           token: '',
-          imageUri: '',
+          org: null,
         },
       };
     default:
