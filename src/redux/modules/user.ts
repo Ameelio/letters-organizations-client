@@ -35,7 +35,7 @@ export const logout = (): UserActionTypes => {
   };
 };
 
-export const loadUser = (): UserActionTypes => {
+export const loadingUser = (): UserActionTypes => {
   return {
     type: LOADING,
     payload: null,

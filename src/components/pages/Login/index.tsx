@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RootState } from '../../../redux';
-import { loadUser, login, logout } from '../../../redux/modules/user';
+import { loadingUser, login, logout } from '../../../redux/modules/user';
 import { onLogin } from '../../../services/Api';
 import { connect, ConnectedProps } from 'react-redux';
 import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
@@ -12,14 +12,14 @@ const mapStateToProps = (state: RootState) => ({
   user: state.user,
 });
 
-const mapDispatchToProps = { loadUser, login, logout };
+const mapDispatchToProps = { loadingUser, login, logout };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const UnconnectedLogin: React.FC<PropsFromRedux> = ({
-  loadUser,
+  loadingUser,
   login,
   logout,
   user,
@@ -43,7 +43,7 @@ const UnconnectedLogin: React.FC<PropsFromRedux> = ({
     e.preventDefault();
     setEmailError('');
     setPasswordError('');
-    loadUser();
+    loadingUser();
     onLogin(email, password)
       .then((userData) => login(userData))
       .catch((error) => onError(error));

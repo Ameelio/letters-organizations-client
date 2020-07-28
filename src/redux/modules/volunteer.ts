@@ -7,10 +7,17 @@ import {
 // Action Constants & Shapes
 const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
 const SELECT_VOLUNTEER = 'volunteer/SET_VOLUNTEER';
+const LOADING = 'volunteer/LOADING';
+const LOADING_DETAILS = 'volunteer/LOADING_DETAILS';
 
-interface SetVolunteerAction {
+interface SetVolunteersAction {
   type: typeof SET_VOLUNTEERS;
   payload: Volunteer[];
+}
+
+interface LoadingAction {
+  type: typeof LOADING;
+  payload: null;
 }
 
 interface SelectVolunteerAction {
@@ -18,7 +25,16 @@ interface SelectVolunteerAction {
   payload: Volunteer;
 }
 
-type VolunteerActionTypes = SetVolunteerAction | SelectVolunteerAction;
+interface LoadingDetailsAction {
+  type: typeof LOADING_DETAILS;
+  payload: null;
+}
+
+type VolunteerActionTypes =
+  | SetVolunteersAction
+  | SelectVolunteerAction
+  | LoadingAction
+  | LoadingDetailsAction;
 
 // Action Creators
 const setVolunteers = (volunteers: Volunteer[]): VolunteerActionTypes => {
@@ -28,12 +44,24 @@ const setVolunteers = (volunteers: Volunteer[]): VolunteerActionTypes => {
   };
 };
 
-export const setSelectedVolunteer = (
-  volunteer: Volunteer,
-): VolunteerActionTypes => {
+const loading = (): VolunteerActionTypes => {
+  return {
+    type: LOADING,
+    payload: null,
+  };
+};
+
+const setSelectedVolunteer = (volunteer: Volunteer): VolunteerActionTypes => {
   return {
     type: SELECT_VOLUNTEER,
     payload: volunteer,
+  };
+};
+
+const loadingDetails = (): VolunteerActionTypes => {
+  return {
+    type: LOADING_DETAILS,
+    payload: null,
   };
 };
 
@@ -41,6 +69,7 @@ export const setSelectedVolunteer = (
 const initialState: VolunteerState = {
   all_volunteers: [],
   loading: false,
+  loading_details: false,
   selected_volunteer: {} as Volunteer,
 };
 
@@ -49,14 +78,26 @@ export function volunteersReducer(
   action: VolunteerActionTypes,
 ): VolunteerState {
   switch (action.type) {
+    case LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
     case SET_VOLUNTEERS:
       return {
         ...state,
         all_volunteers: action.payload,
       };
+    case LOADING_DETAILS:
+      return {
+        ...state,
+        loading_details: true,
+      };
     case SELECT_VOLUNTEER:
       return {
         ...state,
+        loading: false,
+        loading_details: false,
         selected_volunteer: action.payload,
       };
     default:
@@ -68,6 +109,7 @@ export const loadVolunteers = (
   token: string,
   org_id: number,
 ): AppThunk => async (dispatch) => {
+  dispatch(loading());
   fetchVolunteers(token, org_id)
     .then((volunteersData) => dispatch(setVolunteers(volunteersData)))
     .then((action) => {
@@ -85,6 +127,7 @@ export const selectVolunteer = (
   if (volunteer.details) {
     dispatch(setSelectedVolunteer(volunteer));
   } else {
+    dispatch(loadingDetails());
     fetchVolunteerDetails(token, volunteer)
       .then((volunteer) => dispatch(setSelectedVolunteer(volunteer)))
       .catch((error) => console.log(error));

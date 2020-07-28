@@ -14,10 +14,13 @@ import store from '../../../../src';
 import { bindActionCreators, Dispatch } from 'redux';
 import { loadVolunteers, selectVolunteer } from 'src/redux/modules/volunteer';
 import { connect, ConnectedProps } from 'react-redux';
+import { Container, Spinner } from 'react-bootstrap';
 
 const mapStateToProps = (state: RootState) => ({
   volunteers: state.volunteers.all_volunteers,
   selectedVolunteer: state.volunteers.selected_volunteer,
+  loading: state.volunteers.loading,
+  loadingDetails: state.volunteers.loading_details,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -38,6 +41,8 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   volunteers,
   selectVolunteer,
   selectedVolunteer,
+  loading,
+  loadingDetails,
 }) => {
   const [filteredVolunteers, setFilteredVolunteers] = useState<Volunteer[]>(
     volunteers,
@@ -94,9 +99,28 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     setFilteredVolunteers(results);
   }, [hasFetchedVolunteers, loadVolunteers, volunteers, searchQuery]);
 
+  const spinner = (
+    <Container id="volunteers-spinner">
+      <Spinner animation="border" role="status" variant="primary">
+        <span className="sr-only">Loading...</span>
+      </Spinner>
+    </Container>
+  );
+
+  if (loading) {
+    return spinner;
+  }
+
+  let page_id = 'content';
+  if (loadingDetails) {
+    page_id = 'faded';
+  }
+
   return (
     <div className="d-flex flex-row">
-      <section className="volunteers-list-sidebar d-flex flex-column mw-25 border-right pl-4 shadow-sm bg-white rounded vh-100">
+      <section
+        id={page_id}
+        className="volunteers-list-sidebar d-flex flex-column mw-25 border-right pl-4 shadow-sm bg-white rounded vh-100">
         <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
           <span className="black-500 p3">Volunteers</span>
           <Button onClick={handleInviteClick}>Invite</Button>
@@ -119,8 +143,18 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         ))}
       </section>
 
+      {loadingDetails && (
+        <Container id="volunteers-spinner">
+          <Spinner animation="border" role="status" variant="primary">
+            <span className="sr-only">Loading...</span>
+          </Spinner>
+        </Container>
+      )}
+
       {selectedVolunteer.details && (
-        <section className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">
+        <section
+          id={page_id}
+          className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">
           <span className="p3">Letters</span>
           <div className="d-flex flex-row">
             <div className="d-flex flex-column">
@@ -149,7 +183,9 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
       )}
 
       {selectedVolunteer.details && (
-        <section className="volunteer-sidebar d-flex flex-column mr-4 bg-white p-5 shadow-sm">
+        <section
+          id={page_id}
+          className="volunteer-sidebar d-flex flex-column mr-4 bg-white p-5 shadow-sm">
           <div className="d-flex flex-column align-items-center">
             <Image
               src={selectedVolunteer.image}
