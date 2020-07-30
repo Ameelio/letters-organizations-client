@@ -21,7 +21,7 @@ export async function fetchVolunteers(
   );
   const body = await response.json();
   if (body.status === 'ERROR') {
-    throw body['data'];
+    throw body.message;
   }
   const volunteersData: Volunteer[] = [];
   interface v {
@@ -179,4 +179,48 @@ export async function fetchVolunteerDetails(
   };
 
   return volunteer;
+}
+
+export async function addVolunteer(
+  token: string,
+  org_id: number,
+  email: string,
+): Promise<Volunteer> {
+  const requestOptions = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      org_id: org_id,
+      user_email: email,
+      role: 'member',
+    }),
+  };
+  const response = await fetch(
+    url.resolve(API_URL, 'org/user'),
+    requestOptions,
+  );
+  const body = await response.json();
+  if (body.status === 'ERROR') {
+    throw body.message;
+  }
+  const volunteerData: Volunteer = {
+    id: body.data.org_user.id,
+    user_id: body.data.org_user.user_id,
+    name: body.data.org_user.name,
+    image: body.data.org_user.image,
+    role: body.data.org_user.role,
+    total_letters_sent: body.data.org_user.total_letters_sent,
+    last_letter_sent: null,
+    details: null,
+  };
+  if (body.data.org_user.last_letter_sent) {
+    volunteerData.last_letter_sent = new Date(
+      body.data.org_user.last_letter_sent,
+    );
+  }
+  return volunteerData;
 }

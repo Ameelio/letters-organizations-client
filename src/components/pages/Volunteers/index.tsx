@@ -23,6 +23,7 @@ const mapStateToProps = (state: RootState) => ({
   loading: state.volunteers.loading,
   loadingDetails: state.volunteers.loading_details,
   user: state.user,
+  errorMessage: state.volunteers.error_message,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -45,6 +46,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   selectedVolunteer,
   loading,
   loadingDetails,
+  errorMessage,
   user,
 }) => {
   const [filteredVolunteers, setFilteredVolunteers] = useState<Volunteer[]>(
@@ -239,6 +241,8 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         shareLink="www.letters.ameelio.org"
         show={showInviteModal}
         handleClose={handleInviteClose}
+        token={token}
+        org_id={org ? org.id : null}
       />
     </div>
   );

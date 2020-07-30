@@ -6,25 +6,78 @@ import Button from 'react-bootstrap/Button';
 import { Link2 } from 'react-feather';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import './InviteModal.css';
+import { bindActionCreators, Dispatch } from 'redux';
+import { inviteVolunteer, loading } from 'src/redux/modules/volunteer';
+import { addVolunteer } from '../../../services/Api/volunteers';
+import { connect, ConnectedProps } from 'react-redux';
+import { RootState } from '../../../redux';
 
 interface InviteModalProps {
   shareLink: string;
   show: boolean;
   handleClose: () => void;
+  token: string;
+  org_id: number | null;
 }
+const mapStateToProps = (
+  state: RootState,
+  inviteModalProps: InviteModalProps,
+) => ({
+  volunteerState: state.volunteers,
+  shareLink: inviteModalProps.shareLink,
+  show: inviteModalProps.show,
+  handleClose: inviteModalProps.handleClose,
+  token: inviteModalProps.token,
+  org_id: inviteModalProps.org_id,
+});
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(
+    {
+      inviteVolunteer,
+      loading,
+    },
+    dispatch,
+  );
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
 
 // TODO: API call upon clicking, we probably need to pass the Org object here to retrieve theh share link
-const InviteModal: React.FC<InviteModalProps> = ({
+const InviteModal: React.FC<PropsFromRedux> = ({
   shareLink,
   show,
   handleClose,
+  token,
+  org_id,
+  volunteerState,
+  inviteVolunteer,
+  loading,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
+
+  const onInvite = (
+    token: string,
+    volunteer: Volunteer,
+    volunteerState: VolunteerState,
+  ) => {
+    inviteVolunteer(token, volunteer, volunteerState);
+    handleClose();
+  };
+
+  const onSendInvite = (event: React.MouseEvent) => {
+    event.preventDefault();
+    if (org_id) {
+      addVolunteer(token, org_id, searchQuery)
+        .then((volunteer) => onInvite(token, volunteer, volunteerState))
+        .catch((error) => setErrorMessage(error));
+    }
+  };
+
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -37,10 +90,16 @@ const InviteModal: React.FC<InviteModalProps> = ({
             placeholder="Add people by email"
             value={searchQuery}
             onChange={handleSearchChange}
+            isInvalid={errorMessage !== ''}
           />
+          <Form.Control.Feedback type="invalid">
+            {errorMessage}
+          </Form.Control.Feedback>
         </Form>
         <div className="d-flex flex-column">
-          <Button block>Send invitation</Button>
+          <Button block onClick={onSendInvite}>
+            Send invitation
+          </Button>
 
           <div className="d-flex flex-row mt-3">
             <Link2 />
@@ -59,4 +118,4 @@ const InviteModal: React.FC<InviteModalProps> = ({
   );
 };
 
-export default InviteModal;
+export default connector(InviteModal);
