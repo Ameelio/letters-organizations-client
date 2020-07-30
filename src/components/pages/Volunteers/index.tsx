@@ -270,13 +270,15 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         />
       )}
 
-      <InviteModal
-        shareLink="www.letters.ameelio.org"
-        show={showInviteModal}
-        handleClose={handleInviteClose}
-        token={token}
-        org_id={org ? org.id : null}
-      />
+      {org && (
+        <InviteModal
+          shareLink={org.share_link}
+          show={showInviteModal}
+          handleClose={handleInviteClose}
+          token={token}
+          org_id={org ? org.id : null}
+        />
+      )}
     </div>
   );
 };

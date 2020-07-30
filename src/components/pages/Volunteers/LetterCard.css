@@ -2,6 +2,8 @@
   max-height: 50px;
   text-overflow: ellipsis;
   overflow: hidden;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
 }
 
 .letter-card:hover {

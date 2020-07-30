@@ -9,6 +9,7 @@ interface Contact {
   facility_state: string;
   facility_postal: string;
   profile_img_path: string;
+  relationship: string;
   dorm: string | null;
   unit: string | null;
   total_letters_sent: number;

@@ -12,6 +12,8 @@ import { addVolunteer } from '../../../services/Api/volunteers';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../../../redux';
 
+const SHARE_LINK_URL = 'www.letters.ameelio.org/register/'; // TODO: Get right URL
+
 interface InviteModalProps {
   shareLink: string;
   show: boolean;
@@ -104,7 +106,9 @@ const InviteModal: React.FC<PropsFromRedux> = ({
           <div className="d-flex flex-row mt-3">
             <Link2 />
             <span className="ml-3 mr-auto">Share Team Invite Link</span>
-            <CopyToClipboard text={shareLink} onCopy={() => setCopied(true)}>
+            <CopyToClipboard
+              text={SHARE_LINK_URL + shareLink}
+              onCopy={() => setCopied(true)}>
               <span className="primary copy-share-link">Copy link</span>
             </CopyToClipboard>
           </div>

@@ -98,6 +98,7 @@ export async function fetchVolunteerDetails(
     facility_state: string;
     facility_postal: string;
     profile_img_path: string;
+    relationship: string;
     dorm: string | null;
     unit: string | null;
     total_letters_sent: number;
@@ -116,6 +117,7 @@ export async function fetchVolunteerDetails(
       facility_state: contact.facility_state,
       facility_postal: contact.facility_postal,
       profile_img_path: contact.profile_img_path,
+      relationship: contact.relationship,
       dorm: contact.dorm,
       unit: contact.unit,
       total_letters_sent: contact.total_letters_sent,

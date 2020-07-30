@@ -10,6 +10,7 @@ const dummy_contact: Contact = {
   facility_postal: '06511',
   profile_img_path:
     'https://media-exp1.licdn.com/dms/image/C4E03AQEvHsBEJbQ9dg/profile-displayphoto-shrink_400_400/0?e=1600300800&v=beta&t=Boq-ITjNDiXYumLUoZWkYepKIH9ILrUH2B8is2uszLs',
+  relationship: 'Client',
   dorm: null,
   unit: null,
   total_letters_sent: 5,
