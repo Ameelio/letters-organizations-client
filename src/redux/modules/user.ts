@@ -96,6 +96,7 @@ export function userReducer(
       sessionStorage.setItem('userState', JSON.stringify(userState));
       return userState;
     case LOGOUT:
+      sessionStorage.clear();
       return {
         authInfo: {
           isLoadingToken: false,

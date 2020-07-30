@@ -12,18 +12,23 @@ import InviteModal from './InviteModal';
 import { RootState } from '../../../redux';
 import store from '../../../../src';
 import { bindActionCreators, Dispatch } from 'redux';
-import { loadVolunteers, selectVolunteer } from 'src/redux/modules/volunteer';
+import { logout } from '../../../redux/modules/user';
+import {
+  loadVolunteers,
+  selectVolunteer,
+  loading,
+} from 'src/redux/modules/volunteer';
 import { connect, ConnectedProps } from 'react-redux';
-import { Container, Spinner } from 'react-bootstrap';
+import { Card, Container, Spinner } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
 const mapStateToProps = (state: RootState) => ({
   volunteers: state.volunteers.all_volunteers,
   selectedVolunteer: state.volunteers.selected_volunteer,
-  loading: state.volunteers.loading,
-  loadingDetails: state.volunteers.loading_details,
+  isLoading: state.volunteers.loading,
+  isLoadingDetails: state.volunteers.loading_details,
   user: state.user,
-  errorMessage: state.volunteers.error_message,
+  error: state.volunteers.error,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -31,6 +36,8 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
     {
       loadVolunteers,
       selectVolunteer,
+      loading,
+      logout,
     },
     dispatch,
   );
@@ -45,9 +52,11 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   selectVolunteer,
   selectedVolunteer,
   loading,
-  loadingDetails,
-  errorMessage,
+  isLoading,
+  isLoadingDetails,
+  error,
   user,
+  logout,
 }) => {
   const [filteredVolunteers, setFilteredVolunteers] = useState<Volunteer[]>(
     volunteers,
@@ -97,7 +106,6 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
       loadVolunteers(token, org.id);
       setHasFetchedVolunteers(true);
     }
-
     const results = volunteers.filter((volunteer) =>
       volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
@@ -108,6 +116,23 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     return <Redirect to="/login" />;
   }
 
+  if (error.message === 'Expired Token') {
+    loading();
+    logout();
+  }
+  let problemLoadingDetails = null;
+  if (error.data) {
+    if ('org_users' in error.data) {
+      loading();
+      logout();
+    }
+    if ('org_user' in error.data) {
+      if (error.message === 'Associated User not found') {
+        problemLoadingDetails = error.data['org_user'];
+      }
+    }
+  }
+
   const spinner = (
     <Container id="volunteers-spinner">
       <Spinner animation="border" role="status" variant="primary">
@@ -116,12 +141,12 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     </Container>
   );
 
-  if (loading) {
+  if (isLoading) {
     return spinner;
   }
 
   let page_id = 'content';
-  if (loadingDetails) {
+  if (isLoadingDetails) {
     page_id = 'faded';
   }
 
@@ -152,11 +177,20 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         ))}
       </section>
 
-      {loadingDetails && (
+      {isLoadingDetails && (
         <Container id="volunteers-spinner">
           <Spinner animation="border" role="status" variant="primary">
             <span className="sr-only">Loading...</span>
           </Spinner>
+        </Container>
+      )}
+
+      {problemLoadingDetails && (
+        <Container id="problem-loading-info">
+          <Card body>
+            There was a problem loading this volunteer's information.{' '}
+            {problemLoadingDetails}
+          </Card>
         </Container>
       )}
 
@@ -178,7 +212,6 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
                   />
                 ))}
             </div>
-
             <div className="d-flex flex-column ml-5 letter-category">
               <span className="black-400 p4">Delivered</span>
               {selectedVolunteer.details.letters

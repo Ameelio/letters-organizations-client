@@ -2,7 +2,6 @@ import { AppThunk } from 'src/redux/helpers';
 import {
   fetchVolunteerDetails,
   fetchVolunteers,
-  addVolunteer,
 } from '../../services/Api/volunteers';
 
 // Action Constants & Shapes
@@ -24,7 +23,7 @@ interface LoadingAction {
 
 interface ErrorAction {
   type: typeof ERROR;
-  payload: string;
+  payload: ErrorResponse;
 }
 
 interface SelectVolunteerAction {
@@ -59,10 +58,10 @@ export const loading = (): VolunteerActionTypes => {
   };
 };
 
-const showError = (message: string): VolunteerActionTypes => {
+const handleError = (error: ErrorResponse): VolunteerActionTypes => {
   return {
     type: ERROR,
-    payload: message,
+    payload: error,
   };
 };
 
@@ -84,7 +83,7 @@ const loadingDetails = (): VolunteerActionTypes => {
 const initialState: VolunteerState = {
   all_volunteers: [],
   loading: false,
-  error_message: '',
+  error: {} as ErrorResponse,
   loading_details: false,
   selected_volunteer: {} as Volunteer,
 };
@@ -97,14 +96,20 @@ export function volunteersReducer(
     case LOADING:
       return {
         ...state,
-        error_message: '',
+        error: {
+          date: null,
+          status: '',
+          message: '',
+          data: null,
+        },
         loading: true,
       };
     case ERROR:
       return {
         ...state,
         loading: false,
-        error_message: action.payload,
+        loading_details: false,
+        error: action.payload,
       };
     case SET_VOLUNTEERS:
       return {
@@ -114,6 +119,12 @@ export function volunteersReducer(
     case LOADING_DETAILS:
       return {
         ...state,
+        error: {
+          date: null,
+          status: '',
+          message: '',
+          data: null,
+        },
         loading_details: true,
       };
     case SELECT_VOLUNTEER:
@@ -140,7 +151,7 @@ export const loadVolunteers = (
         dispatch(selectVolunteer(token, action.payload[0]));
       }
     })
-    .catch((error) => console.log(error));
+    .catch((error) => dispatch(handleError(error)));
 };
 
 export const selectVolunteer = (
@@ -153,7 +164,7 @@ export const selectVolunteer = (
     dispatch(loadingDetails());
     fetchVolunteerDetails(token, volunteer)
       .then((volunteer) => dispatch(setSelectedVolunteer(volunteer)))
-      .catch((error) => console.log(error));
+      .catch((error) => dispatch(handleError(error)));
   }
 };
 

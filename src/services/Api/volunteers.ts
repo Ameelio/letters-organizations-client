@@ -21,7 +21,7 @@ export async function fetchVolunteers(
   );
   const body = await response.json();
   if (body.status === 'ERROR') {
-    throw body.message;
+    throw body;
   }
   const volunteersData: Volunteer[] = [];
   interface v {
@@ -71,7 +71,7 @@ export async function fetchVolunteerDetails(
   );
   const body = await response.json();
   if (body.status === 'ERROR') {
-    throw body['data'];
+    throw body;
   }
 
   const email = body.data.user.email;
@@ -84,6 +84,9 @@ export async function fetchVolunteerDetails(
     requestOptions,
   );
   const contactsBody = await contactsResponse.json();
+  if (contactsBody.status === 'ERROR') {
+    throw contactsBody.message;
+  }
   interface c {
     first_name: string;
     middle_name: string | null;
@@ -129,6 +132,9 @@ export async function fetchVolunteerDetails(
     requestOptions,
   );
   const lettersBody = await lettersResponse.json();
+  if (lettersBody.status === 'ERROR') {
+    throw lettersBody.message;
+  }
   interface image {
     id: number;
     letter_id: number;
@@ -205,7 +211,7 @@ export async function addVolunteer(
   );
   const body = await response.json();
   if (body.status === 'ERROR') {
-    throw body.message;
+    throw body;
   }
   const volunteerData: Volunteer = {
     id: body.data.org_user.id,

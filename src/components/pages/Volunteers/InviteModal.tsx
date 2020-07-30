@@ -74,7 +74,7 @@ const InviteModal: React.FC<PropsFromRedux> = ({
     if (org_id) {
       addVolunteer(token, org_id, searchQuery)
         .then((volunteer) => onInvite(token, volunteer, volunteerState))
-        .catch((error) => setErrorMessage(error));
+        .catch((error) => setErrorMessage(error.message));
     }
   };
 

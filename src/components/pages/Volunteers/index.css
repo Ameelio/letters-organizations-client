@@ -19,6 +19,11 @@
   z-index: 100;
 }
 
+#problem-loading-info {
+  position: relative;
+  margin-top: 5vh;
+}
+
 #faded {
   opacity: 50%;
 }
