@@ -5,17 +5,25 @@ import { Link } from 'react-router-dom';
 import './Navbar.css';
 import { ReactComponent as Logo } from 'src/assets/logo.svg';
 import { connect, ConnectedProps } from 'react-redux';
+import { logout } from '../../redux/modules/user';
 
 interface NavBarProps {}
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
 });
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  logout,
+};
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const NavBar: React.FC<PropsFromRedux> = ({ user }) => {
+const NavBar: React.FC<PropsFromRedux> = ({ user, logout }) => {
+  const onLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    logout();
+  };
+
   if (user.authInfo.isLoggedIn) {
     return (
       <Navbar
@@ -40,6 +48,9 @@ const NavBar: React.FC<PropsFromRedux> = ({ user }) => {
             </Nav.Link>
             <Nav.Link as={Link} to="/newsletter">
               Newsletter
+            </Nav.Link>
+            <Nav.Link as={Link} to="/login" onClick={onLogout}>
+              Log Out
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
