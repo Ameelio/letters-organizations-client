@@ -12,7 +12,7 @@ import { addVolunteer } from '../../../services/Api/volunteers';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../../../redux';
 
-const SHARE_LINK_URL = 'www.letters.ameelio.org/register/'; // TODO: Get right URL
+const SHARE_LINK_URL = 'letters.ameelio.org/register/';
 
 interface InviteModalProps {
   shareLink: string;

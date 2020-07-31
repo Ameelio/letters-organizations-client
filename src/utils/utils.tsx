@@ -1,5 +1,6 @@
-export const formatDate = (date: Date) =>
-  `${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
+export const formatDate = (date: Date) => {
+  return `${date.getMonth() + 1}/${date.getDate()}`;
+};
 
 function hashCode(str: string): number {
   var hash = 0;
