@@ -14,4 +14,5 @@ interface Contact {
   unit: string | null;
   total_letters_sent: number;
   last_letter_sent: Date | null;
+  org_id: number | null;
 }

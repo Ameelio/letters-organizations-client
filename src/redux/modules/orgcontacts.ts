@@ -1,5 +1,6 @@
 import { AppThunk } from 'src/redux/helpers';
-import { sampleOrgContacts } from 'src/data/sampleOrgContacts';
+// import { sampleOrgContacts } from 'src/data/sampleOrgContacts';
+import { fetchContacts } from 'src/services/Api/contacts';
 
 const SET_ORG_CONTACTS = 'orgContacts/SET_ORG_CONTACTS';
 const ADD_FILTER = 'orgContacts/ADD_FILTER';
@@ -11,6 +12,8 @@ const UPDATE_CSV_ROWS = 'orgContacts/UPDATE_CSV_ROWS';
 const ADD_UPLOAD_TAG = 'orgContacts/UPDATE_UPLOAD_TAGS';
 const REMOVE_UPLOAD_TAG = 'orgContacts/REMOVE_UPLOAD_TAG';
 const ADD_ORG_CONTACTS = 'orgContacts/ADD_ORG_CONTACTS';
+const LOADING = 'orgContacts/LOADING';
+const ERROR = 'orgContacts/ERROR';
 
 interface SetOrgContactsAction {
   type: typeof SET_ORG_CONTACTS;
@@ -61,6 +64,16 @@ interface AddOrgContactsAction {
   payload: OrgContact[];
 }
 
+interface LoadingAction {
+  type: typeof LOADING;
+  payload: null;
+}
+
+interface ErrorAction {
+  type: typeof ERROR;
+  payload: ErrorResponse;
+}
+
 type OrgContactsActionTypes =
   | SetOrgContactsAction
   | AddOrgContactsAction
@@ -71,7 +84,9 @@ type OrgContactsActionTypes =
   | UpdateUploadStepAction
   | UpdateCsvRowsAction
   | AddUploadTagAction
-  | RemoveUploadTagAction;
+  | RemoveUploadTagAction
+  | LoadingAction
+  | ErrorAction;
 
 export const setOrgContacts = (
   contacts: OrgContact[],
@@ -146,12 +161,28 @@ export const removeUploadTag = (tag: Tag): OrgContactsActionTypes => {
   };
 };
 
+export const loading = (): OrgContactsActionTypes => {
+  return {
+    type: LOADING,
+    payload: null,
+  };
+};
+
+export const handleError = (error: ErrorResponse): OrgContactsActionTypes => {
+  return {
+    type: ERROR,
+    payload: error,
+  };
+};
+
 const initialState: OrgContactsState = {
   contacts: [],
   selectedFilters: [],
   uploadedCsv: { file: null, data: [[]], header: [] },
   uploadStep: 0,
   uploadSelectedTags: [],
+  loading: false,
+  error: {} as ErrorResponse,
 };
 
 export function orgContactsReducer(
@@ -160,13 +191,18 @@ export function orgContactsReducer(
 ): OrgContactsState {
   switch (action.type) {
     case SET_ORG_CONTACTS:
-      return { ...state, contacts: action.payload };
+      return { ...state, contacts: action.payload, loading: false };
     case ADD_ORG_CONTACTS:
-      return { ...state, contacts: [...action.payload, ...state.contacts] };
+      return {
+        ...state,
+        contacts: [...action.payload, ...state.contacts],
+        loading: false,
+      };
     case ADD_FILTER:
       return {
         ...state,
         selectedFilters: [...state.selectedFilters, action.payload],
+        loading: false,
       };
     case REMOVE_FILTER:
       return {
@@ -174,32 +210,38 @@ export function orgContactsReducer(
         selectedFilters: state.selectedFilters.filter(
           (selectedFilter) => selectedFilter.id !== action.payload.id,
         ),
+        loading: false,
       };
     case UPLOAD_CSV:
       return {
         ...state,
         uploadedCsv: { ...state.uploadedCsv, file: action.payload },
+        loading: false,
       };
     case REMOVE_CSV:
       return {
         ...state,
         uploadedCsv: { file: null, data: [[]], header: [] },
+        loading: false,
       };
     case UPDATE_FILE_UPLOAD_STEP:
       return {
         ...state,
         uploadStep: action.payload,
+        loading: false,
       };
     case UPDATE_CSV_ROWS:
       const [header, ...data] = action.payload;
       return {
         ...state,
         uploadedCsv: { ...state.uploadedCsv, data: data, header: header },
+        loading: false,
       };
     case ADD_UPLOAD_TAG:
       return {
         ...state,
         uploadSelectedTags: [...state.uploadSelectedTags, action.payload],
+        loading: false,
       };
     case REMOVE_UPLOAD_TAG:
       return {
@@ -207,14 +249,38 @@ export function orgContactsReducer(
         uploadSelectedTags: state.uploadSelectedTags.filter(
           (selectedTag) => selectedTag.id !== action.payload.id,
         ),
+        loading: false,
+      };
+    case LOADING:
+      return {
+        ...state,
+        error: {
+          date: null,
+          status: '',
+          message: '',
+          data: null,
+        },
+        loading: true,
+      };
+    case ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
       };
     default:
       return state;
   }
 }
 
-export const loadOrgContacts = (): AppThunk => async (dispatch) => {
-  dispatch(setOrgContacts(sampleOrgContacts));
+export const loadOrgContacts = (
+  token: string,
+  org_id: number,
+): AppThunk => async (dispatch) => {
+  dispatch(loading());
+  fetchContacts(token, org_id)
+    .then((contactsData) => dispatch(setOrgContacts(contactsData)))
+    .catch((error) => handleError(error));
 };
 
 // TOO: make actual API calls

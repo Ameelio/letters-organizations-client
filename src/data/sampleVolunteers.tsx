@@ -15,6 +15,7 @@ const dummy_contact: Contact = {
   unit: null,
   total_letters_sent: 5,
   last_letter_sent: new Date('2020-07-21T01:18:22.000000Z'),
+  org_id: null,
 };
 
 const dummy_letter: Letter = {

@@ -7,6 +7,7 @@ import {
   loadOrgContacts,
   addFilter,
   removeFilter,
+  loading,
 } from 'src/redux/modules/orgcontacts';
 import { loadTags } from 'src/redux/modules/tag';
 
@@ -16,17 +17,19 @@ import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import Tag from 'src/components/tags/Tag';
 import './index.css';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { Container, Spinner } from 'react-bootstrap';
 
 const mapStateToProps = (state: RootState) => ({
+  user: state.user,
   tags: state.tags.tags,
-  orgContacts: state.orgContacts.contacts,
+  orgContacts: state.orgContacts,
   filters: state.orgContacts.selectedFilters,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
-    { loadOrgContacts, addFilter, removeFilter, loadTags },
+    { loadOrgContacts, addFilter, removeFilter, loadTags, loading },
     dispatch,
   );
 
@@ -34,6 +37,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const UnconnectedContacts: React.FC<PropsFromRedux> = ({
+  loading,
   loadTags,
   tags,
   orgContacts,
@@ -41,6 +45,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   loadOrgContacts,
   addFilter,
   removeFilter,
+  user,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filteredOrgContact, setFilteredOrgContacts] = useState<OrgContact[]>(
@@ -48,14 +53,17 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   );
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
+  const token = user.user.token;
+  const org = user.user.org;
+
   useEffect(() => {
-    if (!hasFetchedData && orgContacts.length === 0) {
-      loadOrgContacts();
+    if (!hasFetchedData && orgContacts.contacts.length === 0 && org) {
+      loadOrgContacts(token, org.id);
       loadTags();
       setHasFetchedData(true);
     }
 
-    let results = orgContacts.filter((contact) =>
+    let results = orgContacts.contacts.filter((contact) =>
       `${contact.first_name} ${contact.last_name}`
         .toLowerCase()
         .includes(searchQuery.toLowerCase()),
@@ -81,9 +89,32 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     setSearchQuery(event.target.value);
   };
 
+  if (
+    !user.authInfo.isLoggedIn ||
+    orgContacts.error.message === 'Expired Token'
+  ) {
+    loading();
+    return <Redirect to="/login" />;
+  }
+
+  const spinner = (
+    <Container id="contacts-spinner">
+      <Spinner animation="border" role="status" variant="primary">
+        <span className="sr-only">Loading...</span>
+      </Spinner>
+    </Container>
+  );
+
+  let page_id = 'content';
+  if (orgContacts.loading) {
+    page_id = 'faded';
+  }
+
   return (
     <div className="d-flex flex-row">
-      <section className="d-flex flex-column w-25 shadow-sm vh-100 bg-white align-items-center">
+      <section
+        id={page_id}
+        className="d-flex flex-column w-25 shadow-sm vh-100 bg-white align-items-center">
         <div className="d-flex flex-column my-5 mx-3 justify-content-center">
           <Form className="mr-3 mb-3 ">
             <FormControl
@@ -104,7 +135,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
         </div>
       </section>
 
-      <section className="d-flex flex-column m-5 w-100">
+      <section id={page_id} className="d-flex flex-column m-5 w-100">
         <div className="d-flex flex-row justify-content-between">
           <span className="p2 mb-3">Contacts</span>
           <div>
@@ -115,6 +146,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             {/* <Button variant="outline-secondary">Export as CSV</Button> */}
           </div>
         </div>
+
+        {orgContacts.loading && spinner}
 
         <div className="vh-100 w-100 shadow-sm p-5 bg-white overflow-auto">
           <Table responsive hover>

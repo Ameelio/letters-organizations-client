@@ -1,8 +1,6 @@
 import url from 'url';
 import { API_URL } from './base';
 
-// TODO: Handle pagination!!! (unclear what this should look like on the frontend)
-
 export async function fetchVolunteers(
   token: string,
   org_id: number,
@@ -103,30 +101,34 @@ export async function fetchVolunteerDetails(
     unit: string | null;
     total_letters_sent: number;
     last_letter_sent: string | null;
+    org_id: number | null;
   }
   const contactsData: Contact[] = [];
   contactsBody.data.data.forEach((contact: c) => {
-    const contactData: Contact = {
-      first_name: contact.first_name,
-      middle_name: contact.middle_name,
-      last_name: contact.last_name,
-      inmate_number: contact.inmate_number,
-      facility_name: contact.facility_name,
-      facility_address: contact.facility_address,
-      facility_city: contact.facility_city,
-      facility_state: contact.facility_state,
-      facility_postal: contact.facility_postal,
-      profile_img_path: contact.profile_img_path,
-      relationship: contact.relationship,
-      dorm: contact.dorm,
-      unit: contact.unit,
-      total_letters_sent: contact.total_letters_sent,
-      last_letter_sent: null,
-    };
-    if (contact.last_letter_sent) {
-      contactData.last_letter_sent = new Date(contact.last_letter_sent);
+    if (contact.org_id === null) {
+      const contactData: Contact = {
+        first_name: contact.first_name,
+        middle_name: contact.middle_name,
+        last_name: contact.last_name,
+        inmate_number: contact.inmate_number,
+        facility_name: contact.facility_name,
+        facility_address: contact.facility_address,
+        facility_city: contact.facility_city,
+        facility_state: contact.facility_state,
+        facility_postal: contact.facility_postal,
+        profile_img_path: contact.profile_img_path,
+        relationship: contact.relationship,
+        dorm: contact.dorm,
+        unit: contact.unit,
+        total_letters_sent: contact.total_letters_sent,
+        last_letter_sent: null,
+        org_id: contact.org_id,
+      };
+      if (contact.last_letter_sent) {
+        contactData.last_letter_sent = new Date(contact.last_letter_sent);
+      }
+      contactsData.push(contactData);
     }
-    contactsData.push(contactData);
   });
 
   const lettersResponse = await fetch(

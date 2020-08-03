@@ -19,7 +19,7 @@ interface InviteModalProps {
   show: boolean;
   handleClose: () => void;
   token: string;
-  org_id: number | null;
+  orgId: number | null;
 }
 const mapStateToProps = (
   state: RootState,
@@ -30,7 +30,7 @@ const mapStateToProps = (
   show: inviteModalProps.show,
   handleClose: inviteModalProps.handleClose,
   token: inviteModalProps.token,
-  org_id: inviteModalProps.org_id,
+  orgId: inviteModalProps.orgId,
 });
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
@@ -49,7 +49,7 @@ const InviteModal: React.FC<PropsFromRedux> = ({
   show,
   handleClose,
   token,
-  org_id,
+  orgId,
   volunteerState,
   inviteVolunteer,
   loading,
@@ -73,8 +73,8 @@ const InviteModal: React.FC<PropsFromRedux> = ({
 
   const onSendInvite = (event: React.MouseEvent) => {
     event.preventDefault();
-    if (org_id) {
-      addVolunteer(token, org_id, searchQuery)
+    if (orgId) {
+      addVolunteer(token, orgId, searchQuery)
         .then((volunteer) => onInvite(token, volunteer, volunteerState))
         .catch((error) => setErrorMessage(error.message));
     }

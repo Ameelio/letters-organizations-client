@@ -10,25 +10,21 @@ import './index.css';
 import LetterModal from './LetterModal';
 import InviteModal from './InviteModal';
 import { RootState } from '../../../redux';
-import store from '../../../../src';
 import { bindActionCreators, Dispatch } from 'redux';
 import { logout } from '../../../redux/modules/user';
 import {
   loadVolunteers,
   selectVolunteer,
   loading,
+  inviteVolunteer,
 } from 'src/redux/modules/volunteer';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, Container, Spinner } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
 const mapStateToProps = (state: RootState) => ({
-  volunteers: state.volunteers.all_volunteers,
-  selectedVolunteer: state.volunteers.selected_volunteer,
-  isLoading: state.volunteers.loading,
-  isLoadingDetails: state.volunteers.loading_details,
+  volunteers: state.volunteers,
   user: state.user,
-  error: state.volunteers.error,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -38,6 +34,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       selectVolunteer,
       loading,
       logout,
+      inviteVolunteer,
     },
     dispatch,
   );
@@ -50,20 +47,16 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   loadVolunteers,
   volunteers,
   selectVolunteer,
-  selectedVolunteer,
   loading,
-  isLoading,
-  isLoadingDetails,
-  error,
   user,
   logout,
 }) => {
   const [filteredVolunteers, setFilteredVolunteers] = useState<Volunteer[]>(
-    volunteers,
+    volunteers.all_volunteers,
   );
 
-  const token = store.getState().user.user.token;
-  const org = store.getState().user.user.org;
+  const token = user.user.token;
+  const org = user.user.org;
 
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -102,33 +95,43 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (volunteers.length === 0 && org) {
+    if (
+      !hasFetchedVolunteers &&
+      volunteers.all_volunteers.length === 0 &&
+      org
+    ) {
       loadVolunteers(token, org.id);
       setHasFetchedVolunteers(true);
     }
-    const results = volunteers.filter((volunteer) =>
+    const results = volunteers.all_volunteers.filter((volunteer) =>
       volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredVolunteers(results);
-  }, [hasFetchedVolunteers, loadVolunteers, volunteers, searchQuery]);
+  }, [
+    hasFetchedVolunteers,
+    loadVolunteers,
+    volunteers.all_volunteers,
+    searchQuery,
+  ]);
 
   if (!user.authInfo.isLoggedIn) {
+    loading();
     return <Redirect to="/login" />;
   }
 
-  if (error.message === 'Expired Token') {
+  if (volunteers.error.message === 'Expired Token') {
     loading();
     logout();
   }
   let problemLoadingDetails = null;
-  if (error.data) {
-    if ('org_users' in error.data) {
+  if (volunteers.error.data) {
+    if ('org_users' in volunteers.error.data) {
       loading();
       logout();
     }
-    if ('org_user' in error.data) {
-      if (error.message === 'Associated User not found') {
-        problemLoadingDetails = error.data['org_user'];
+    if ('org_user' in volunteers.error.data) {
+      if (volunteers.error.message === 'Associated User not found') {
+        problemLoadingDetails = volunteers.error.data['org_user'];
       }
     }
   }
@@ -141,12 +144,12 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     </Container>
   );
 
-  if (isLoading) {
+  if (volunteers.loading) {
     return spinner;
   }
 
   let page_id = 'content';
-  if (isLoadingDetails) {
+  if (volunteers.loading_details) {
     page_id = 'faded';
   }
 
@@ -172,18 +175,12 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
             handleClick={(e) => handleVolunteerClick(e, volunteer)}
             volunteer={volunteer}
             key={volunteer.name}
-            isActive={volunteer.id === selectedVolunteer.id}
+            isActive={volunteer.id === volunteers.selected_volunteer.id}
           />
         ))}
       </section>
 
-      {isLoadingDetails && (
-        <Container id="volunteers-spinner">
-          <Spinner animation="border" role="status" variant="primary">
-            <span className="sr-only">Loading...</span>
-          </Spinner>
-        </Container>
-      )}
+      {volunteers.loading_details && spinner}
 
       {problemLoadingDetails && (
         <Container id="problem-loading-info">
@@ -194,7 +191,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         </Container>
       )}
 
-      {selectedVolunteer.details && (
+      {volunteers.selected_volunteer.details && (
         <section
           id={page_id}
           className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">
@@ -202,7 +199,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
           <div className="d-flex flex-row">
             <div className="d-flex flex-column letter-category">
               <span className="black-400 p4">In transit</span>
-              {selectedVolunteer.details.letters
+              {volunteers.selected_volunteer.details.letters
                 .filter((letter) => letter.lob_status === 'letter.in_transit')
                 .map((letter) => (
                   <LetterCard
@@ -214,7 +211,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
             </div>
             <div className="d-flex flex-column ml-5 letter-category">
               <span className="black-400 p4">Delivered</span>
-              {selectedVolunteer.details.letters
+              {volunteers.selected_volunteer.details.letters
                 .filter(
                   (letter) =>
                     letter.lob_status === 'letter.processed_for_delivery',
@@ -231,33 +228,37 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         </section>
       )}
 
-      {selectedVolunteer.details && (
+      {volunteers.selected_volunteer.details && (
         <section
           id={page_id}
           className="volunteer-sidebar d-flex flex-column mr-4 bg-white p-5 shadow-sm">
           <div className="d-flex flex-column align-items-center">
             <Image
-              src={selectedVolunteer.image}
+              src={volunteers.selected_volunteer.image}
               className="large-image"
               roundedCircle
             />
             <span className="black-500 font-weight-bold p3">
-              {selectedVolunteer.name}
+              {volunteers.selected_volunteer.name}
             </span>
-            <span className="black-400">{selectedVolunteer.details.email}</span>
             <span className="black-400">
-              {selectedVolunteer.details.city},{' '}
-              {selectedVolunteer.details.state}
+              {volunteers.selected_volunteer.details.email}
+            </span>
+            <span className="black-400">
+              {volunteers.selected_volunteer.details.city},{' '}
+              {volunteers.selected_volunteer.details.state}
             </span>
           </div>
           <hr />
           <div className="d-flex flex-column">
             <span className="black-500 font-weight-bold">
-              Contacts ({selectedVolunteer.details.contacts.length})
+              Contacts ({volunteers.selected_volunteer.details.contacts.length})
             </span>
-            {selectedVolunteer.details.contacts.map((contact, index) => (
-              <ContactCard key={index} contact={contact} />
-            ))}
+            {volunteers.selected_volunteer.details.contacts.map(
+              (contact, index) => (
+                <ContactCard key={index} contact={contact} />
+              ),
+            )}
           </div>
         </section>
       )}
@@ -276,7 +277,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
           show={showInviteModal}
           handleClose={handleInviteClose}
           token={token}
-          org_id={org ? org.id : null}
+          orgId={org ? org.id : null}
         />
       )}
     </div>
