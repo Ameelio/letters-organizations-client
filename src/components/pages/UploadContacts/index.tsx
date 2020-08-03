@@ -31,6 +31,7 @@ const mapStateToProps = (state: RootState) => ({
   uploadStep: state.orgContacts.uploadStep,
   tags: state.tags.tags,
   selectedTags: state.orgContacts.uploadSelectedTags,
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -65,6 +66,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   removeUploadTag,
   selectedTags,
   createContacts,
+  user,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
     initialContactFieldMap,
@@ -86,9 +88,12 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     updateCsvUploadStep(uploadStep + 1);
   };
 
+  const token = user.user.token;
+  const org = user.user.org;
+
   useEffect(() => {
-    if (!hasFetchedData) {
-      loadTags();
+    if (!hasFetchedData && org) {
+      loadTags(token, org.id);
       setHasFetchedData(true);
     }
   }, [hasFetchedData, loadTags]);

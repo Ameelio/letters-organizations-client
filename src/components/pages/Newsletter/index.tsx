@@ -25,6 +25,7 @@ const mapStateToProps = (state: RootState) => ({
   uploadStep: state.newsletters.uploadStep,
   tags: state.tags.tags,
   uploadSelectedTags: state.newsletters.uploadSelectedTags,
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -58,6 +59,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   addAllUploadTags,
   removeAllUploadTags,
   sendNewsletter,
+  user,
 }) => {
   const [name, setName] = useState<string>('');
   const [newsletter, setNewsletter] = useState<DraftNewsletter>(
@@ -70,9 +72,12 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   const handleModalClose = () => setShowModal(false);
   const handleModalShow = () => setShowModal(true);
 
+  const token = user.user.token;
+  const org = user.user.org;
+
   useEffect(() => {
-    if (!hasFetchedTags) {
-      loadTags();
+    if (!hasFetchedTags && org) {
+      loadTags(token, org.id);
       setHasFetchedTags(true);
     }
     if (uploadStep === 2 && uploadedFile) {

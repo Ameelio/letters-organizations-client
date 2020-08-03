@@ -1,10 +1,12 @@
 import { AppThunk } from 'src/redux/helpers';
 import { sampleTags } from 'src/data/sampleTags';
+import { fetchTags } from 'src/services/Api/tags';
 import { addUploadTag } from './orgcontacts';
 
 // Constants & Shapes
 const SET_TAGS = 'tag/GET_TAGS';
 const ADD_TAG = 'tag/ADD_TAG';
+const LOADING = 'tag/LOADING';
 
 interface SetTagAction {
   type: typeof SET_TAGS;
@@ -16,7 +18,12 @@ interface AddTagAction {
   payload: Tag;
 }
 
-type TagActionTypes = SetTagAction | AddTagAction;
+interface LoadingAction {
+  type: typeof LOADING;
+  payload: null;
+}
+
+type TagActionTypes = SetTagAction | AddTagAction | LoadingAction;
 
 // Action Creators
 
@@ -34,8 +41,15 @@ const addTag = (tag: Tag): TagActionTypes => {
   };
 };
 
+export const loading = (): TagActionTypes => {
+  return {
+    type: LOADING,
+    payload: null,
+  };
+};
+
 // Reducer
-const initialState: TagState = { tags: [] };
+const initialState: TagState = { tags: [], loading: false };
 
 export function tagsReducer(
   state = initialState,
@@ -43,17 +57,23 @@ export function tagsReducer(
 ): TagState {
   switch (action.type) {
     case SET_TAGS:
-      return { ...state, tags: action.payload };
+      return { tags: action.payload, loading: false };
     case ADD_TAG:
-      return { ...state, tags: [...state.tags, action.payload] };
+      return { tags: [...state.tags, action.payload], loading: false };
+    case LOADING:
+      return { ...state, loading: true };
     default:
       return state;
   }
 }
 
-export const loadTags = (): AppThunk => async (dispatch) => {
-  //TODO: adds API call
-  dispatch(setTags(sampleTags));
+export const loadTags = (token: string, org_id: number): AppThunk => async (
+  dispatch,
+) => {
+  dispatch(loading());
+  fetchTags(token, org_id)
+    .then((tagData) => dispatch(setTags(tagData)))
+    .catch((error) => console.log(error));
 };
 
 export const createTag = (label: string): AppThunk => async (dispatch) => {

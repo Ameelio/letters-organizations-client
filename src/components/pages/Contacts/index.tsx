@@ -22,7 +22,7 @@ import { Container, Spinner } from 'react-bootstrap';
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
-  tags: state.tags.tags,
+  tags: state.tags,
   orgContacts: state.orgContacts,
   filters: state.orgContacts.selectedFilters,
 });
@@ -59,7 +59,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   useEffect(() => {
     if (!hasFetchedData && orgContacts.contacts.length === 0 && org) {
       loadOrgContacts(token, org.id);
-      loadTags();
+      loadTags(token, org.id);
       setHasFetchedData(true);
     }
 
@@ -71,7 +71,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 
     if (filters.length > 0) {
       results = results.filter((contact) =>
-        contact.tags.some((tag) => filters.includes(tag)),
+        contact.tags.some((tag) => filters.some((t) => t.id === tag.id)),
       );
     }
     setFilteredOrgContacts(results);
@@ -106,7 +106,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   );
 
   let page_id = 'content';
-  if (orgContacts.loading) {
+  if (orgContacts.loading || tags.loading) {
     page_id = 'faded';
   }
 
@@ -126,7 +126,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           </Form>
           <span className="black-500 mt-3">Filter by</span>
           <TagSelector
-            tags={tags}
+            tags={tags.tags}
             selectedTags={filters}
             addTag={addFilter}
             removeTag={removeFilter}
