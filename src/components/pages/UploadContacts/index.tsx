@@ -228,7 +228,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 cta="Create contacts"
                 onNext={handleSubmission}
                 onBack={handleBackClick}
-                enabled={uploadedCsv !== null}
+                enabled={selectedTags.length > 0 && uploadedCsv !== null}
               />
             </div>
           )}
