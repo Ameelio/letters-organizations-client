@@ -70,9 +70,15 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     );
 
     if (filters.length > 0) {
-      results = results.filter((contact) =>
-        contact.tags.some((tag) => filters.some((t) => t.id === tag.id)),
-      );
+      results = results.filter((contact) => {
+        let passes: boolean = true;
+        filters.forEach((t) => {
+          if (!contact.tags.some((tag) => tag.id === t.id)) {
+            passes = false;
+          }
+        });
+        return passes;
+      });
     }
     setFilteredOrgContacts(results);
   }, [
@@ -131,6 +137,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             addTag={addFilter}
             removeTag={removeFilter}
             showTotalCount={false}
+            token={token}
+            orgId={org ? org.id : null}
           />
         </div>
       </section>
@@ -165,7 +173,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             <tbody>
               {filteredOrgContact.map((contact, index) => (
                 <tr key={index}>
-                  <td>{contact.first_name}</td>
+                  <td>{index + 1}</td>
                   <td>{contact.first_name}</td>
                   <td>{contact.last_name}</td>
                   <td>{contact.inmate_number}</td>

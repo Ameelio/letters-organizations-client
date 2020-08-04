@@ -9,7 +9,9 @@ interface TagSelector {
   removeTag: (tag: Tag) => void;
   showTotalCount?: boolean;
   showInputField?: boolean;
-  createTag?: (label: string) => void;
+  addNewTag?: (token: string, org_id: number, label: string) => void;
+  token: string;
+  orgId: number | null;
 }
 
 const TagSelector: React.FC<TagSelector> = ({
@@ -19,7 +21,9 @@ const TagSelector: React.FC<TagSelector> = ({
   removeTag,
   showTotalCount,
   showInputField,
-  createTag,
+  addNewTag,
+  token,
+  orgId,
 }) => {
   const [availableTags, setAvailableTags] = useState<Tag[]>(tags);
   const [inputField, setInputField] = useState<HTMLInputElement | null>();
@@ -55,7 +59,7 @@ const TagSelector: React.FC<TagSelector> = ({
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     label: string,
   ) => {
-    if (createTag) createTag(label);
+    if (addNewTag && orgId) addNewTag(token, orgId, label);
     setQuery('');
   };
 
@@ -107,7 +111,7 @@ const TagSelector: React.FC<TagSelector> = ({
             <Tag label={tag.label} count={tag.numContacts} />
           </div>
         ))}
-        {createTag && query !== '' && (
+        {addNewTag && query !== '' && (
           <div
             className="tag-row p-2 w-100"
             onClick={(e) => handleTagCreation(e, query)}>

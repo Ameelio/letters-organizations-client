@@ -1,7 +1,7 @@
 import { AppThunk } from 'src/redux/helpers';
 import { sampleTags } from 'src/data/sampleTags';
-import { fetchTags } from 'src/services/Api/tags';
-import { addUploadTag } from './orgcontacts';
+import { fetchTags, createTag } from 'src/services/Api/tags';
+import { addUploadTag, handleError } from './orgcontacts';
 
 // Constants & Shapes
 const SET_TAGS = 'tag/GET_TAGS';
@@ -72,13 +72,21 @@ export const loadTags = (token: string, org_id: number): AppThunk => async (
 ) => {
   dispatch(loading());
   fetchTags(token, org_id)
-    .then((tagData) => dispatch(setTags(tagData)))
-    .catch((error) => console.log(error));
+    .then((tagsData) => dispatch(setTags(tagsData)))
+    .catch((error) => handleError(error));
 };
 
-export const createTag = (label: string): AppThunk => async (dispatch) => {
-  //TODO: replace this line with API call
-  const newTag: Tag = { label: label, numContacts: 0, id: Math.random() * 100 };
-  dispatch(addTag(newTag));
-  dispatch(addUploadTag(newTag));
+export const addNewTag = (
+  token: string,
+  org_id: number,
+  label: string,
+): AppThunk => async (dispatch) => {
+  createTag(token, org_id, label)
+    .then((tagData) => dispatch(addTag(tagData)))
+    .then((action) => {
+      if (action.payload && !(action.payload instanceof Array)) {
+        dispatch(addUploadTag(action.payload));
+      }
+    })
+    .catch((error) => handleError(error));
 };

@@ -1,6 +1,7 @@
 import { AppThunk } from 'src/redux/helpers';
 // import { sampleOrgContacts } from 'src/data/sampleOrgContacts';
-import { fetchContacts } from 'src/services/Api/contacts';
+import { fetchContacts, createContacts } from 'src/services/Api/contacts';
+import { loadTags } from './tag';
 
 const SET_ORG_CONTACTS = 'orgContacts/SET_ORG_CONTACTS';
 const ADD_FILTER = 'orgContacts/ADD_FILTER';
@@ -283,13 +284,14 @@ export const loadOrgContacts = (
     .catch((error) => handleError(error));
 };
 
-// TOO: make actual API calls
-export const createContacts = (
+export const createOrgContacts = (
+  token: string,
+  org_id: number,
   mapping: ContactFieldMap,
   uploadedCsv: CSV,
   tags: Tag[],
 ): AppThunk => async (dispatch) => {
-  const newContacts: OrgContact[] = uploadedCsv.data.map((row) => {
+  const contacts: Contact[] = uploadedCsv.data.map((row) => {
     return {
       first_name: row[mapping.firstName.index],
       last_name: row[mapping.lastName.index],
@@ -301,8 +303,18 @@ export const createContacts = (
       facility_postal: row[mapping.facilityPostal.index],
       unit: row[mapping.unit.index],
       dorm: row[mapping.dorm.index],
-      tags: tags,
-    } as OrgContact;
+      relationship: 'Other',
+    } as Contact;
   });
-  dispatch(addOrgContacts(newContacts));
+  const tag_ids: number[] = tags.map((tag) => {
+    return tag.id;
+  });
+  dispatch(loading());
+  createContacts(token, org_id, tag_ids, contacts)
+    .then((contactsData) => dispatch(addOrgContacts(contactsData)))
+    .then(() => {
+      tags.forEach((tag) => dispatch(removeFilter(tag)));
+    })
+    .then(() => dispatch(loadTags(token, org_id)))
+    .catch((error) => handleError(error));
 };

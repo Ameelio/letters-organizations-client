@@ -185,6 +185,8 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 addTag={addUploadTag}
                 removeTag={removeUploadTag}
                 showTotalCount={true}
+                token={token}
+                orgId={org ? org.id : null}
               />
             </div>
             <div className="mt-3">

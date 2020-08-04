@@ -34,3 +34,32 @@ export async function fetchTags(token: string, org_id: number): Promise<Tag[]> {
   });
   return tagsData;
 }
+
+export async function createTag(
+  token: string,
+  org_id: number,
+  label: string,
+): Promise<Tag> {
+  const requestOptions = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      org_id: org_id,
+      label: label,
+    }),
+  };
+  const response = await fetch(url.resolve(API_URL, `org/tag`), requestOptions);
+  const body = await response.json();
+  if (body.status === 'ERROR') {
+    throw body;
+  }
+  return {
+    id: body.data.id,
+    label: body.data.label,
+    numContacts: body.data.total_contacts,
+  };
+}

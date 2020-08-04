@@ -10,7 +10,7 @@ import {
   updateCsvRows,
   addUploadTag,
   removeUploadTag,
-  createContacts,
+  createOrgContacts,
 } from 'src/redux/modules/orgcontacts';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
@@ -20,7 +20,7 @@ import { readString } from 'react-papaparse';
 import FieldMappingTable from 'src/components/pages/UploadContacts/FieldMappingTable';
 import { initialContactFieldMap } from 'src/data/InitialContactFieldMap';
 import TagSelector from 'src/components/tags/TagSelector';
-import { loadTags, createTag } from 'src/redux/modules/tag';
+import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import ErrorAlert from 'src/components/alerts/ErrorAlert';
 import { Clock } from 'react-feather';
 import Tag from 'src/components/tags/Tag';
@@ -41,11 +41,11 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       updateCsvUploadStep,
       updateCsvRows,
       loadTags,
-      createTag,
+      addNewTag,
       addUploadTag,
       removeUploadTag,
       removeCsv,
-      createContacts,
+      createOrgContacts,
     },
     dispatch,
   );
@@ -61,11 +61,11 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   updateCsvRows,
   tags,
   loadTags,
-  createTag,
+  addNewTag,
   addUploadTag,
   removeUploadTag,
   selectedTags,
-  createContacts,
+  createOrgContacts,
   user,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
@@ -83,13 +83,19 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     updateCsvUploadStep(uploadStep - 1);
   };
 
-  const handleSubmission = (event: React.MouseEvent) => {
-    createContacts(mapping, uploadedCsv, selectedTags);
-    updateCsvUploadStep(uploadStep + 1);
-  };
-
   const token = user.user.token;
   const org = user.user.org;
+
+  const handleSubmission = (event: React.MouseEvent) => {
+    if (org) {
+      createOrgContacts(token, org.id, mapping, uploadedCsv, selectedTags);
+      updateCsvUploadStep(uploadStep + 1);
+    }
+  };
+
+  const handleDone = (event: React.MouseEvent) => {
+    updateCsvUploadStep(0);
+  };
 
   useEffect(() => {
     if (!hasFetchedData && org) {
@@ -214,7 +220,9 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 addTag={addUploadTag}
                 removeTag={removeUploadTag}
                 showInputField={true}
-                createTag={createTag}
+                token={token}
+                orgId={org ? org.id : null}
+                addNewTag={addNewTag}
               />
               <FunnelButton
                 cta="Create contacts"
@@ -252,7 +260,9 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 </div>
               </div>
 
-              <Link to={'/contacts'}>Done</Link>
+              <Link to={'/contacts'} onClick={handleDone}>
+                Done
+              </Link>
             </div>
           )}
         </div>
