@@ -112,7 +112,7 @@ const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
             </span>
           )}
           <Button
-            className="remove-volunteer mb-5"
+            className="remove-volunteer"
             variant="outline-danger"
             onClick={handleRemove}
             disabled={user.id === volunteer.user_id}>
@@ -153,7 +153,7 @@ const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
           </div>
         )}
         {volunteer.details && (
-          <div className="d-flex flex-column pl-5 pr-5">
+          <div className="d-flex flex-column pl-5 pr-5 pb-5">
             <span className="black-500 font-weight-bold">
               Contacts ({volunteer.details.contacts.length})
             </span>
