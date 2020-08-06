@@ -14,4 +14,6 @@ interface ContactFieldMap {
   facilityAddress: FieldMap;
   unit: FieldMap;
   dorm: FieldMap;
+  color: FieldMap;
+  doubleSided: FieldMap;
 }

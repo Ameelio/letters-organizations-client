@@ -304,6 +304,8 @@ export const createOrgContacts = (
       unit: row[mapping.unit.index],
       dorm: row[mapping.dorm.index],
       relationship: 'Other',
+      color: row[mapping.color.index] || true,
+      double_sided: row[mapping.doubleSided.index] || false,
     } as Contact;
   });
   const tag_ids: number[] = tags.map((tag) => {

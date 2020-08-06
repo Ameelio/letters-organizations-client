@@ -27,6 +27,7 @@ import {
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, Container, Spinner } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import { addBusinessDays, differenceInBusinessDays } from 'date-fns';
 
 const mapStateToProps = (state: RootState) => ({
   volunteers: state.volunteers,
@@ -223,10 +224,17 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
             <div className="d-flex flex-column ml-5 letter-category">
               <span className="black-400 p4">Delivered</span>
               {volunteers.selected_volunteer.details.letters
-                .filter(
-                  (letter) =>
-                    letter.lob_status === 'letter.processed_for_delivery',
-                )
+                .filter((letter) => {
+                  const now = new Date();
+                  return (
+                    letter.last_lob_status_update &&
+                    differenceInBusinessDays(
+                      now,
+                      letter.last_lob_status_update,
+                    ) >= 3 &&
+                    letter.lob_status === 'letter.processed_for_delivery'
+                  );
+                })
                 .map((letter, index) => (
                   <LetterCard
                     letter={letter}

@@ -18,6 +18,8 @@ const d1: OrgContact = {
   total_letters_sent: 5,
   last_letter_sent: null,
   org_id: 1,
+  color: true,
+  double_sided: false,
   tags: [sampleTags[1], sampleTags[2]],
 };
 
@@ -39,6 +41,8 @@ const d2: OrgContact = {
   total_letters_sent: 5,
   last_letter_sent: null,
   org_id: 1,
+  color: true,
+  double_sided: false,
   tags: [sampleTags[3], sampleTags[4]],
 };
 
@@ -60,6 +64,8 @@ const d3: OrgContact = {
   total_letters_sent: 5,
   last_letter_sent: null,
   org_id: 1,
+  color: true,
+  double_sided: false,
   tags: [sampleTags[3], sampleTags[4]],
 };
 
@@ -81,6 +87,8 @@ const d4: OrgContact = {
   total_letters_sent: 5,
   last_letter_sent: null,
   org_id: 1,
+  color: true,
+  double_sided: false,
   tags: [sampleTags[3], sampleTags[4]],
 };
 

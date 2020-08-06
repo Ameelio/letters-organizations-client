@@ -19,6 +19,7 @@
     "@types/redux": "^3.6.0",
     "@types/redux-thunk": "^2.1.0",
     "bootstrap": "^4.5.0",
+    "date-fns": "^2.15.0",
     "eslint": "^6.6.0",
     "lodash": "^4.17.19",
     "react": "^16.13.1",
@@ -42,7 +43,6 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
-
   },
   "eslintConfig": {
     "extends": "react-app"

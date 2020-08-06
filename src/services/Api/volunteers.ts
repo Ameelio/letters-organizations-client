@@ -102,6 +102,8 @@ export async function fetchVolunteerDetails(
     total_letters_sent: number;
     last_letter_sent: string | null;
     org_id: number | null;
+    color: boolean;
+    double_sided: boolean;
   }
   const contactsData: Contact[] = [];
   contactsBody.data.data.forEach((contact: c) => {
@@ -123,6 +125,8 @@ export async function fetchVolunteerDetails(
         total_letters_sent: contact.total_letters_sent,
         last_letter_sent: null,
         org_id: contact.org_id,
+        color: contact.color,
+        double_sided: contact.double_sided,
       };
       if (contact.last_letter_sent) {
         contactData.last_letter_sent = new Date(contact.last_letter_sent);
@@ -154,6 +158,7 @@ export async function fetchVolunteerDetails(
     sent: boolean;
     lob_validation_error: boolean;
     lob_status: string | null;
+    last_lob_status_update: string | null;
     page_count: number | null;
     user_name: string;
     contact_name: string;
@@ -170,11 +175,17 @@ export async function fetchVolunteerDetails(
         sent: letter.sent,
         lob_validation_error: letter.lob_validation_error,
         lob_status: letter.lob_status,
+        last_lob_status_update: null,
         page_count: letter.page_count,
         user_name: letter.user_name,
         contact_name: letter.contact_name,
         images: [],
       };
+      if (letter.last_lob_status_update) {
+        letterData.last_lob_status_update = new Date(
+          letter.last_lob_status_update,
+        );
+      }
       letter.images.forEach((image) => letterData.images.push(image.img_src));
       lettersData.push(letterData);
     }

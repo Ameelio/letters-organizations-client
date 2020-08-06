@@ -15,6 +15,8 @@ const dummy_contact: Contact = {
   unit: null,
   total_letters_sent: 5,
   last_letter_sent: new Date('2020-07-21T01:18:22.000000Z'),
+  color: true,
+  double_sided: false,
   org_id: null,
 };
 
@@ -29,6 +31,7 @@ const dummy_letter: Letter = {
     'https://images.unsplash.com/photo-1508138221679-760a23a2285b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1567&q=80',
   ],
   lob_validation_error: false,
+  last_lob_status_update: null,
   page_count: 1,
   user_name: 'Gabee',
   lob_status: null,
@@ -46,6 +49,7 @@ const dummy_letter2: Letter = {
     'https://images.unsplash.com/photo-1508138221679-760a23a2285b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1567&q=80',
   ],
   lob_validation_error: false,
+  last_lob_status_update: null,
   page_count: 1,
   user_name: 'Gabee',
   lob_status: null,
