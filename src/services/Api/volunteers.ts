@@ -234,3 +234,65 @@ export async function addVolunteer(
   }
   return volunteerData;
 }
+
+export async function updateVolunteer(
+  token: string,
+  org_id: number,
+  role: string,
+  volunteer: Volunteer,
+): Promise<Volunteer> {
+  const requestOptions = {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      org_id: org_id,
+      user_id: volunteer.user_id,
+      role: role,
+    }),
+  };
+  const response = await fetch(
+    url.resolve(API_URL, `org/user/${volunteer.id}`),
+    requestOptions,
+  );
+  const body = await response.json();
+  if (body.status === 'ERROR') {
+    throw body;
+  }
+  const volunteerData: Volunteer = {
+    id: volunteer.id,
+    user_id: volunteer.user_id,
+    name: volunteer.name,
+    image: volunteer.image,
+    role: body.data.role,
+    total_letters_sent: volunteer.total_letters_sent,
+    last_letter_sent: volunteer.last_letter_sent,
+    details: null,
+  };
+  return volunteerData;
+}
+
+export async function removeVolunteer(
+  token: string,
+  volunteer: Volunteer,
+): Promise<void> {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await fetch(
+    url.resolve(API_URL, `org/user/${volunteer.id}`),
+    requestOptions,
+  );
+  const body = await response.json();
+  if (body.status === 'ERROR') {
+    throw body;
+  }
+}

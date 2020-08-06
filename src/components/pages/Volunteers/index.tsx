@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import VolunteerCard from './VolunteerCard';
+import VolunteerDetails from './VolunteerDetails';
 import LetterCard from './LetterCard';
 import Image from 'react-bootstrap/Image';
 import ContactCard from './ContactCard';
@@ -17,7 +18,12 @@ import {
   selectVolunteer,
   loading,
   inviteVolunteer,
+  handleError,
 } from 'src/redux/modules/volunteer';
+import {
+  updateVolunteer,
+  removeVolunteer,
+} from '../../../services/Api/volunteers';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, Container, Spinner } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
@@ -62,6 +68,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
   const [showLetterModal, setShowLetterModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
   const [hasFetchedVolunteers, setHasFetchedVolunteers] = useState<boolean>(
@@ -74,10 +81,14 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   const handleInviteClose = () => setShowInviteModal(false);
   const handleInviteShow = () => setShowInviteModal(true);
 
+  const handleUpdateClose = () => setShowUpdateForm(false);
+  const handleUpdateShow = () => setShowUpdateForm(true);
+
   const handleVolunteerClick = (
     event: React.MouseEvent,
     volunteer: Volunteer,
   ) => {
+    handleUpdateClose();
     selectVolunteer(token, volunteer);
   };
 
@@ -228,39 +239,22 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         </section>
       )}
 
-      {volunteers.selected_volunteer.details && (
-        <section
-          id={page_id}
-          className="volunteer-sidebar d-flex flex-column mr-4 bg-white p-5 shadow-sm">
-          <div className="d-flex flex-column align-items-center">
-            <Image
-              src={volunteers.selected_volunteer.image}
-              className="large-image"
-              roundedCircle
-            />
-            <span className="black-500 font-weight-bold p3">
-              {volunteers.selected_volunteer.name}
-            </span>
-            <span className="black-400">
-              {volunteers.selected_volunteer.details.email}
-            </span>
-            <span className="black-400">
-              {volunteers.selected_volunteer.details.city},{' '}
-              {volunteers.selected_volunteer.details.state}
-            </span>
-          </div>
-          <hr />
-          <div className="d-flex flex-column">
-            <span className="black-500 font-weight-bold">
-              Contacts ({volunteers.selected_volunteer.details.contacts.length})
-            </span>
-            {volunteers.selected_volunteer.details.contacts.map(
-              (contact, index) => (
-                <ContactCard key={index} contact={contact} />
-              ),
-            )}
-          </div>
-        </section>
+      {volunteers.selected_volunteer.details && org && (
+        <VolunteerDetails
+          volunteer={volunteers.selected_volunteer}
+          page_id={page_id}
+          showUpdateForm={showUpdateForm}
+          handleUpdateClose={handleUpdateClose}
+          handleUpdateShow={handleUpdateShow}
+          token={token}
+          orgId={org.id}
+          updateVolunteer={updateVolunteer}
+          selectVolunteer={selectVolunteer}
+          removeVolunteer={removeVolunteer}
+          loadVolunteers={loadVolunteers}
+          handleError={handleError}
+          user={user.user}
+        />
       )}
 
       {selectedLetter && (

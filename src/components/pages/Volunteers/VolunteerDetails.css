@@ -1,0 +1,26 @@
+.update-link {
+  width: fit-content;
+  width: -moz-fit-content;
+  position: absolute;
+  top: 1vh;
+  right: 0.5vw;
+}
+
+.cancel-update {
+  width: fit-content;
+  width: -moz-fit-content;
+  position: absolute;
+  top: 1vh;
+  left: 0.5vw;
+}
+
+.confirm-remove {
+  margin-left: 2vw;
+  margin-right: 2vw;
+  margin-bottom: 1vw;
+}
+
+.volunteer-sidebar {
+  width: 22vw;
+  position: relative;
+}

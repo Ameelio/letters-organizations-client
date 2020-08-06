@@ -100,7 +100,7 @@ const InviteModal: React.FC<PropsFromRedux> = ({
         </Form>
         <div className="d-flex flex-column">
           <Button block onClick={onSendInvite}>
-            Send invitation
+            Invite
           </Button>
 
           <div className="d-flex flex-row mt-3">

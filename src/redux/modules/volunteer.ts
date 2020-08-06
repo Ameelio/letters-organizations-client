@@ -36,7 +36,7 @@ interface LoadingDetailsAction {
   payload: null;
 }
 
-type VolunteerActionTypes =
+export type VolunteerActionTypes =
   | SetVolunteersAction
   | SelectVolunteerAction
   | LoadingAction
@@ -58,7 +58,7 @@ export const loading = (): VolunteerActionTypes => {
   };
 };
 
-const handleError = (error: ErrorResponse): VolunteerActionTypes => {
+export const handleError = (error: ErrorResponse): VolunteerActionTypes => {
   return {
     type: ERROR,
     payload: error,
