@@ -22,9 +22,7 @@ const ConfirmSendModal: React.FC<ConfirmSendModalProps> = ({
     <Modal show={show} onHide={handleClose}>
       <div className="blue-600-bg w-100 py-2"></div>
       <Modal.Header>
-        <Modal.Title>
-          Send newsletter to {newsletter.numContacts} contacts?
-        </Modal.Title>
+        <Modal.Title>Send "{newsletter.title}"</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className="d-flex flex-column align-items-center">

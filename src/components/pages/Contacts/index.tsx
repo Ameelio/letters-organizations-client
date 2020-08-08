@@ -97,7 +97,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 
   if (
     !user.authInfo.isLoggedIn ||
-    orgContacts.error.message === 'Expired Token'
+    orgContacts.error.message === 'Expired Token' ||
+    orgContacts.error.message === 'Unauthorized'
   ) {
     loading();
     return <Redirect to="/login" />;

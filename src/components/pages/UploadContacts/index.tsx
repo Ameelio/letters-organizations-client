@@ -11,6 +11,7 @@ import {
   addUploadTag,
   removeUploadTag,
   createOrgContacts,
+  loading,
 } from 'src/redux/modules/orgcontacts';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
@@ -24,13 +25,14 @@ import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import ErrorAlert from 'src/components/alerts/ErrorAlert';
 import { Clock } from 'react-feather';
 import Tag from 'src/components/tags/Tag';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
   uploadStep: state.orgContacts.uploadStep,
   tags: state.tags.tags,
   selectedTags: state.orgContacts.uploadSelectedTags,
+  error: state.orgContacts.error,
   user: state.user,
 });
 
@@ -46,6 +48,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       removeUploadTag,
       removeCsv,
       createOrgContacts,
+      loading,
     },
     dispatch,
   );
@@ -66,13 +69,14 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   removeUploadTag,
   selectedTags,
   createOrgContacts,
+  error,
   user,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
     initialContactFieldMap,
   );
 
-  const [error, setError] = useState<ErrorFeedback | null>();
+  const [feedback, setFeedback] = useState<ErrorFeedback | null>();
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
   const handleNextClick = (event: React.MouseEvent) => {
@@ -94,6 +98,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   };
 
   const handleDone = (event: React.MouseEvent) => {
+    removeCsv();
     updateCsvUploadStep(0);
   };
 
@@ -115,7 +120,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
       if (results.data.length < 2) {
         // ensure there are at least two rows of data
         removeCsv();
-        setError({
+        setFeedback({
           title: "Oops! There's something wrong with the file!",
           body:
             "It looks like your spreadsheet doesn't have any contacts. Make sure there's at least two rows of data.",
@@ -123,13 +128,13 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
       } else if ((results.data[0] as string[]).length < 8) {
         // ensure that there are the min number of columns needeed
         removeCsv();
-        setError({
+        setFeedback({
           title: "Oops! There's something wrong with the file!",
           body:
             "It looks like your spreadsheet doesn't have all the 8 columns that you need to create your contacts. Make sure that you follow the template below.",
         });
       } else {
-        setError(null);
+        setFeedback(null);
         updateCsvRows(results.data as string[][]);
       }
     }
@@ -146,9 +151,19 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
       handleFileChosen(uploadedCsv.file);
     }
   });
+
+  if (
+    !user.authInfo.isLoggedIn ||
+    error.message === 'Expired Token' ||
+    error.message === 'Unauthorized'
+  ) {
+    loading();
+    return <Redirect to="/login" />;
+  }
+
   return (
     <div className="upload-file-wrapper">
-      {error && <ErrorAlert error={error} />}
+      {feedback && <ErrorAlert error={feedback} />}
       <div className="upload-file-container">
         <ProgressBarHeader
           step={uploadStep}

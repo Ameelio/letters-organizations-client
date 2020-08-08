@@ -12,6 +12,8 @@ import {
   sendNewsletter,
   addAllUploadTags,
   removeAllUploadTags,
+  loading,
+  removeFile,
 } from 'src/redux/modules/newsletter';
 import { loadTags } from 'src/redux/modules/tag';
 import ConfirmSendModal from './ConfirmSendModal';
@@ -19,13 +21,13 @@ import SuccessModal from './SuccessModal';
 import TagSelector from 'src/components/tags/TagSelector';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
 import FunnelButton from 'src/components/buttons/FunnelButton';
+import { Container, Spinner } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 
 const mapStateToProps = (state: RootState) => ({
-  uploadedFile: state.newsletters.uploadedFile,
-  uploadStep: state.newsletters.uploadStep,
   tags: state.tags.tags,
-  uploadSelectedTags: state.newsletters.uploadSelectedTags,
   user: state.user,
+  newsletters: state.newsletters,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -39,6 +41,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       sendNewsletter,
       addAllUploadTags,
       removeAllUploadTags,
+      loading,
     },
     dispatch,
   );
@@ -49,16 +52,14 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   uploadFile,
   updateFileUploadStep,
-  uploadedFile,
-  uploadStep,
   tags,
   loadTags,
-  uploadSelectedTags,
   addUploadTag,
   removeUploadTag,
   addAllUploadTags,
   removeAllUploadTags,
   sendNewsletter,
+  newsletters,
   user,
 }) => {
   const [name, setName] = useState<string>('');
@@ -80,36 +81,26 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
       loadTags(token, org.id);
       setHasFetchedTags(true);
     }
-    if (uploadStep === 2 && uploadedFile) {
+    if (newsletters.uploadStep === 2 && newsletters.uploadedFile) {
       setNewsletter({
         title: name,
-        file: uploadedFile,
-        numContacts: uploadSelectedTags.reduce(
-          (prev: number, next: Tag) => prev + next.numContacts,
-          0,
-        ),
-        tags: uploadSelectedTags,
+        file: newsletters.uploadedFile,
+        // numContacts: uploadSelectedTags.reduce(
+        //   (prev: number, next: Tag) => prev + next.numContacts,
+        //   0,
+        // ),
+        tags: newsletters.uploadSelectedTags,
       });
       handleModalShow();
     }
-    // TODO reset all state values once we're done
-  }, [
-    removeAllUploadTags,
-    hasFetchedTags,
-    tags,
-    loadTags,
-    uploadStep,
-    name,
-    uploadSelectedTags,
-    uploadedFile,
-  ]);
+  }, [removeAllUploadTags, hasFetchedTags, tags, loadTags, name, newsletters]);
 
   const handleNextClick = (event: React.MouseEvent) => {
-    updateFileUploadStep(uploadStep + 1);
+    updateFileUploadStep(newsletters.uploadStep + 1);
   };
 
   const handleBackClick = (event: React.MouseEvent) => {
-    updateFileUploadStep(uploadStep - 1);
+    updateFileUploadStep(newsletters.uploadStep - 1);
   };
 
   const handleSelectAllClick = (event: React.MouseEvent) => {
@@ -118,17 +109,42 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   };
 
   const handleSubmission = (event: React.MouseEvent) => {
-    // TODO: make this await and catch errors if something goes wrong with newsletter
-    sendNewsletter(newsletter);
+    sendNewsletter(token, newsletter);
     setShowSuccessModal(true);
-    updateFileUploadStep(uploadStep + 1);
+    updateFileUploadStep(newsletters.uploadStep + 1);
   };
+
+  const handleDone = (event: React.MouseEvent) => {
+    removeFile();
+    updateFileUploadStep(0);
+  };
+
+  if (
+    !user.authInfo.isLoggedIn ||
+    newsletters.error.message === 'Expired Token' ||
+    newsletters.error.message === 'Unauthorized'
+  ) {
+    loading();
+    return <Redirect to="/login" />;
+  }
+
+  const spinner = (
+    <Container id="contacts-spinner">
+      <Spinner animation="border" role="status" variant="primary">
+        <span className="sr-only">Loading...</span>
+      </Spinner>
+    </Container>
+  );
+
+  if (newsletters.loading) {
+    return spinner;
+  }
 
   return (
     <div className="upload-file-wrapper">
       <div className="upload-file-container">
         <ProgressBarHeader
-          step={uploadStep}
+          step={newsletters.uploadStep}
           stepLabels={[
             'Upload file',
             'Select contacts',
@@ -137,7 +153,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
           ]}
         />
 
-        {uploadStep === 0 && (
+        {newsletters.uploadStep === 0 && (
           <div>
             <div className="d-flex flex-column align-items-center mt-3">
               <span className="p2 black-500 mt-3">Newsletters</span>
@@ -159,7 +175,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 <Form.Label>Attach file</Form.Label>
                 <Docdrop
                   uploadFile={uploadFile}
-                  uploadedFile={uploadedFile}
+                  uploadedFile={newsletters.uploadedFile}
                   acceptedFormat="application/pdf/*"
                   acceptedFormatLabel="PDF"
                 />
@@ -167,12 +183,12 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               <FunnelButton
                 onNext={handleNextClick}
                 cta="Next"
-                enabled={uploadedFile != null && name !== ''}
+                enabled={newsletters.uploadedFile != null && name !== ''}
               />
             </Form>
           </div>
         )}
-        {uploadStep === 1 && (
+        {newsletters.uploadStep === 1 && (
           <div className="mt-5 w-75 d-flex flex-column">
             <span>
               Search and select tags to classify who you want to send your
@@ -181,10 +197,10 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             <div>
               <TagSelector
                 tags={tags}
-                selectedTags={uploadSelectedTags}
+                selectedTags={newsletters.uploadSelectedTags}
                 addTag={addUploadTag}
                 removeTag={removeUploadTag}
-                showTotalCount={true}
+                // showTotalCount={true}
                 token={token}
                 orgId={org ? org.id : null}
               />
@@ -200,11 +216,11 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               onNext={handleNextClick}
               onBack={handleBackClick}
               cta="Next"
-              enabled={uploadSelectedTags.length > 0}
+              enabled={newsletters.uploadSelectedTags.length > 0}
             />
           </div>
         )}
-        {uploadStep === 2 && (
+        {newsletters.uploadStep === 2 && (
           <ConfirmSendModal
             handleClose={handleModalClose}
             show={showModal}
@@ -213,7 +229,9 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             handleBackClick={handleBackClick}
           />
         )}
-        {uploadStep === 3 && <SuccessModal show={showSuccessModal} />}
+        {newsletters.uploadStep === 3 && (
+          <SuccessModal show={showSuccessModal} handleDone={handleDone} />
+        )}
       </div>
     </div>
   );

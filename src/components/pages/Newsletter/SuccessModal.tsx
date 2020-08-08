@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom';
 
 interface SuccessModalProps {
   show: boolean;
+  handleDone: (event: React.MouseEvent) => void;
 }
 
-const SuccessModal: React.FC<SuccessModalProps> = ({ show }) => {
+const SuccessModal: React.FC<SuccessModalProps> = ({ show, handleDone }) => {
   return (
     <Modal show={show}>
       <div className="blue-600-bg w-100 py-2"></div>
@@ -18,7 +19,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ show }) => {
         <div className="d-flex flex-column align-items-center">
           <Illustration />
           <div className="d-flex flex-row mt-5">
-            <Link to="/newsletter" className="btn btn-primary">
+            <Link
+              to="/newsletter"
+              className="btn btn-primary"
+              onClick={handleDone}>
               Done!
             </Link>
           </div>

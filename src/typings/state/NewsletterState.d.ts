@@ -3,4 +3,7 @@ interface NewsletterState {
   uploadedFile: File | null;
   uploadStep: number;
   uploadSelectedTags: Tag[];
+  selectedFilters: Tag[];
+  error: ErrorResponse;
+  loading: boolean;
 }

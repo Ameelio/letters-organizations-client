@@ -1,7 +1,7 @@
 interface DraftNewsletter {
   title: string;
   file: File;
-  numContacts: number;
+  // numContacts: number;
   tags: Tags[];
 }
 
@@ -13,6 +13,6 @@ interface NewsletterLog {
   inTransit: number;
   returned: number;
   creationDate: Date;
-  estimatedArrival: Date;
+  estimatedArrival: Date | null;
   tags: Tags[];
 }

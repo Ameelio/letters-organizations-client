@@ -21,17 +21,6 @@ export async function onLogin(email: string, password: string): Promise<User> {
   }
   const userData: User = {
     id: body.data.id,
-    // firstName: body.data.first_name,
-    // lastName: body.data.last_name,
-    // email: body.data.email,
-    // phone: body.data.phone,
-    // address1: body.data.addr_line_1,
-    // address2: body.data.addr_line_2 || '',
-    // country: body.data.country,
-    // postal: body.data.postal,
-    // city: body.data.city,
-    // state: body.data.state,
-    // imageUri: body.data.imageUri,
     token: body.data.token,
     org: null,
   };
