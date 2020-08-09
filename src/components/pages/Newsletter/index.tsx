@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { RootState } from 'src/redux';
 import Docdrop from 'src/components/docdrop/Docdrop';
 import Form from 'react-bootstrap/Form';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import * as pdfjsLib from 'pdfjs-dist';
+import * as PDFObject from 'pdfobject';
+import { pdfjsWorker } from 'pdfjs-dist/build/pdf.worker.entry';
+
 import {
   uploadFile,
   updateFileUploadStep,
@@ -66,6 +70,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   const [newsletter, setNewsletter] = useState<DraftNewsletter>(
     {} as DraftNewsletter,
   );
+  const [pageCount, setPageCount] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
   const [toggle, setToggle] = useState<boolean>(false);
@@ -75,6 +80,12 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
 
   const token = user.user.token;
   const org = user.user.org;
+
+  const getPageCount = useCallback(async (fileURL: string) => {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+    const loadPDF = await pdfjsLib.getDocument(fileURL).promise;
+    setPageCount(loadPDF.numPages);
+  }, []);
 
   useEffect(() => {
     if (!hasFetchedTags && org) {
@@ -91,9 +102,20 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
         // ),
         tags: newsletters.uploadSelectedTags,
       });
+      const obj = URL.createObjectURL(newsletters.uploadedFile);
+      PDFObject.embed(obj, '#embedded-pdf');
+      getPageCount(obj);
       handleModalShow();
     }
-  }, [removeAllUploadTags, hasFetchedTags, tags, loadTags, name, newsletters]);
+  }, [
+    removeAllUploadTags,
+    hasFetchedTags,
+    tags,
+    loadTags,
+    name,
+    newsletters,
+    getPageCount,
+  ]);
 
   const handleNextClick = (event: React.MouseEvent) => {
     updateFileUploadStep(newsletters.uploadStep + 1);
@@ -109,7 +131,8 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   };
 
   const handleSubmission = (event: React.MouseEvent) => {
-    sendNewsletter(token, newsletter);
+    console.log(pageCount);
+    sendNewsletter(token, newsletter, pageCount);
     setShowSuccessModal(true);
     updateFileUploadStep(newsletters.uploadStep + 1);
   };

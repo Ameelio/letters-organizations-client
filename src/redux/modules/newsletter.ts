@@ -287,9 +287,10 @@ export function newsletterReducer(
 export const sendNewsletter = (
   token: string,
   newsletter: DraftNewsletter,
+  pageCount: number,
 ): AppThunk => async (dispatch) => {
   dispatch(loading());
-  createNewsletter(token, newsletter, false, 1)
+  createNewsletter(token, newsletter, false, pageCount)
     .then((newsletter) => dispatch(addNewsletter(newsletter)))
     .catch((error) => handleError(error));
 };
