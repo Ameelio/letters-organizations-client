@@ -7,6 +7,28 @@ export async function createNewsletter(
   isTest: boolean,
   pageCount: number,
 ): Promise<NewsletterLog> {
+  const s3requestOptions = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      type: 'pdf',
+      file: newsletter.file,
+    }),
+  };
+  const s3response = await fetch(
+    url.resolve(API_URL, '/file/upload'),
+    s3requestOptions,
+  );
+  const s3body = await s3response.json();
+  if (s3body.status === 'ERROR') {
+    throw s3body;
+  }
+  const s3_url = s3body.data.data;
+
   let tagIds: number[] = [];
   newsletter.tags.forEach((tag) => tagIds.push(tag.id));
   const requestOptions = {
@@ -18,7 +40,7 @@ export async function createNewsletter(
     },
     body: JSON.stringify({
       name: newsletter.title,
-      s3_path: newsletter.file.name,
+      s3_path: s3_url,
       tags: tagIds,
       is_test: isTest,
       page_count: pageCount,
