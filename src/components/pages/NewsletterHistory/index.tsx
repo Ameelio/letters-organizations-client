@@ -101,7 +101,9 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
   if (
     !user.authInfo.isLoggedIn ||
     newsletters.error.message === 'Expired Token' ||
-    newsletters.error.message === 'Unauthorized'
+    newsletters.error.message === 'Unauthorized' ||
+    tags.error.message === 'Expired Token' ||
+    tags.error.message === 'Unauthorized'
   ) {
     loading();
     return <Redirect to="/login" />;

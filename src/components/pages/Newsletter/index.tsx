@@ -28,7 +28,7 @@ import { Container, Spinner } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
 const mapStateToProps = (state: RootState) => ({
-  tags: state.tags.tags,
+  tags: state.tags,
   user: state.user,
   newsletters: state.newsletters,
 });
@@ -124,7 +124,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   };
 
   const handleSelectAllClick = (event: React.MouseEvent) => {
-    toggle ? removeAllUploadTags() : addAllUploadTags(tags);
+    toggle ? removeAllUploadTags() : addAllUploadTags(tags.tags);
     setToggle(!toggle);
   };
 
@@ -142,7 +142,9 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   if (
     !user.authInfo.isLoggedIn ||
     newsletters.error.message === 'Expired Token' ||
-    newsletters.error.message === 'Unauthorized'
+    newsletters.error.message === 'Unauthorized' ||
+    tags.error.message === 'Expired Token' ||
+    tags.error.message === 'Unauthorized'
   ) {
     loading();
     return <Redirect to="/login" />;
@@ -216,7 +218,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             </span>
             <div>
               <TagSelector
-                tags={tags}
+                tags={tags.tags}
                 selectedTags={newsletters.uploadSelectedTags}
                 addTag={addUploadTag}
                 removeTag={removeUploadTag}

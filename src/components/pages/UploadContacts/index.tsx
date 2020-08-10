@@ -30,7 +30,7 @@ import { Link, Redirect } from 'react-router-dom';
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
   uploadStep: state.orgContacts.uploadStep,
-  tags: state.tags.tags,
+  tags: state.tags,
   selectedTags: state.orgContacts.uploadSelectedTags,
   error: state.orgContacts.error,
   user: state.user,
@@ -155,7 +155,9 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   if (
     !user.authInfo.isLoggedIn ||
     error.message === 'Expired Token' ||
-    error.message === 'Unauthorized'
+    error.message === 'Unauthorized' ||
+    tags.error.message === 'Expired Token' ||
+    tags.error.message === 'Unauthorized'
   ) {
     loading();
     return <Redirect to="/login" />;
@@ -230,7 +232,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 Assign existing tags or create new ones for your contacts.
               </span>
               <TagSelector
-                tags={tags}
+                tags={tags.tags}
                 selectedTags={selectedTags}
                 addTag={addUploadTag}
                 removeTag={removeUploadTag}
