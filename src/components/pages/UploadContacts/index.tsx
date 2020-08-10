@@ -10,7 +10,8 @@ import {
   updateCsvRows,
   addUploadTag,
   removeUploadTag,
-  createContacts,
+  createOrgContacts,
+  loading,
 } from 'src/redux/modules/orgcontacts';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
@@ -20,17 +21,19 @@ import { readString } from 'react-papaparse';
 import FieldMappingTable from 'src/components/pages/UploadContacts/FieldMappingTable';
 import { initialContactFieldMap } from 'src/data/InitialContactFieldMap';
 import TagSelector from 'src/components/tags/TagSelector';
-import { loadTags, createTag } from 'src/redux/modules/tag';
+import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import ErrorAlert from 'src/components/alerts/ErrorAlert';
 import { Clock } from 'react-feather';
 import Tag from 'src/components/tags/Tag';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
   uploadStep: state.orgContacts.uploadStep,
-  tags: state.tags.tags,
+  tags: state.tags,
   selectedTags: state.orgContacts.uploadSelectedTags,
+  error: state.orgContacts.error,
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -40,11 +43,12 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       updateCsvUploadStep,
       updateCsvRows,
       loadTags,
-      createTag,
+      addNewTag,
       addUploadTag,
       removeUploadTag,
       removeCsv,
-      createContacts,
+      createOrgContacts,
+      loading,
     },
     dispatch,
   );
@@ -60,17 +64,19 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   updateCsvRows,
   tags,
   loadTags,
-  createTag,
+  addNewTag,
   addUploadTag,
   removeUploadTag,
   selectedTags,
-  createContacts,
+  createOrgContacts,
+  error,
+  user,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
     initialContactFieldMap,
   );
 
-  const [error, setError] = useState<ErrorFeedback | null>();
+  const [feedback, setFeedback] = useState<ErrorFeedback | null>();
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
   const handleNextClick = (event: React.MouseEvent) => {
@@ -81,14 +87,24 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     updateCsvUploadStep(uploadStep - 1);
   };
 
+  const token = user.user.token;
+  const org = user.user.org;
+
   const handleSubmission = (event: React.MouseEvent) => {
-    createContacts(mapping, uploadedCsv, selectedTags);
-    updateCsvUploadStep(uploadStep + 1);
+    if (org) {
+      createOrgContacts(token, org.id, mapping, uploadedCsv, selectedTags);
+      updateCsvUploadStep(uploadStep + 1);
+    }
+  };
+
+  const handleDone = (event: React.MouseEvent) => {
+    removeCsv();
+    updateCsvUploadStep(0);
   };
 
   useEffect(() => {
-    if (!hasFetchedData) {
-      loadTags();
+    if (!hasFetchedData && org) {
+      loadTags(token, org.id);
       setHasFetchedData(true);
     }
   }, [hasFetchedData, loadTags]);
@@ -104,7 +120,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
       if (results.data.length < 2) {
         // ensure there are at least two rows of data
         removeCsv();
-        setError({
+        setFeedback({
           title: "Oops! There's something wrong with the file!",
           body:
             "It looks like your spreadsheet doesn't have any contacts. Make sure there's at least two rows of data.",
@@ -112,13 +128,13 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
       } else if ((results.data[0] as string[]).length < 8) {
         // ensure that there are the min number of columns needeed
         removeCsv();
-        setError({
+        setFeedback({
           title: "Oops! There's something wrong with the file!",
           body:
             "It looks like your spreadsheet doesn't have all the 8 columns that you need to create your contacts. Make sure that you follow the template below.",
         });
       } else {
-        setError(null);
+        setFeedback(null);
         updateCsvRows(results.data as string[][]);
       }
     }
@@ -135,9 +151,21 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
       handleFileChosen(uploadedCsv.file);
     }
   });
+
+  if (
+    !user.authInfo.isLoggedIn ||
+    error.message === 'Expired Token' ||
+    error.message === 'Unauthorized' ||
+    tags.error.message === 'Expired Token' ||
+    tags.error.message === 'Unauthorized'
+  ) {
+    loading();
+    return <Redirect to="/login" />;
+  }
+
   return (
     <div className="upload-file-wrapper">
-      {error && <ErrorAlert error={error} />}
+      {feedback && <ErrorAlert error={feedback} />}
       <div className="upload-file-container">
         <ProgressBarHeader
           step={uploadStep}
@@ -204,18 +232,20 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 Assign existing tags or create new ones for your contacts.
               </span>
               <TagSelector
-                tags={tags}
+                tags={tags.tags}
                 selectedTags={selectedTags}
                 addTag={addUploadTag}
                 removeTag={removeUploadTag}
                 showInputField={true}
-                createTag={createTag}
+                token={token}
+                orgId={org ? org.id : null}
+                addNewTag={addNewTag}
               />
               <FunnelButton
                 cta="Create contacts"
                 onNext={handleSubmission}
                 onBack={handleBackClick}
-                enabled={uploadedCsv !== null}
+                enabled={selectedTags.length > 0 && uploadedCsv !== null}
               />
             </div>
           )}
@@ -247,7 +277,9 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
                 </div>
               </div>
 
-              <Link to={'/contacts'}>Done</Link>
+              <Link to={'/contacts'} onClick={handleDone}>
+                Done
+              </Link>
             </div>
           )}
         </div>

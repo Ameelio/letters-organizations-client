@@ -6,10 +6,12 @@ interface Letter {
   type: LetterType;
   content: string;
   sent: boolean;
-  attached_img_src: string;
+  images: string[];
   lob_validation_error: boolean;
-  page_count: number;
-  tracking_events: TrackingEvent[];
+  last_lob_status_update: Date | null;
+  page_count: number | null;
+  // tracking_events: TrackingEvent[];
+  lob_status: string | null;
   user_name: string;
   contact_name: string;
 }

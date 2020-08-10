@@ -11,7 +11,7 @@ const LetterCard: React.FC<LetterCardProps> = ({ letter, handleClick }) => {
   return (
     <div
       onClick={handleClick}
-      className="letter-card d-flex flex-column py-3 px-5 mt-3 border  rounded ">
+      className="letter-card d-flex flex-column py-3 px-4 mt-3 border rounded">
       <div className="d-flex flex-row justify-content-between">
         <span>{letter.contact_name}</span>
         <span className="primary">Sent {formatDate(letter.created_at)}</span>

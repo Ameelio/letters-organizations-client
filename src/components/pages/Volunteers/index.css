@@ -1,3 +1,25 @@
 .volunteers-list-sidebar {
-  width: 275px;
+  width: 20em;
+}
+
+.letter-category {
+  width: 50%;
+  padding-top: 1em;
+}
+
+#volunteers-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  opacity: 100%;
+  z-index: 100;
+}
+
+#problem-loading-info {
+  position: relative;
+  margin-top: 5em;
+}
+
+#faded {
+  opacity: 50%;
 }

@@ -9,4 +9,6 @@ export const initialContactFieldMap: ContactFieldMap = {
   facilityAddress: { field: 'Address', index: 7 },
   unit: { field: 'Unit', index: 8 },
   dorm: { field: 'Dorm', index: 9 },
+  color: { field: 'Color', index: 10 },
+  doubleSided: { field: 'Double-Sided', index: 11 },
 };

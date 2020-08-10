@@ -12,11 +12,14 @@ const d1: OrgContact = {
   facility_postal: '06511',
   profile_img_path:
     'https://media-exp1.licdn.com/dms/image/C4E03AQEvHsBEJbQ9dg/profile-displayphoto-shrink_400_400/0?e=1600300800&v=beta&t=Boq-ITjNDiXYumLUoZWkYepKIH9ILrUH2B8is2uszLs',
+  relationship: 'Client',
   dorm: null,
   unit: null,
   total_letters_sent: 5,
-  last_letter_sent: new Date(),
-  letter_streak: 1,
+  last_letter_sent: null,
+  org_id: 1,
+  color: true,
+  double_sided: false,
   tags: [sampleTags[1], sampleTags[2]],
 };
 
@@ -32,11 +35,14 @@ const d2: OrgContact = {
   facility_postal: '06511',
   profile_img_path:
     'https://media-exp1.licdn.com/dms/image/C4E03AQEvHsBEJbQ9dg/profile-displayphoto-shrink_400_400/0?e=1600300800&v=beta&t=Boq-ITjNDiXYumLUoZWkYepKIH9ILrUH2B8is2uszLs',
+  relationship: 'Client',
   dorm: null,
   unit: null,
   total_letters_sent: 5,
-  last_letter_sent: new Date(),
-  letter_streak: 1,
+  last_letter_sent: null,
+  org_id: 1,
+  color: true,
+  double_sided: false,
   tags: [sampleTags[3], sampleTags[4]],
 };
 
@@ -52,11 +58,14 @@ const d3: OrgContact = {
   facility_postal: '06511',
   profile_img_path:
     'https://media-exp1.licdn.com/dms/image/C4E03AQEvHsBEJbQ9dg/profile-displayphoto-shrink_400_400/0?e=1600300800&v=beta&t=Boq-ITjNDiXYumLUoZWkYepKIH9ILrUH2B8is2uszLs',
+  relationship: 'Client',
   dorm: null,
   unit: null,
   total_letters_sent: 5,
-  last_letter_sent: new Date(),
-  letter_streak: 1,
+  last_letter_sent: null,
+  org_id: 1,
+  color: true,
+  double_sided: false,
   tags: [sampleTags[3], sampleTags[4]],
 };
 
@@ -72,13 +81,17 @@ const d4: OrgContact = {
   facility_postal: '06511',
   profile_img_path:
     'https://media-exp1.licdn.com/dms/image/C4E03AQEvHsBEJbQ9dg/profile-displayphoto-shrink_400_400/0?e=1600300800&v=beta&t=Boq-ITjNDiXYumLUoZWkYepKIH9ILrUH2B8is2uszLs',
+  relationship: 'Client',
   dorm: null,
   unit: null,
   total_letters_sent: 5,
-  last_letter_sent: new Date(),
-  letter_streak: 1,
+  last_letter_sent: null,
+  org_id: 1,
+  color: true,
+  double_sided: false,
   tags: [sampleTags[3], sampleTags[4]],
 };
+
 export const sampleOrgContacts: OrgContact[] = [
   d1,
   d2,

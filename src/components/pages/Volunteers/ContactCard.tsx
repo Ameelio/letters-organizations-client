@@ -25,19 +25,21 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
         </div>
       </div>
       <div className="d-flex flex-row black-200-bg mt-3">
-        <div className="d-flex flex-column align-items-center p-2">
+        <div className="d-flex flex-column align-items-center p-1">
           <span className="black-400 p7">Letters sent</span>
-          <span className="black-500">{contact.total_letters_sent}</span>
+          <span className="black-400 p6">{contact.total_letters_sent}</span>
         </div>
-        <div className="d-flex flex-column align-items-center p-2">
-          <span className="black-400 p7">Streak</span>
-          <span className="black-500">{contact.letter_streak}</span>
-        </div>
-        <div className="d-flex flex-column align-items-center p-2">
+        <div className="d-flex flex-column align-items-center p-1">
           <span className="black-400 p7">Last sent</span>
-          <span className="black-500">
-            {formatDate(contact.last_letter_sent)}
+          <span className="black-400 p6">
+            {contact.last_letter_sent
+              ? formatDate(contact.last_letter_sent)
+              : 'None'}
           </span>
+        </div>
+        <div className="d-flex flex-column align-items-center p-1">
+          <span className="black-400 p7">Relationship</span>
+          <span className="black-400 p6">{contact.relationship}</span>
         </div>
       </div>
     </div>

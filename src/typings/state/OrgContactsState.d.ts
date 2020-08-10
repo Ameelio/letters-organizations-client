@@ -10,4 +10,6 @@ interface OrgContactsState {
   uploadStep: number;
   uploadedCsv: CSV;
   uploadSelectedTags: Tag[];
+  loading: boolean;
+  error: ErrorResponse;
 }

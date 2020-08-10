@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'react-bootstrap/Image';
 import './VolunteerCard.css';
+import { formatDate } from 'src/utils/utils';
 
 interface VolunteerProps {
   volunteer: Volunteer;
@@ -24,6 +25,12 @@ const VolunteerCard: React.FC<VolunteerProps> = ({
         <span className={`${fontColor} p4`}>{volunteer.name}</span>
         <span className="black-400 p6">
           Total letters sent: {volunteer.total_letters_sent}
+        </span>
+        <span className="black-400 p6">
+          Last letter sent:{' '}
+          {volunteer.last_letter_sent
+            ? formatDate(volunteer.last_letter_sent)
+            : 'None'}
         </span>
       </div>
       <hr />

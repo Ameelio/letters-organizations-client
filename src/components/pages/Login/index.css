@@ -1,0 +1,9 @@
+#login-form {
+  padding-top: 4em;
+}
+
+#login-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+}
