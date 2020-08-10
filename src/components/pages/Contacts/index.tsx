@@ -139,7 +139,6 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             selectedTags={filters}
             addTag={addFilter}
             removeTag={removeFilter}
-            showTotalCount={false}
             token={token}
             orgId={org ? org.id : null}
           />

@@ -92,6 +92,7 @@ const TagSelector: React.FC<TagSelector> = ({
         </div>
 
         {showTotalCount && (
+          // TODO: Show correct total number of contacts instead of sum, which double-counts (low-priority)
           <span className="ml-auto mr-3 font-weight-bold black-400 flex-shrink-0">
             {selectedTags.reduce(
               (previousValue: number, currentValue: Tag) =>

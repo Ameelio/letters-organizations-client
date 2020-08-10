@@ -95,10 +95,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
       setNewsletter({
         title: name,
         file: newsletters.uploadedFile,
-        // numContacts: uploadSelectedTags.reduce(
-        //   (prev: number, next: Tag) => prev + next.numContacts,
-        //   0,
-        // ),
         tags: newsletters.uploadSelectedTags,
       });
       const obj = URL.createObjectURL(newsletters.uploadedFile);
@@ -222,7 +218,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 selectedTags={newsletters.uploadSelectedTags}
                 addTag={addUploadTag}
                 removeTag={removeUploadTag}
-                // showTotalCount={true}
                 token={token}
                 orgId={org ? org.id : null}
               />
