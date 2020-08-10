@@ -5,7 +5,6 @@ import Form from 'react-bootstrap/Form';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import * as pdfjsLib from 'pdfjs-dist';
-import * as PDFObject from 'pdfobject';
 import { pdfjsWorker } from 'pdfjs-dist/build/pdf.worker.entry';
 
 import {
@@ -103,7 +102,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
         tags: newsletters.uploadSelectedTags,
       });
       const obj = URL.createObjectURL(newsletters.uploadedFile);
-      PDFObject.embed(obj, '#embedded-pdf');
       getPageCount(obj);
       handleModalShow();
     }
@@ -131,7 +129,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   };
 
   const handleSubmission = (event: React.MouseEvent) => {
-    console.log(pageCount);
     sendNewsletter(token, newsletter, pageCount);
     setShowSuccessModal(true);
     updateFileUploadStep(newsletters.uploadStep + 1);
