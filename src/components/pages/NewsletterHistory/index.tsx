@@ -62,7 +62,7 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
   const org = user.user.org;
 
   useEffect(() => {
-    if (!hasFetched && newsletters.newsletters.length === 0 && org) {
+    if (!hasFetched && org) {
       loadNewsletters(token);
       loadTags(token, org.id);
       setHasFetched(true);

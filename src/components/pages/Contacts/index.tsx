@@ -57,7 +57,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   const org = user.user.org;
 
   useEffect(() => {
-    if (!hasFetchedData && orgContacts.contacts.length === 0 && org) {
+    if (!hasFetchedData && org) {
       loadOrgContacts(token, org.id);
       loadTags(token, org.id);
       setHasFetchedData(true);

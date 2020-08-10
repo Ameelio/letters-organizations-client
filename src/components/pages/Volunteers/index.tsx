@@ -107,11 +107,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (
-      !hasFetchedVolunteers &&
-      volunteers.all_volunteers.length === 0 &&
-      org
-    ) {
+    if (!hasFetchedVolunteers && org) {
       loadVolunteers(token, org.id);
       setHasFetchedVolunteers(true);
     }
