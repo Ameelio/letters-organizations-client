@@ -2,25 +2,25 @@
   width: fit-content;
   width: -moz-fit-content;
   position: absolute;
-  top: 1vh;
-  right: 0.5vw;
+  top: 1em;
+  right: 0.5em;
 }
 
 .cancel-update {
   width: fit-content;
   width: -moz-fit-content;
   position: absolute;
-  top: 1vh;
-  left: 0.5vw;
+  top: 1em;
+  left: 0.5em;
 }
 
 .confirm-remove {
-  margin-left: 2vw;
-  margin-right: 2vw;
-  margin-bottom: 1vw;
+  margin-left: 2em;
+  margin-right: 2em;
+  margin-bottom: 1em;
 }
 
 .volunteer-sidebar {
-  width: 22vw;
+  width: 22em;
   position: relative;
 }

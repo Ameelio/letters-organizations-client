@@ -1,10 +1,10 @@
 .volunteers-list-sidebar {
-  width: 20vw;
+  width: 20em;
 }
 
 .letter-category {
   width: 50%;
-  padding-top: 1vh;
+  padding-top: 1em;
 }
 
 #volunteers-spinner {
@@ -17,7 +17,7 @@
 
 #problem-loading-info {
   position: relative;
-  margin-top: 5vh;
+  margin-top: 5em;
 }
 
 #faded {
