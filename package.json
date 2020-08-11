@@ -3,7 +3,6 @@
   "homepage": "http://ameelio.github.io/letters-organizations-client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3000",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -22,6 +21,7 @@
     "@types/redux-thunk": "^2.1.0",
     "bootstrap": "^4.5.0",
     "date-fns": "^2.15.0",
+    "env-cmd": "^10.1.0",
     "eslint": "^6.6.0",
     "lodash": "^4.17.19",
     "pdfjs-dist": "^2.4.456",
@@ -43,7 +43,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:staging": "env-cmd -f .env.staging react-scripts start",
     "build": "react-scripts build",
+    "build:staging": "env-cmd -f .env.staging react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",

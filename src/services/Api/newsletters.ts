@@ -1,5 +1,5 @@
 import url from 'url';
-import { API_URL } from './base';
+import { API_URL, BASE_URL } from './base';
 
 export async function createNewsletter(
   token: string,
@@ -7,7 +7,7 @@ export async function createNewsletter(
   isTest: boolean,
   pageCount: number,
 ): Promise<NewsletterLog> {
-  const s3requestOptions = {
+  const s3requestOptions: RequestInit = {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -20,7 +20,7 @@ export async function createNewsletter(
     }),
   };
   const s3response = await fetch(
-    url.resolve(API_URL, '/file/upload'),
+    url.resolve(BASE_URL, 'file/upload'),
     s3requestOptions,
   );
   const s3body = await s3response.json();
@@ -31,7 +31,7 @@ export async function createNewsletter(
 
   let tagIds: number[] = [];
   newsletter.tags.forEach((tag) => tagIds.push(tag.id));
-  const requestOptions = {
+  const requestOptions: RequestInit = {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -87,7 +87,7 @@ export async function createNewsletter(
 export async function fetchNewsletters(
   token: string,
 ): Promise<NewsletterLog[]> {
-  const requestOptions = {
+  const requestOptions: RequestInit = {
     method: 'GET',
     headers: {
       Accept: 'application/json',

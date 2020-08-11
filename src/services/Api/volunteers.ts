@@ -5,7 +5,7 @@ export async function fetchVolunteers(
   token: string,
   org_id: number,
 ): Promise<Volunteer[]> {
-  const requestOptions = {
+  const requestOptions: RequestInit = {
     method: 'GET',
     headers: {
       Accept: 'application/json',

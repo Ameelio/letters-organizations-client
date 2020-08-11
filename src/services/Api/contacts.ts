@@ -5,7 +5,7 @@ export async function fetchContacts(
   token: string,
   org_id: number,
 ): Promise<OrgContact[]> {
-  const requestOptions = {
+  const requestOptions: RequestInit = {
     method: 'GET',
     headers: {
       Accept: 'application/json',
@@ -92,7 +92,7 @@ export async function createContacts(
   tag_ids: number[],
   contacts: Contact[],
 ): Promise<OrgContact[]> {
-  const requestOptions = {
+  const requestOptions: RequestInit = {
     method: 'POST',
     headers: {
       Accept: 'application/json',
