@@ -7,17 +7,16 @@ export async function createNewsletter(
   isTest: boolean,
   pageCount: number,
 ): Promise<NewsletterLog> {
-  const s3requestOptions: RequestInit = {
+  let formData = new FormData();
+  formData.append('type', 'pdf');
+  formData.append('file', newsletter.file);
+  const s3requestOptions = {
     method: 'POST',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      type: 'pdf',
-      file: newsletter.file,
-    }),
+    body: formData,
   };
   const s3response = await fetch(
     url.resolve(BASE_URL, 'file/upload'),
@@ -27,8 +26,8 @@ export async function createNewsletter(
   if (s3body.status === 'ERROR') {
     throw s3body;
   }
-  const s3_url = s3body.data.data;
 
+  const s3_url = s3body.data;
   let tagIds: number[] = [];
   newsletter.tags.forEach((tag) => tagIds.push(tag.id));
   const requestOptions: RequestInit = {
