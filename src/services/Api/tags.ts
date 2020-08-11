@@ -2,7 +2,7 @@ import url from 'url';
 import { API_URL } from './base';
 
 export async function fetchTags(token: string, org_id: number): Promise<Tag[]> {
-  const requestOptions = {
+  const requestOptions: RequestInit = {
     method: 'GET',
     headers: {
       Accept: 'application/json',
@@ -40,7 +40,7 @@ export async function createTag(
   org_id: number,
   label: string,
 ): Promise<Tag> {
-  const requestOptions = {
+  const requestOptions: RequestInit = {
     method: 'POST',
     headers: {
       Accept: 'application/json',

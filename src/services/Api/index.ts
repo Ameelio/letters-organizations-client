@@ -2,7 +2,7 @@ import url from 'url';
 import { API_URL } from './base';
 
 export async function onLogin(email: string, password: string): Promise<User> {
-  const requestOptions = {
+  const requestOptions: RequestInit = {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -25,7 +25,7 @@ export async function onLogin(email: string, password: string): Promise<User> {
     org: null,
   };
 
-  const orgRequestOptions = {
+  const orgRequestOptions: RequestInit = {
     method: 'GET',
     headers: {
       Accept: 'application/json',

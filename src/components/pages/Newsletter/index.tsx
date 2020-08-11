@@ -37,6 +37,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
       uploadFile,
+      removeFile,
       updateFileUploadStep,
       loadTags,
       addUploadTag,
@@ -54,6 +55,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   uploadFile,
+  removeFile,
   updateFileUploadStep,
   tags,
   loadTags,
@@ -132,6 +134,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
 
   const handleDone = (event: React.MouseEvent) => {
     removeFile();
+    removeAllUploadTags();
     updateFileUploadStep(0);
   };
 
