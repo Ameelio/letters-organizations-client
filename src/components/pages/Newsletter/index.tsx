@@ -6,7 +6,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import * as pdfjsLib from 'pdfjs-dist';
 import { pdfjsWorker } from 'pdfjs-dist/build/pdf.worker.entry';
-
+import { logout } from '../../../redux/modules/user';
 import {
   uploadFile,
   updateFileUploadStep,
@@ -25,7 +25,6 @@ import TagSelector from 'src/components/tags/TagSelector';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import { Container, Spinner } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
 
 const mapStateToProps = (state: RootState) => ({
   tags: state.tags,
@@ -46,6 +45,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       addAllUploadTags,
       removeAllUploadTags,
       loading,
+      logout,
     },
     dispatch,
   );
@@ -66,6 +66,8 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   sendNewsletter,
   newsletters,
   user,
+  loading,
+  logout,
 }) => {
   const [name, setName] = useState<string>('');
   const [newsletter, setNewsletter] = useState<DraftNewsletter>(
@@ -139,14 +141,13 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   };
 
   if (
-    !user.authInfo.isLoggedIn ||
     newsletters.error.message === 'Expired Token' ||
     newsletters.error.message === 'Unauthorized' ||
     tags.error.message === 'Expired Token' ||
     tags.error.message === 'Unauthorized'
   ) {
     loading();
-    return <Redirect to="/login" />;
+    logout();
   }
 
   const spinner = (

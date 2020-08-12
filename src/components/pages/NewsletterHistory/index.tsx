@@ -12,10 +12,11 @@ import {
 import FormControl from 'react-bootstrap/FormControl';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Tag from 'src/components/tags/Tag';
 import { formatDate } from 'src/utils/utils';
 import TagSelector from '../../tags/TagSelector';
+import { logout } from '../../../redux/modules/user';
 import { loadTags } from '../../../redux/modules/tag';
 import { Container, Spinner } from 'react-bootstrap';
 
@@ -34,6 +35,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       removeFilter,
       loadTags,
       loading,
+      logout,
     },
     dispatch,
   );
@@ -51,6 +53,7 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
   addFilter,
   removeFilter,
   loading,
+  logout,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [hasFetched, setHasFetched] = useState<boolean>(false);
@@ -99,14 +102,13 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
   };
 
   if (
-    !user.authInfo.isLoggedIn ||
     newsletters.error.message === 'Expired Token' ||
     newsletters.error.message === 'Unauthorized' ||
     tags.error.message === 'Expired Token' ||
     tags.error.message === 'Unauthorized'
   ) {
     loading();
-    return <Redirect to="/login" />;
+    logout();
   }
 
   const spinner = (

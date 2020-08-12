@@ -122,11 +122,6 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     searchQuery,
   ]);
 
-  if (!user.authInfo.isLoggedIn) {
-    loading();
-    return <Redirect to="/login" />;
-  }
-
   if (volunteers.error.message === 'Expired Token') {
     loading();
     logout();
