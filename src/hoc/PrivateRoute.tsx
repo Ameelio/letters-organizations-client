@@ -7,7 +7,7 @@ interface Props extends RouteProps {
   authenticated: boolean;
 }
 
-class AuthorizedRoute extends Route<Props> {
+class PrivateRoute extends Route<Props> {
   public render() {
     if (!this.props.authenticated) {
       const renderComponent = () => <Redirect to="/login" />;
@@ -22,4 +22,4 @@ const mapStateToProps = (state: RootState) => ({
   authenticated: state.user.authInfo.isLoggedIn,
 });
 
-export default connect(mapStateToProps)(AuthorizedRoute);
+export default connect(mapStateToProps)(PrivateRoute);
