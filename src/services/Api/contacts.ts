@@ -140,7 +140,7 @@ export async function createContacts(
     double_sided: boolean;
     tags: Array<t>;
   }
-  body.data.data.forEach((contact: c) => {
+  body.data.data.contacts.forEach((contact: c) => {
     const contactData: OrgContact = {
       first_name: contact.first_name,
       middle_name: contact.middle_name,

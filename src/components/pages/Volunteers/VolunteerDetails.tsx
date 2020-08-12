@@ -112,7 +112,7 @@ const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
             </span>
           )}
           <Button
-            className="remove-volunteer"
+            className="remove-volunteer mb-5"
             variant="outline-danger"
             onClick={handleRemove}
             disabled={user.id === volunteer.user_id}>

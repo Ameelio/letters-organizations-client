@@ -12,6 +12,7 @@ const UPDATE_FILE_UPLOAD_STEP = 'orgContacts/UPDATE_FILE_UPLOAD_STEP';
 const UPDATE_CSV_ROWS = 'orgContacts/UPDATE_CSV_ROWS';
 const ADD_UPLOAD_TAG = 'orgContacts/UPDATE_UPLOAD_TAGS';
 const REMOVE_UPLOAD_TAG = 'orgContacts/REMOVE_UPLOAD_TAG';
+const REMOVE_ALL_UPLOAD_TAG = 'orgContacts/RESET_UPLOAD_TAG';
 const ADD_ORG_CONTACTS = 'orgContacts/ADD_ORG_CONTACTS';
 const LOADING = 'orgContacts/LOADING';
 const ERROR = 'orgContacts/ERROR';
@@ -56,6 +57,10 @@ interface RemoveUploadTagAction {
   payload: Tag;
 }
 
+interface RemoveAllUploadTagsAction {
+  type: typeof REMOVE_ALL_UPLOAD_TAG;
+}
+
 interface RemoveCsvAction {
   type: typeof REMOVE_CSV;
 }
@@ -86,6 +91,7 @@ type OrgContactsActionTypes =
   | UpdateCsvRowsAction
   | AddUploadTagAction
   | RemoveUploadTagAction
+  | RemoveAllUploadTagsAction
   | LoadingAction
   | ErrorAction;
 
@@ -159,6 +165,12 @@ export const removeUploadTag = (tag: Tag): OrgContactsActionTypes => {
   return {
     type: REMOVE_UPLOAD_TAG,
     payload: tag,
+  };
+};
+
+export const removeAllUploadTags = (): OrgContactsActionTypes => {
+  return {
+    type: REMOVE_ALL_UPLOAD_TAG,
   };
 };
 
@@ -250,6 +262,12 @@ export function orgContactsReducer(
         uploadSelectedTags: state.uploadSelectedTags.filter(
           (selectedTag) => selectedTag.id !== action.payload.id,
         ),
+        loading: false,
+      };
+    case REMOVE_ALL_UPLOAD_TAG:
+      return {
+        ...state,
+        uploadSelectedTags: [],
         loading: false,
       };
     case LOADING:

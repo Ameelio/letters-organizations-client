@@ -10,6 +10,18 @@ function hashCode(str: string): number {
   return hash;
 }
 
+const unauthenticatedMessages: string[] = [
+  'Expired Token',
+  'Unauthorized',
+  'Unauthenticated',
+];
+
+export function unauthenticated(errorMessages: string[]): boolean {
+  return errorMessages.some((errorMessage) =>
+    unauthenticatedMessages.includes(errorMessage),
+  );
+}
+
 export function generateTagColor(colors: TagColor[], label: string): string {
   return colors[Math.abs(hashCode(label) % colors.length)];
 }
