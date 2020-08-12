@@ -10,14 +10,14 @@ import {
   loading,
 } from 'src/redux/modules/orgcontacts';
 import { loadTags } from 'src/redux/modules/tag';
-
+import { logout } from '../../../redux/modules/user';
 import TagSelector from 'src/components/tags/TagSelector';
 import FormControl from 'react-bootstrap/FormControl';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import Tag from 'src/components/tags/Tag';
 import './index.css';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 
 const mapStateToProps = (state: RootState) => ({
@@ -29,7 +29,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
-    { loadOrgContacts, addFilter, removeFilter, loadTags, loading },
+    { loadOrgContacts, addFilter, removeFilter, loadTags, loading, logout },
     dispatch,
   );
 
@@ -46,6 +46,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   addFilter,
   removeFilter,
   user,
+  logout,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filteredOrgContact, setFilteredOrgContacts] = useState<OrgContact[]>(
@@ -96,14 +97,13 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   };
 
   if (
-    !user.authInfo.isLoggedIn ||
     orgContacts.error.message === 'Expired Token' ||
     orgContacts.error.message === 'Unauthorized' ||
     tags.error.message === 'Expired Token' ||
     tags.error.message === 'Unauthorized'
   ) {
     loading();
-    return <Redirect to="/login" />;
+    logout();
   }
 
   const spinner = (

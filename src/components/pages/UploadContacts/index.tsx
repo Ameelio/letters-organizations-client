@@ -25,7 +25,8 @@ import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import ErrorAlert from 'src/components/alerts/ErrorAlert';
 import { Clock } from 'react-feather';
 import Tag from 'src/components/tags/Tag';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { logout } from '../../../redux/modules/user';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
@@ -48,7 +49,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       removeUploadTag,
       removeCsv,
       createOrgContacts,
-      loading,
+      logout,
     },
     dispatch,
   );
@@ -71,6 +72,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   createOrgContacts,
   error,
   user,
+  logout,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
     initialContactFieldMap,
@@ -153,14 +155,12 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   });
 
   if (
-    !user.authInfo.isLoggedIn ||
     error.message === 'Expired Token' ||
     error.message === 'Unauthorized' ||
     tags.error.message === 'Expired Token' ||
     tags.error.message === 'Unauthorized'
   ) {
-    loading();
-    return <Redirect to="/login" />;
+    logout();
   }
 
   return (

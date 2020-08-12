@@ -8,6 +8,7 @@ import NewsletterCreationPage from './components/pages/Newsletter';
 import ContactsPage from './components/pages/Contacts';
 import UploadContactsPage from './components/pages/UploadContacts';
 import NewsletterHistoryPage from './components/pages/NewsletterHistory';
+import AuthorizedRoute from './hoc/AuthorizedRoute';
 
 function App() {
   return (
@@ -15,15 +16,19 @@ function App() {
       <NavBar />
       <Switch>
         <Route path="/login" component={Login}></Route>
-        <Route exact path="/newsletter" component={NewsletterHistoryPage} />
-        <Route
+        <AuthorizedRoute
+          exact
+          path="/newsletter"
+          component={NewsletterHistoryPage}
+        />
+        <AuthorizedRoute
           exact
           path="/newsletter/create"
           component={NewsletterCreationPage}
         />
-        <Route exact path="/contacts" component={ContactsPage} />
-        <Route exact path="/upload" component={UploadContactsPage} />
-        <Route exact path="/" component={VolunteerPage}></Route>
+        <AuthorizedRoute exact path="/contacts" component={ContactsPage} />
+        <AuthorizedRoute exact path="/upload" component={UploadContactsPage} />
+        <AuthorizedRoute exact path="/" component={VolunteerPage} />
       </Switch>
     </Router>
   );
