@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import VolunteerCard from './VolunteerCard';
 import VolunteerDetails from './VolunteerDetails';
 import LetterCard from './LetterCard';
-import Image from 'react-bootstrap/Image';
-import ContactCard from './ContactCard';
 import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
 import Form from 'react-bootstrap/Form';
@@ -24,9 +22,9 @@ import {
   updateVolunteer,
   removeVolunteer,
 } from '../../../services/Api/volunteers';
+import { unauthenticated } from 'src/utils/utils';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, Container, Spinner } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
 import { addBusinessDays, differenceInBusinessDays } from 'date-fns';
 
 const mapStateToProps = (state: RootState) => ({
@@ -122,13 +120,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     searchQuery,
   ]);
 
-  const unauthenticated: string[] = [
-    'Expired Token',
-    'Unauthorized',
-    'Unauthenticated',
-  ];
-
-  if (unauthenticated.includes(volunteers.error.message)) {
+  if (unauthenticated([volunteers.error.message])) {
     loading();
     logout();
   }

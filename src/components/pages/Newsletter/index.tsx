@@ -25,6 +25,7 @@ import TagSelector from 'src/components/tags/TagSelector';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import { Container, Spinner } from 'react-bootstrap';
+import { unauthenticated } from 'src/utils/utils';
 
 const mapStateToProps = (state: RootState) => ({
   tags: state.tags,
@@ -140,16 +141,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     updateFileUploadStep(0);
   };
 
-  const unauthenticated: string[] = [
-    'Expired Token',
-    'Unauthorized',
-    'Unauthenticated',
-  ];
-
-  if (
-    unauthenticated.includes(newsletters.error.message) ||
-    unauthenticated.includes(tags.error.message)
-  ) {
+  if (unauthenticated([newsletters.error.message, tags.error.message])) {
     loading();
     logout();
   }

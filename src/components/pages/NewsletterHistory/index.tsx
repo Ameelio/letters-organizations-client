@@ -14,7 +14,7 @@ import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import { Link } from 'react-router-dom';
 import Tag from 'src/components/tags/Tag';
-import { formatDate } from 'src/utils/utils';
+import { formatDate, unauthenticated } from 'src/utils/utils';
 import TagSelector from '../../tags/TagSelector';
 import { logout } from '../../../redux/modules/user';
 import { loadTags } from '../../../redux/modules/tag';
@@ -101,16 +101,7 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
     setSearchQuery(event.target.value);
   };
 
-  const unauthenticated: string[] = [
-    'Expired Token',
-    'Unauthorized',
-    'Unauthenticated',
-  ];
-
-  if (
-    unauthenticated.includes(newsletters.error.message) ||
-    unauthenticated.includes(tags.error.message)
-  ) {
+  if (unauthenticated([newsletters.error.message, tags.error.message])) {
     loading();
     logout();
   }

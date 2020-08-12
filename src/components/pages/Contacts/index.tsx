@@ -19,6 +19,7 @@ import Tag from 'src/components/tags/Tag';
 import './index.css';
 import { Link } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
+import { unauthenticated } from 'src/utils/utils';
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
@@ -96,16 +97,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     setSearchQuery(event.target.value);
   };
 
-  const unauthenticated: string[] = [
-    'Expired Token',
-    'Unauthorized',
-    'Unauthenticated',
-  ];
-
-  if (
-    unauthenticated.includes(orgContacts.error.message) ||
-    unauthenticated.includes(tags.error.message)
-  ) {
+  if (unauthenticated([orgContacts.error.message, tags.error.message])) {
     loading();
     logout();
   }

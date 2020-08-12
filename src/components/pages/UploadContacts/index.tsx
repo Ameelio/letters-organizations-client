@@ -28,6 +28,7 @@ import { Clock } from 'react-feather';
 import Tag from 'src/components/tags/Tag';
 import { Link } from 'react-router-dom';
 import { logout } from '../../../redux/modules/user';
+import { unauthenticated } from 'src/utils/utils';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
@@ -158,16 +159,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     }
   });
 
-  const unauthenticated: string[] = [
-    'Expired Token',
-    'Unauthorized',
-    'Unauthenticated',
-  ];
-
-  if (
-    unauthenticated.includes(error.message) ||
-    unauthenticated.includes(tags.error.message)
-  ) {
+  if (unauthenticated([error.message, tags.error.message])) {
     logout();
   }
 
