@@ -8,7 +8,7 @@ import NewsletterCreationPage from './components/pages/Newsletter';
 import ContactsPage from './components/pages/Contacts';
 import UploadContactsPage from './components/pages/UploadContacts';
 import NewsletterHistoryPage from './components/pages/NewsletterHistory';
-import AuthorizedRoute from './hoc/AuthorizedRoute';
+import PrivateRoute from './hoc/PrivateRoute';
 
 function App() {
   return (
@@ -16,19 +16,19 @@ function App() {
       <NavBar />
       <Switch>
         <Route path="/login" component={Login}></Route>
-        <AuthorizedRoute
+        <PrivateRoute
           exact
           path="/newsletter"
           component={NewsletterHistoryPage}
         />
-        <AuthorizedRoute
+        <PrivateRoute
           exact
           path="/newsletter/create"
           component={NewsletterCreationPage}
         />
-        <AuthorizedRoute exact path="/contacts" component={ContactsPage} />
-        <AuthorizedRoute exact path="/upload" component={UploadContactsPage} />
-        <AuthorizedRoute exact path="/" component={VolunteerPage} />
+        <PrivateRoute exact path="/contacts" component={ContactsPage} />
+        <PrivateRoute exact path="/upload" component={UploadContactsPage} />
+        <PrivateRoute exact path="/" component={VolunteerPage} />
       </Switch>
     </Router>
   );
