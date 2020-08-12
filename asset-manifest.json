@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/letters-organizations-client/static/css/main.6d9803e0.chunk.css",
-    "main.js": "/letters-organizations-client/static/js/main.7c4272cd.chunk.js",
-    "main.js.map": "/letters-organizations-client/static/js/main.7c4272cd.chunk.js.map",
+    "main.css": "/letters-organizations-client/static/css/main.1db6dbbd.chunk.css",
+    "main.js": "/letters-organizations-client/static/js/main.8752bf4d.chunk.js",
+    "main.js.map": "/letters-organizations-client/static/js/main.8752bf4d.chunk.js.map",
     "runtime-main.js": "/letters-organizations-client/static/js/runtime-main.027d688b.js",
     "runtime-main.js.map": "/letters-organizations-client/static/js/runtime-main.027d688b.js.map",
-    "static/js/2.c7d6d76e.chunk.js": "/letters-organizations-client/static/js/2.c7d6d76e.chunk.js",
-    "static/js/2.c7d6d76e.chunk.js.map": "/letters-organizations-client/static/js/2.c7d6d76e.chunk.js.map",
+    "static/js/2.b798c272.chunk.js": "/letters-organizations-client/static/js/2.b798c272.chunk.js",
+    "static/js/2.b798c272.chunk.js.map": "/letters-organizations-client/static/js/2.b798c272.chunk.js.map",
     "index.html": "/letters-organizations-client/index.html",
-    "precache-manifest.bf1cecf568ae684f4b29d4cc3e49bea7.js": "/letters-organizations-client/precache-manifest.bf1cecf568ae684f4b29d4cc3e49bea7.js",
+    "precache-manifest.0908fca7714df132b26ed8c827d1ccb4.js": "/letters-organizations-client/precache-manifest.0908fca7714df132b26ed8c827d1ccb4.js",
     "service-worker.js": "/letters-organizations-client/service-worker.js",
-    "static/css/main.6d9803e0.chunk.css.map": "/letters-organizations-client/static/css/main.6d9803e0.chunk.css.map",
-    "static/js/2.c7d6d76e.chunk.js.LICENSE.txt": "/letters-organizations-client/static/js/2.c7d6d76e.chunk.js.LICENSE.txt",
+    "static/css/main.1db6dbbd.chunk.css.map": "/letters-organizations-client/static/css/main.1db6dbbd.chunk.css.map",
+    "static/js/2.b798c272.chunk.js.LICENSE.txt": "/letters-organizations-client/static/js/2.b798c272.chunk.js.LICENSE.txt",
     "static/media/logo.dfd0363d.svg": "/letters-organizations-client/static/media/logo.dfd0363d.svg",
     "static/media/mail.44a73e0e.svg": "/letters-organizations-client/static/media/mail.44a73e0e.svg",
     "static/media/skate.0f84cd80.svg": "/letters-organizations-client/static/media/skate.0f84cd80.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.027d688b.js",
-    "static/js/2.c7d6d76e.chunk.js",
-    "static/css/main.6d9803e0.chunk.css",
-    "static/js/main.7c4272cd.chunk.js"
+    "static/js/2.b798c272.chunk.js",
+    "static/css/main.1db6dbbd.chunk.css",
+    "static/js/main.8752bf4d.chunk.js"
   ]
 }
