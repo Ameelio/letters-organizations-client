@@ -101,11 +101,15 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
     setSearchQuery(event.target.value);
   };
 
+  const unauthenticated: string[] = [
+    'Expired Token',
+    'Unauthorized',
+    'Unauthenticated',
+  ];
+
   if (
-    newsletters.error.message === 'Expired Token' ||
-    newsletters.error.message === 'Unauthorized' ||
-    tags.error.message === 'Expired Token' ||
-    tags.error.message === 'Unauthorized'
+    unauthenticated.includes(newsletters.error.message) ||
+    unauthenticated.includes(tags.error.message)
   ) {
     loading();
     logout();

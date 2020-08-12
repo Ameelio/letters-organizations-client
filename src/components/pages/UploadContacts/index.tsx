@@ -10,6 +10,7 @@ import {
   updateCsvRows,
   addUploadTag,
   removeUploadTag,
+  removeAllUploadTags,
   createOrgContacts,
   loading,
 } from 'src/redux/modules/orgcontacts';
@@ -47,6 +48,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       addNewTag,
       addUploadTag,
       removeUploadTag,
+      removeAllUploadTags,
       removeCsv,
       createOrgContacts,
       logout,
@@ -68,6 +70,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   addNewTag,
   addUploadTag,
   removeUploadTag,
+  removeAllUploadTags,
   selectedTags,
   createOrgContacts,
   error,
@@ -101,6 +104,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
 
   const handleDone = (event: React.MouseEvent) => {
     removeCsv();
+    removeAllUploadTags();
     updateCsvUploadStep(0);
   };
 
@@ -154,11 +158,15 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     }
   });
 
+  const unauthenticated: string[] = [
+    'Expired Token',
+    'Unauthorized',
+    'Unauthenticated',
+  ];
+
   if (
-    error.message === 'Expired Token' ||
-    error.message === 'Unauthorized' ||
-    tags.error.message === 'Expired Token' ||
-    tags.error.message === 'Unauthorized'
+    unauthenticated.includes(error.message) ||
+    unauthenticated.includes(tags.error.message)
   ) {
     logout();
   }

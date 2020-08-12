@@ -140,11 +140,15 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     updateFileUploadStep(0);
   };
 
+  const unauthenticated: string[] = [
+    'Expired Token',
+    'Unauthorized',
+    'Unauthenticated',
+  ];
+
   if (
-    newsletters.error.message === 'Expired Token' ||
-    newsletters.error.message === 'Unauthorized' ||
-    tags.error.message === 'Expired Token' ||
-    tags.error.message === 'Unauthorized'
+    unauthenticated.includes(newsletters.error.message) ||
+    unauthenticated.includes(tags.error.message)
   ) {
     loading();
     logout();

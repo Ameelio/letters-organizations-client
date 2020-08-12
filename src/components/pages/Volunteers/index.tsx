@@ -122,7 +122,13 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     searchQuery,
   ]);
 
-  if (volunteers.error.message === 'Expired Token') {
+  const unauthenticated: string[] = [
+    'Expired Token',
+    'Unauthorized',
+    'Unauthenticated',
+  ];
+
+  if (unauthenticated.includes(volunteers.error.message)) {
     loading();
     logout();
   }

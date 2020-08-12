@@ -96,11 +96,15 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     setSearchQuery(event.target.value);
   };
 
+  const unauthenticated: string[] = [
+    'Expired Token',
+    'Unauthorized',
+    'Unauthenticated',
+  ];
+
   if (
-    orgContacts.error.message === 'Expired Token' ||
-    orgContacts.error.message === 'Unauthorized' ||
-    tags.error.message === 'Expired Token' ||
-    tags.error.message === 'Unauthorized'
+    unauthenticated.includes(orgContacts.error.message) ||
+    unauthenticated.includes(tags.error.message)
   ) {
     loading();
     logout();
