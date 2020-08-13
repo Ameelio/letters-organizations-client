@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/letters-organizations-client/static/css/main.1db6dbbd.chunk.css",
-    "main.js": "/letters-organizations-client/static/js/main.8752bf4d.chunk.js",
-    "main.js.map": "/letters-organizations-client/static/js/main.8752bf4d.chunk.js.map",
+    "main.js": "/letters-organizations-client/static/js/main.6ee100a3.chunk.js",
+    "main.js.map": "/letters-organizations-client/static/js/main.6ee100a3.chunk.js.map",
     "runtime-main.js": "/letters-organizations-client/static/js/runtime-main.027d688b.js",
     "runtime-main.js.map": "/letters-organizations-client/static/js/runtime-main.027d688b.js.map",
-    "static/js/2.b798c272.chunk.js": "/letters-organizations-client/static/js/2.b798c272.chunk.js",
-    "static/js/2.b798c272.chunk.js.map": "/letters-organizations-client/static/js/2.b798c272.chunk.js.map",
+    "static/js/2.39691a39.chunk.js": "/letters-organizations-client/static/js/2.39691a39.chunk.js",
+    "static/js/2.39691a39.chunk.js.map": "/letters-organizations-client/static/js/2.39691a39.chunk.js.map",
     "index.html": "/letters-organizations-client/index.html",
-    "precache-manifest.0908fca7714df132b26ed8c827d1ccb4.js": "/letters-organizations-client/precache-manifest.0908fca7714df132b26ed8c827d1ccb4.js",
+    "precache-manifest.deda1bc16e508a19a1471f100e539251.js": "/letters-organizations-client/precache-manifest.deda1bc16e508a19a1471f100e539251.js",
     "service-worker.js": "/letters-organizations-client/service-worker.js",
     "static/css/main.1db6dbbd.chunk.css.map": "/letters-organizations-client/static/css/main.1db6dbbd.chunk.css.map",
-    "static/js/2.b798c272.chunk.js.LICENSE.txt": "/letters-organizations-client/static/js/2.b798c272.chunk.js.LICENSE.txt",
+    "static/js/2.39691a39.chunk.js.LICENSE.txt": "/letters-organizations-client/static/js/2.39691a39.chunk.js.LICENSE.txt",
     "static/media/logo.dfd0363d.svg": "/letters-organizations-client/static/media/logo.dfd0363d.svg",
     "static/media/mail.44a73e0e.svg": "/letters-organizations-client/static/media/mail.44a73e0e.svg",
     "static/media/skate.0f84cd80.svg": "/letters-organizations-client/static/media/skate.0f84cd80.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.027d688b.js",
-    "static/js/2.b798c272.chunk.js",
+    "static/js/2.39691a39.chunk.js",
     "static/css/main.1db6dbbd.chunk.css",
-    "static/js/main.8752bf4d.chunk.js"
+    "static/js/main.6ee100a3.chunk.js"
   ]
 }
