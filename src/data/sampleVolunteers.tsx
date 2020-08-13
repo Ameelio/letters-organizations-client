@@ -35,6 +35,7 @@ const dummy_letter: Letter = {
   page_count: 1,
   user_name: 'Gabee',
   lob_status: null,
+  delivered: false,
   contact_name: 'Frankie',
 };
 
@@ -53,6 +54,7 @@ const dummy_letter2: Letter = {
   page_count: 1,
   user_name: 'Gabee',
   lob_status: null,
+  delivered: false,
   contact_name: 'Frankie',
 };
 const dummy_letters: Letter[] = [dummy_letter, dummy_letter2];

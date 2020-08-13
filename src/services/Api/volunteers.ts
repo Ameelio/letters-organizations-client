@@ -163,6 +163,7 @@ export async function fetchVolunteerDetails(
     user_name: string;
     contact_name: string;
     images: image[];
+    delivered: boolean;
   }
   const lettersData: Letter[] = [];
   lettersBody.data.data.forEach((letter: l) => {
@@ -176,6 +177,7 @@ export async function fetchVolunteerDetails(
         lob_validation_error: letter.lob_validation_error,
         lob_status: letter.lob_status,
         last_lob_status_update: null,
+        delivered: letter.delivered,
         page_count: letter.page_count,
         user_name: letter.user_name,
         contact_name: letter.contact_name,

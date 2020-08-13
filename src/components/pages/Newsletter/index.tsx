@@ -8,6 +8,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { pdfjsWorker } from 'pdfjs-dist/build/pdf.worker.entry';
 import { logout } from '../../../redux/modules/user';
 import {
+  setName,
   uploadFile,
   updateFileUploadStep,
   addUploadTag,
@@ -36,6 +37,7 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
+      setName,
       uploadFile,
       removeFile,
       updateFileUploadStep,
@@ -55,6 +57,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
+  setName,
   uploadFile,
   removeFile,
   updateFileUploadStep,
@@ -70,7 +73,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   loading,
   logout,
 }) => {
-  const [name, setName] = useState<string>('');
   const [newsletter, setNewsletter] = useState<DraftNewsletter>(
     {} as DraftNewsletter,
   );
@@ -98,7 +100,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     }
     if (newsletters.uploadStep === 2 && newsletters.uploadedFile) {
       setNewsletter({
-        title: name,
+        title: newsletters.newsletterName,
         file: newsletters.uploadedFile,
         tags: newsletters.uploadSelectedTags,
       });
@@ -111,7 +113,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     hasFetchedTags,
     tags,
     loadTags,
-    name,
     newsletters,
     getPageCount,
   ]);
@@ -184,7 +185,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 <Form.Label>Name your newsletter</Form.Label>
                 <Form.Control
                   onChange={(e) => setName(e.target.value)}
-                  value={name}
+                  value={newsletters.newsletterName}
                   type="text"
                   placeholder="Untitled"
                 />
@@ -201,7 +202,10 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               <FunnelButton
                 onNext={handleNextClick}
                 cta="Next"
-                enabled={newsletters.uploadedFile != null && name !== ''}
+                enabled={
+                  newsletters.uploadedFile != null &&
+                  newsletters.newsletterName !== ''
+                }
               />
             </Form>
           </div>
