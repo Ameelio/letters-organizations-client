@@ -298,6 +298,12 @@ export function newsletterReducer(
         },
         loading: true,
       };
+    case ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
     default:
       return state;
   }
@@ -311,7 +317,7 @@ export const sendNewsletter = (
   dispatch(loading());
   createNewsletter(token, newsletter, false, pageCount)
     .then((newsletter) => dispatch(addNewsletter(newsletter)))
-    .catch((error) => handleError(error));
+    .catch((error) => dispatch(handleError(error)));
 };
 
 export const loadNewsletters = (token: string): AppThunk => async (
@@ -320,5 +326,5 @@ export const loadNewsletters = (token: string): AppThunk => async (
   dispatch(loading());
   fetchNewsletters(token)
     .then((newsletters) => dispatch(setNewsletters(newsletters)))
-    .catch((error) => handleError(error));
+    .catch((error) => dispatch(handleError(error)));
 };

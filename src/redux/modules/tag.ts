@@ -93,7 +93,11 @@ export function tagsReducer(
         },
       };
     case ERROR:
-      return { ...state, error: action.payload };
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
     default:
       return state;
   }
@@ -105,7 +109,7 @@ export const loadTags = (token: string, org_id: number): AppThunk => async (
   dispatch(loading());
   fetchTags(token, org_id)
     .then((tagsData) => dispatch(setTags(tagsData)))
-    .catch((error) => handleError(error));
+    .catch((error) => dispatch(handleError(error)));
 };
 
 export const onCreate = (tag: Tag): AppThunk => async (dispatch) => {
@@ -120,5 +124,5 @@ export const addNewTag = (
 ): AppThunk => async (dispatch) => {
   createTag(token, org_id, label)
     .then((tagData) => dispatch(onCreate(tagData)))
-    .catch((error) => handleError(error));
+    .catch((error) => dispatch(handleError(error)));
 };

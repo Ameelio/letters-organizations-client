@@ -299,7 +299,7 @@ export const loadOrgContacts = (
   dispatch(loading());
   fetchContacts(token, org_id)
     .then((contactsData) => dispatch(setOrgContacts(contactsData)))
-    .catch((error) => handleError(error));
+    .catch((error) => dispatch(handleError(error)));
 };
 
 export const createOrgContacts = (
@@ -336,5 +336,5 @@ export const createOrgContacts = (
       tags.forEach((tag) => dispatch(removeFilter(tag)));
     })
     .then(() => dispatch(loadTags(token, org_id)))
-    .catch((error) => handleError(error));
+    .catch((error) => dispatch(handleError(error)));
 };
