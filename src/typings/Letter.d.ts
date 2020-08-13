@@ -9,6 +9,7 @@ interface Letter {
   images: string[];
   lob_validation_error: boolean;
   last_lob_status_update: Date | null;
+  delivered: boolean;
   page_count: number | null;
   // tracking_events: TrackingEvent[];
   lob_status: string | null;

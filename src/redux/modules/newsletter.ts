@@ -6,7 +6,7 @@ import {
 
 const UPLOAD_FILE = 'newsletter/UPLOAD_FILE';
 const REMOVE_FILE = 'newsletter/REMOVE_FILE';
-
+const SET_NAME = 'newsletter/SET_NAME';
 const ADD_FILTER = 'newsletter/ADD_FILTER';
 const REMOVE_FILTER = 'newsletter/REMOVE_FILTER';
 const UPDATE_FILE_UPLOAD_STEP = 'newsletter/UPDATE_FILE_UPLOAD_STEP';
@@ -22,6 +22,11 @@ const ERROR = 'newsletter/ERROR';
 interface LoadingAction {
   type: typeof LOADING;
   payload: null;
+}
+
+interface SetNameAction {
+  type: typeof SET_NAME;
+  payload: string;
 }
 
 interface UploadFileAction {
@@ -83,6 +88,7 @@ interface ErrorAction {
 }
 
 type NewsletterActionTypes =
+  | SetNameAction
   | AddFilterAction
   | RemoveFilterAction
   | UploadFileAction
@@ -98,6 +104,13 @@ type NewsletterActionTypes =
   | ErrorAction;
 
 // Action creators
+export const setName = (name: string): NewsletterActionTypes => {
+  return {
+    type: SET_NAME,
+    payload: name,
+  };
+};
+
 export const addFilter = (tag: Tag): NewsletterActionTypes => {
   return {
     type: ADD_FILTER,
@@ -188,6 +201,7 @@ export const loading = (): NewsletterActionTypes => {
 
 // Reducer
 const initialState: NewsletterState = {
+  newsletterName: '',
   newsletters: [] as NewsletterLog[],
   uploadedFile: null,
   uploadStep: 0,
@@ -202,6 +216,11 @@ export function newsletterReducer(
   action: NewsletterActionTypes,
 ): NewsletterState {
   switch (action.type) {
+    case SET_NAME:
+      return {
+        ...state,
+        newsletterName: action.payload,
+      };
     case ADD_FILTER:
       return {
         ...state,
