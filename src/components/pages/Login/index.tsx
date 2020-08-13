@@ -70,7 +70,8 @@ const UnconnectedLogin: React.FC<PropsFromRedux> = ({
   return (
     <Container id="login-form">
       <Row className="justify-content-lg-center">
-        <Col lg={5}>
+        <Col lg={5} className="bg-white p-5 shadow-sm">
+          <span className="p2 font-weight-light">Welcome back!</span>
           <Form>
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Email address</Form.Label>

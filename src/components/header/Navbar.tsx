@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { RootState } from '../../redux';
 import { Navbar, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -6,8 +6,6 @@ import './Navbar.css';
 import { ReactComponent as Logo } from 'src/assets/logo.svg';
 import { connect, ConnectedProps } from 'react-redux';
 import { logout } from '../../redux/modules/user';
-
-interface NavBarProps {}
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,

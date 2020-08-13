@@ -25,3 +25,7 @@ export function unauthenticated(errorMessages: string[]): boolean {
 export function generateTagColor(colors: TagColor[], label: string): string {
   return colors[Math.abs(hashCode(label) % colors.length)];
 }
+
+export function genImageUri(img: string) {
+  return img === 'avatar.svg' ? `${process.env.PUBLIC_URL}/avatar.svg` : img;
+}

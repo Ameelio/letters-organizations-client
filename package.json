@@ -1,6 +1,6 @@
 {
   "name": "letters-organizations",
-  "homepage": "http://ameelio.github.io/letters-organizations-client",
+  "homepage": "http://organizations.ameelio.orgs",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

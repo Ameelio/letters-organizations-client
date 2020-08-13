@@ -49,7 +49,7 @@ const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
       setNewRole(volunteer.role);
       setConfirmRemove(false);
     }
-  });
+  }, [volunteer, showUpdateForm]);
 
   const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setNewRole(event.target.value.toLowerCase());
