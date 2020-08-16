@@ -95,6 +95,8 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
     loadTags,
     filters,
     tags,
+    org,
+    token,
   ]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

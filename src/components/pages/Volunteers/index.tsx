@@ -25,7 +25,6 @@ import {
 import { unauthenticated } from 'src/utils/utils';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, Container, Spinner } from 'react-bootstrap';
-import { addBusinessDays, differenceInBusinessDays } from 'date-fns';
 
 const mapStateToProps = (state: RootState) => ({
   volunteers: state.volunteers,
@@ -118,6 +117,8 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     loadVolunteers,
     volunteers.all_volunteers,
     searchQuery,
+    org,
+    token,
   ]);
 
   if (unauthenticated([volunteers.error.message])) {

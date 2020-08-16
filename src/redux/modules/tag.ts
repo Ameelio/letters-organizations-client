@@ -1,5 +1,4 @@
 import { AppThunk } from 'src/redux/helpers';
-import { sampleTags } from 'src/data/sampleTags';
 import { fetchTags, createTag } from 'src/services/Api/tags';
 import { addUploadTag } from './orgcontacts';
 

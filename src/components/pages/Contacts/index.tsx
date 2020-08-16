@@ -91,6 +91,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     loadOrgContacts,
     loadTags,
     searchQuery,
+    org,
+    token,
   ]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

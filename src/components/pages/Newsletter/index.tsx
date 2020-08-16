@@ -115,6 +115,8 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     loadTags,
     newsletters,
     getPageCount,
+    org,
+    token,
   ]);
 
   const handleNextClick = (event: React.MouseEvent) => {

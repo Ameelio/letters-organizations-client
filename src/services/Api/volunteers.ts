@@ -1,5 +1,6 @@
 import url from 'url';
 import { API_URL } from './base';
+import { genImageUri } from 'src/utils/utils';
 
 export async function fetchVolunteers(
   token: string,
@@ -118,7 +119,7 @@ export async function fetchVolunteerDetails(
         facility_city: contact.facility_city,
         facility_state: contact.facility_state,
         facility_postal: contact.facility_postal,
-        profile_img_path: contact.profile_img_path,
+        profile_img_path: genImageUri(contact.profile_img_path),
         relationship: contact.relationship,
         dorm: contact.dorm,
         unit: contact.unit,

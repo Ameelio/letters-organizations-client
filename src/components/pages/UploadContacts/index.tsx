@@ -12,7 +12,6 @@ import {
   removeUploadTag,
   removeAllUploadTags,
   createOrgContacts,
-  loading,
 } from 'src/redux/modules/orgcontacts';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
@@ -114,7 +113,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
       loadTags(token, org.id);
       setHasFetchedData(true);
     }
-  }, [hasFetchedData, loadTags]);
+  }, [hasFetchedData, loadTags, org, token]);
 
   let fileReader: FileReader;
 
