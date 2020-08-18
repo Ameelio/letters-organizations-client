@@ -9,10 +9,11 @@ const sampleA: NewsletterLog = {
   returned: 3,
   creationDate: new Date(),
   estimatedArrival: new Date(),
+  totalLettersCount: 3,
   tags: [sampleTags[0]],
 };
 
-const sampleB = {
+const sampleB: NewsletterLog = {
   id: 1,
   title: 'Poetry Newsletter',
   fileLink: '',
@@ -21,6 +22,7 @@ const sampleB = {
   returned: 0,
   creationDate: new Date(),
   estimatedArrival: new Date(),
+  totalLettersCount: 3,
   tags: [sampleTags[1], sampleTags[2]],
 };
 
