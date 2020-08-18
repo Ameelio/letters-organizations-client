@@ -1,5 +1,4 @@
 import { AppThunk } from 'src/redux/helpers';
-// import { sampleOrgContacts } from 'src/data/sampleOrgContacts';
 import { fetchContacts, createContacts } from 'src/services/Api/contacts';
 import { loadTags } from './tag';
 
@@ -321,9 +320,7 @@ export const createOrgContacts = (
       facility_postal: row[mapping.facilityPostal.index],
       unit: row[mapping.unit.index],
       dorm: row[mapping.dorm.index],
-      relationship: 'Other',
-      color: row[mapping.color.index] || true,
-      double_sided: row[mapping.doubleSided.index] || false,
+      relationship: 'Org Contact',
     } as Contact;
   });
   const tag_ids: number[] = tags.map((tag) => {
