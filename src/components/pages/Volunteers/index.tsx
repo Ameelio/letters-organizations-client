@@ -176,7 +176,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
           <VolunteerCard
             handleClick={(e) => handleVolunteerClick(e, volunteer)}
             volunteer={volunteer}
-            key={volunteer.name}
+            key={volunteer.id}
             isActive={volunteer.id === volunteers.selected_volunteer.id}
           />
         ))}
