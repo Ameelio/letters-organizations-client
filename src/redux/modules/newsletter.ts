@@ -240,7 +240,7 @@ const initialState: NewsletterState = {
   error: {} as ErrorResponse,
   loading: false,
   uploadDoubleSided: false,
-  uploadColor: false,
+  uploadColor: true,
 };
 
 export function newsletterReducer(

@@ -249,8 +249,8 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               <Toggle
                 value={newsletters.uploadDoubleSided}
                 setValue={updateUploadDoublesided}
-                defaultLabel="Double-Sided"
-                otherLabel="Single-Sided"
+                defaultLabel="Single-Sided"
+                otherLabel="Double-Sided"
               />
             </div>
             <div className="d-flex flex-column my-3 mw-50">
