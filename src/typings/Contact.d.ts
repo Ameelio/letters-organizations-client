@@ -15,6 +15,4 @@ interface Contact {
   total_letters_sent: number;
   last_letter_sent: Date | null;
   org_id: number | null;
-  color: boolean;
-  double_sided: boolean;
 }

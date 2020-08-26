@@ -18,6 +18,8 @@ const REMOVE_ALL_UPLOAD_TAG = 'newsletter/RESET_UPLOAD_TAG';
 const ADD_ALL_UPLOAD_TAGS = 'newsletter/ADD_ALL_UPLOAD_TAGS';
 const LOADING = 'newsletter/LOADING';
 const ERROR = 'newsletter/ERROR';
+const UPDATE_DOUBLESIDED = 'newsletter/UPDATE_DOUBLESIDED';
+const UPDATE_COLOR = 'newsletter/UPDATE_COLOR';
 
 interface LoadingAction {
   type: typeof LOADING;
@@ -87,6 +89,16 @@ interface ErrorAction {
   payload: ErrorResponse;
 }
 
+interface UpdateDoublesidedAction {
+  type: typeof UPDATE_DOUBLESIDED;
+  payload: boolean;
+}
+
+interface UpdateColorAction {
+  type: typeof UPDATE_COLOR;
+  payload: boolean;
+}
+
 type NewsletterActionTypes =
   | SetNameAction
   | AddFilterAction
@@ -101,7 +113,9 @@ type NewsletterActionTypes =
   | AddNewsletterAction
   | RemoveFileAction
   | LoadingAction
-  | ErrorAction;
+  | ErrorAction
+  | UpdateColorAction
+  | UpdateDoublesidedAction;
 
 // Action creators
 export const setName = (name: string): NewsletterActionTypes => {
@@ -192,6 +206,22 @@ const handleError = (error: ErrorResponse): NewsletterActionTypes => {
   };
 };
 
+export const updateUploadColor = (value: boolean): NewsletterActionTypes => {
+  return {
+    type: UPDATE_COLOR,
+    payload: value,
+  };
+};
+
+export const updateUploadDoublesided = (
+  value: boolean,
+): NewsletterActionTypes => {
+  return {
+    type: UPDATE_DOUBLESIDED,
+    payload: value,
+  };
+};
+
 export const loading = (): NewsletterActionTypes => {
   return {
     type: LOADING,
@@ -209,6 +239,8 @@ const initialState: NewsletterState = {
   selectedFilters: [],
   error: {} as ErrorResponse,
   loading: false,
+  uploadDoubleSided: false,
+  uploadColor: true,
 };
 
 export function newsletterReducer(
@@ -303,6 +335,16 @@ export function newsletterReducer(
         ...state,
         loading: false,
         error: action.payload,
+      };
+    case UPDATE_DOUBLESIDED:
+      return {
+        ...state,
+        uploadDoubleSided: action.payload,
+      };
+    case UPDATE_COLOR:
+      return {
+        ...state,
+        uploadColor: action.payload,
       };
     default:
       return state;

@@ -43,6 +43,8 @@ export async function createNewsletter(
       tags: tagIds,
       is_test: isTest,
       page_count: pageCount,
+      double_sided: newsletter.double_sided,
+      color: newsletter.color,
     }),
   };
   const response = await fetch(
@@ -61,6 +63,7 @@ export async function createNewsletter(
     inTransit: body.data.in_transit_count,
     returned: body.data.returned_count,
     creationDate: new Date(body.data.created_at),
+    totalLettersCount: body.data.total_letter_count,
     estimatedArrival: null,
     tags: [],
   };
@@ -111,6 +114,7 @@ export async function fetchNewsletters(
     id: number;
     name: string;
     pdf_path: string;
+    total_letter_count: number;
     delivered_count: number;
     in_transit_count: number;
     returned_count: number;
@@ -130,6 +134,7 @@ export async function fetchNewsletters(
       creationDate: new Date(newsletter.created_at),
       estimatedArrival: null,
       tags: [],
+      totalLettersCount: newsletter.total_letter_count,
     };
     if (newsletter.estimated_arrival) {
       newsletterData.estimatedArrival = new Date(newsletter.estimated_arrival);

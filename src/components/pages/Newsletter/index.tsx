@@ -18,6 +18,8 @@ import {
   removeAllUploadTags,
   loading,
   removeFile,
+  updateUploadColor,
+  updateUploadDoublesided,
 } from 'src/redux/modules/newsletter';
 import { loadTags } from 'src/redux/modules/tag';
 import ConfirmSendModal from './ConfirmSendModal';
@@ -27,6 +29,7 @@ import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import { Container, Spinner } from 'react-bootstrap';
 import { unauthenticated } from 'src/utils/utils';
+import Toggle from './Toggle';
 
 const mapStateToProps = (state: RootState) => ({
   tags: state.tags,
@@ -49,6 +52,8 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       removeAllUploadTags,
       loading,
       logout,
+      updateUploadDoublesided,
+      updateUploadColor,
     },
     dispatch,
   );
@@ -72,6 +77,8 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   user,
   loading,
   logout,
+  updateUploadColor,
+  updateUploadDoublesided,
 }) => {
   const [newsletter, setNewsletter] = useState<DraftNewsletter>(
     {} as DraftNewsletter,
@@ -103,6 +110,8 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
         title: newsletters.newsletterName,
         file: newsletters.uploadedFile,
         tags: newsletters.uploadSelectedTags,
+        color: newsletters.uploadColor,
+        double_sided: newsletters.uploadDoubleSided,
       });
       const obj = URL.createObjectURL(newsletters.uploadedFile);
       getPageCount(obj);
@@ -233,6 +242,24 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 onClick={handleSelectAllClick}
                 type="checkbox"
                 label="Select all contacts"
+              />
+            </div>
+            <div className="d-flex flex-column mt-3 mw-50">
+              <span className="p5 font-weight-bold">Printing</span>
+              <Toggle
+                value={newsletters.uploadDoubleSided}
+                setValue={updateUploadDoublesided}
+                defaultLabel="Single-Sided"
+                otherLabel="Double-Sided"
+              />
+            </div>
+            <div className="d-flex flex-column my-3 mw-50">
+              <span className="p5 font-weight-bold">Color</span>
+              <Toggle
+                value={newsletters.uploadColor}
+                setValue={updateUploadColor}
+                defaultLabel="Black and White"
+                otherLabel="Colored"
               />
             </div>
             <FunnelButton

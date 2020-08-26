@@ -1,14 +1,16 @@
 interface DraftNewsletter {
   title: string;
   file: File;
-  // numContacts: number;
   tags: Tags[];
+  color: boolean;
+  double_sided: boolean;
 }
 
 interface NewsletterLog {
   id: number;
   title: string;
   fileLink: string;
+  totalLettersCount: number;
   delivered: number;
   inTransit: number;
   returned: number;

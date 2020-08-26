@@ -45,8 +45,6 @@ export async function fetchContacts(
     total_letters_sent: number;
     last_letter_sent: string | null;
     org_id: number | null;
-    color: boolean;
-    double_sided: boolean;
     tags: Array<t>;
   }
   body.data.data.forEach((contact: c) => {
@@ -67,8 +65,6 @@ export async function fetchContacts(
       total_letters_sent: contact.total_letters_sent,
       last_letter_sent: null,
       org_id: contact.org_id,
-      color: contact.color,
-      double_sided: contact.double_sided,
       tags: [],
     };
     if (contact.last_letter_sent) {
@@ -137,8 +133,6 @@ export async function createContacts(
     total_letters_sent: number;
     last_letter_sent: string | null;
     org_id: number | null;
-    color: boolean;
-    double_sided: boolean;
     tags: Array<t>;
   }
   body.data.data.contacts.forEach((contact: c) => {
@@ -159,8 +153,6 @@ export async function createContacts(
       total_letters_sent: contact.total_letters_sent,
       last_letter_sent: null,
       org_id: contact.org_id,
-      color: contact.color,
-      double_sided: contact.double_sided,
       tags: [],
     };
     if (contact.last_letter_sent) {

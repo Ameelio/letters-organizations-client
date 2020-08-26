@@ -130,7 +130,7 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
           <Form className="mr-3 mb-3 ">
             <FormControl
               type="text"
-              placeholder="Search newsletter title"
+              placeholder="Search by title"
               value={searchQuery}
               onChange={handleSearchChange}
             />
@@ -164,6 +164,7 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
             <thead>
               <tr>
                 <th>Title</th>
+                <th>Total Sent</th>
                 <th>Delivered</th>
                 <th>In Transit</th>
                 <th>Returned</th>
@@ -176,30 +177,33 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
               {filteredNewsletters &&
                 filteredNewsletters.map((newsletter) => (
                   <tr key={newsletter.id}>
-                    <td>{newsletter.title}</td>
-                    <td>{newsletter.delivered}</td>
-                    <td>{newsletter.inTransit}</td>
-                    <td>{newsletter.returned}</td>
-                    <td>
-                      {newsletter.estimatedArrival
-                        ? formatDate(newsletter.estimatedArrival)
-                        : 'There was a problem estimating the arrival date.'}
-                    </td>
-                    <td className="d-flex flex-column">
-                      {newsletter.tags.map((tag, index) => (
-                        <div className="mb-3" key={index}>
-                          <Tag label={tag.label} />
-                        </div>
-                      ))}
-                    </td>
-                    <td>
-                      <a
-                        href={newsletter.fileLink}
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        Link
-                      </a>
-                    </td>
+                    <>
+                      <td>{newsletter.title}</td>
+                      <td>{newsletter.totalLettersCount}</td>
+                      <td>{newsletter.delivered}</td>
+                      <td>{newsletter.inTransit}</td>
+                      <td>{newsletter.returned}</td>
+                      <td>
+                        {newsletter.estimatedArrival
+                          ? formatDate(newsletter.estimatedArrival)
+                          : 'There was a problem estimating the arrival date.'}
+                      </td>
+                      <td className="d-flex flex-column">
+                        {newsletter.tags.map((tag, index) => (
+                          <div className="mb-3" key={index}>
+                            <Tag label={tag.label} />
+                          </div>
+                        ))}
+                      </td>
+                      <td>
+                        <a
+                          href={newsletter.fileLink}
+                          target="_blank"
+                          rel="noopener noreferrer">
+                          Link
+                        </a>
+                      </td>
+                    </>
                   </tr>
                 ))}
             </tbody>

@@ -103,8 +103,6 @@ export async function fetchVolunteerDetails(
     total_letters_sent: number;
     last_letter_sent: string | null;
     org_id: number | null;
-    color: boolean;
-    double_sided: boolean;
   }
   const contactsData: Contact[] = [];
   contactsBody.data.data.forEach((contact: c) => {
@@ -126,8 +124,6 @@ export async function fetchVolunteerDetails(
         total_letters_sent: contact.total_letters_sent,
         last_letter_sent: null,
         org_id: contact.org_id,
-        color: contact.color,
-        double_sided: contact.double_sided,
       };
       if (contact.last_letter_sent) {
         contactData.last_letter_sent = new Date(contact.last_letter_sent);
