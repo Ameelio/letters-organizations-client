@@ -1,0 +1,35 @@
+#contacts-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  opacity: 100%;
+  z-index: 100;
+}
+
+#faded {
+  opacity: 50%;
+}
+
+.grey {
+  color: #9a9a9a;
+}
+
+.right-line {
+  border-right: 1px solid grey;
+}
+
+.border-grey {
+  border: 1px solid #9a9a9a;
+}
+
+.rounded-div {
+  border-radius: 12;
+}
+
+.rounded-img {
+  border-radius: 50%;
+}
+
+.border-b-grey {
+  border-bottom: 1px solid #9a9a9a;
+}
