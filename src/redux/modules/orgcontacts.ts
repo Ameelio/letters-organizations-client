@@ -308,7 +308,7 @@ export const createOrgContacts = (
   uploadedCsv: CSV,
   tags: Tag[],
 ): AppThunk => async (dispatch) => {
-  const contacts: Contact[] = uploadedCsv.data.map((row) => {
+  const contacts: OrgContact[] = uploadedCsv.data.map((row) => {
     return {
       first_name: row[mapping.firstName.index],
       last_name: row[mapping.lastName.index],
@@ -321,7 +321,7 @@ export const createOrgContacts = (
       unit: row[mapping.unit.index],
       dorm: row[mapping.dorm.index],
       relationship: 'Org Contact',
-    } as Contact;
+    } as OrgContact;
   });
   const tag_ids: number[] = tags.map((tag) => {
     return tag.id;

@@ -4,7 +4,7 @@ import { formatDate } from 'src/utils/utils';
 import './ContactCard.css';
 
 interface ContactCardProps {
-  contact: Contact;
+  contact: VolunteerContact;
 }
 
 const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {

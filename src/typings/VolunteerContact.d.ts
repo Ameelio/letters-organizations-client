@@ -1,0 +1,1 @@
+interface VolunteerContact extends Contact {}
