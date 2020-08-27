@@ -3,7 +3,6 @@ import Image from 'react-bootstrap/Image';
 import ContactCard from './ContactCard';
 import { Button, Form } from 'react-bootstrap';
 import './VolunteerDetails.css';
-import { submitButton } from 'src/redux/modules/volunteerContacts';
 import { VolunteerActionTypes } from '../../../redux/modules/volunteer';
 import AddContactModal from './AddContactModal';
 

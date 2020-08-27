@@ -155,7 +155,7 @@ export const submitButton = (
     errorMssg.facilityCityErr = 'Facility city is a required field';
   }
   if (
-    contact.facility_postal.length != 5 ||
+    contact.facility_postal.length !== 5 ||
     !/^\d+$/.test(contact.facility_postal)
   ) {
     errorMssg.facilityPostalErr =
