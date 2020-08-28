@@ -33,7 +33,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const UnconnectedContacts: React.FC<PropsFromRedux> = ({
+const ContactDetails: React.FC<PropsFromRedux> = ({
   loading,
   loadTags,
   tags,
@@ -100,14 +100,6 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     logout();
   }
 
-  const spinner = (
-    <Container id="contacts-spinner">
-      <Spinner animation="border" role="status" variant="primary">
-        <span className="sr-only">Loading...</span>
-      </Spinner>
-    </Container>
-  );
-
   let page_id = 'content';
   if (orgContacts.loading || tags.loading) {
     page_id = 'faded';
@@ -117,27 +109,26 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     <Row className="d-flex flex-row">
       <section
         id={page_id}
-        className="d-flex flex-row m-5 w-100  bg-white p-5 shadow-sm">
-        <Col lg={4} className="vh-100 d-flex flex-column p-40">
-          <Row className="row  w-100 m-100">
+        className="d-flex flex-row m-5 w-100 bg-white p-5 shadow-sm">
+        <Col lg={4} className="d-flex flex-column">
+          <Row className="row w-100">
             <Col lg={12} className="d-flex flex-row justify-content-between">
-              <a>&lt; Back to Contacts </a>
-              <p>Edit</p>
+              <Link to="/contacts">&lt; Back to Contacts</Link>
             </Col>
           </Row>
 
-          <Row className="d-flex justify-content-center my-2 w-5">
+          <Row className="d-flex justify-content-center my-2">
             <img
               className="rounded-img"
               src="https://picsum.photos/seed/picsum/200/200"
             />
           </Row>
 
-          <Row className="justify-content-center my-2 w-5">
+          <Row className="justify-content-center my-2">
             <h4>Frankie Peter</h4>
           </Row>
 
-          <Row className="d-flex justify-content-center my-2">
+          <Row className="d-flex justify-content-center">
             <Table hover borderless size="sm">
               <tbody>
                 <tr>
@@ -204,13 +195,16 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             </Table>
           </Row>
         </Col>
-        <Col lg={1} className="w-100">
-          <div className="right-line"></div>
+
+        <Col lg={1} className="w-10 vh-100">
+          <div className="w-100 vh-100 right-line">
+            <p>Edit</p>
+          </div>
         </Col>
+        <Col lg={1} className="w-100 vh-100"></Col>
+
         <Col lg={6} className="vh-100 d-flex flex-column m-20 p-2">
-          <Row className="d-flex flex-row justify-content-end">
-            <Button> Send Letter </Button>
-          </Row>
+          <Row className="d-flex flex-row justify-content-end"></Row>
           <Row>
             <Table borderless>
               <thead>
@@ -242,4 +236,4 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   );
 };
 
-export default connector(UnconnectedContacts);
+export default connector(ContactDetails);

@@ -9,6 +9,7 @@ import ContactsPage from './components/pages/Contacts';
 import UploadContactsPage from './components/pages/UploadContacts';
 import NewsletterHistoryPage from './components/pages/NewsletterHistory';
 import PrivateRoute from './hoc/PrivateRoute';
+import ContactDetail from './components/pages/Contact';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <PrivateRoute exact path="/contacts" component={ContactsPage} />
         <PrivateRoute exact path="/upload" component={UploadContactsPage} />
         <PrivateRoute exact path="/" component={VolunteerPage} />
+        <PrivateRoute exact path="/contact" component={ContactDetail} />
       </Switch>
     </Router>
   );
