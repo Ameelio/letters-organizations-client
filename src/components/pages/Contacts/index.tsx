@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, UIEvent } from 'react';
 import { RootState } from 'src/redux';
-
+import Table from 'react-bootstrap/Table';
+import Tag from 'src/components/tags/Tag';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
 import {
@@ -14,12 +15,11 @@ import { logout } from '../../../redux/modules/user';
 import TagSelector from 'src/components/tags/TagSelector';
 import FormControl from 'react-bootstrap/FormControl';
 import Form from 'react-bootstrap/Form';
-import Table from 'react-bootstrap/Table';
-import Tag from 'src/components/tags/Tag';
 import './index.css';
 import { Link } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 import { unauthenticated } from 'src/utils/utils';
+import ContactTable from './ContactTable';
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
@@ -55,16 +55,16 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   );
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
+  const contacts = orgContacts.contacts;
   const token = user.user.token;
   const org = user.user.org;
 
   useEffect(() => {
     if (!hasFetchedData && org) {
-      loadOrgContacts(token, org.id);
+      loadOrgContacts(token, org.id, orgContacts.currPage);
       loadTags(token, org.id);
       setHasFetchedData(true);
     }
-
     let results = orgContacts.contacts.filter((contact) =>
       `${contact.first_name} ${contact.last_name}`
         .toLowerCase()
@@ -117,6 +117,20 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     page_id = 'faded';
   }
 
+  const handleScroll = (e: UIEvent) => {
+    const tableDiv = document.getElementById('tableDiv');
+    // const org = user.user.org;
+
+    if (tableDiv) {
+      const isBottom =
+        tableDiv.scrollHeight - tableDiv.scrollTop === tableDiv.clientHeight;
+      if (isBottom && org) {
+        console.log('table bottom reached');
+        loadOrgContacts(token, org.id, orgContacts.currPage);
+      }
+    }
+  };
+
   return (
     <div className="d-flex flex-row">
       <section
@@ -157,7 +171,10 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 
         {orgContacts.loading && spinner}
 
-        <div className="vh-100 w-100 shadow-sm p-5 bg-white overflow-auto">
+        <div
+          id="tableDiv"
+          className="vh-100 w-100 shadow-sm p-5 bg-white overflow-auto"
+          onScroll={handleScroll}>
           <Table responsive hover>
             <thead>
               <tr>
@@ -171,7 +188,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
               </tr>
             </thead>
             <tbody>
-              {filteredOrgContact.map((contact, index) => (
+              {contacts.map((contact, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{contact.first_name}</td>
