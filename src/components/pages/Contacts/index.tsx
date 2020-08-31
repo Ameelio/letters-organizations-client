@@ -19,7 +19,6 @@ import './index.css';
 import { Link } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 import { unauthenticated } from 'src/utils/utils';
-import ContactTable from './ContactTable';
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
