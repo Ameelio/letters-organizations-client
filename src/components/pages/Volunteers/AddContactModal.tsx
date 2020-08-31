@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Form, Modal, Col } from 'react-bootstrap';
+import { Button, Form, Modal, Col, Row } from 'react-bootstrap';
 import { submitButton } from 'src/redux/modules/volunteerContacts';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { RootState } from '../../../redux';
+import { STATES } from '../../../utils/utils';
+import { serverFailure } from './ServerFailure';
 
 interface AddContactModalProps {
   volunteer: Volunteer;
@@ -44,65 +46,6 @@ const AddContactModal: React.FC<PropsFromRedux> = ({
   errors,
   submitButton,
 }) => {
-  const STATES = [
-    'AL',
-    'AK',
-    'AS',
-    'AZ',
-    'AR',
-    'CA',
-    'CO',
-    'CT',
-    'DE',
-    'DC',
-    'FL',
-    'GA',
-    'GU',
-    'HI',
-    'ID',
-    'IL',
-    'IN',
-    'IA',
-    'KS',
-    'KY',
-    'LA',
-    'ME',
-    'MD',
-    'MA',
-    'MI',
-    'MN',
-    'MS',
-    'MO',
-    'MT',
-    'NE',
-    'NV',
-    'NH',
-    'NJ',
-    'NM',
-    'NY',
-    'NC',
-    'ND',
-    'MP',
-    'OH',
-    'OK',
-    'OR',
-    'PA',
-    'PR',
-    'RI',
-    'SC',
-    'SD',
-    'TN',
-    'TX',
-    'UT',
-    'VT',
-    'VA',
-    'VI',
-    'WA',
-    'WV',
-    'WI',
-    'WY',
-  ];
-
   const [firstName, setFirstName] = useState<string>('');
   const [middleName, setMiddleName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
@@ -116,7 +59,6 @@ const AddContactModal: React.FC<PropsFromRedux> = ({
   const [facilityPhone, setFacilityPhone] = useState<string>('');
   const [facilityDorm, setFacilityDorm] = useState<string>('');
   const [facilityUnit, setFacilityUnit] = useState<string>('');
-  const [relationship, setRelationship] = useState<string>('Other');
 
   const handleInputChange = (
     set: React.Dispatch<React.SetStateAction<string>>,
@@ -151,7 +93,6 @@ const AddContactModal: React.FC<PropsFromRedux> = ({
       func('');
     });
     setFacilityState(STATES[0]);
-    setRelationship('Other');
     vcState.failedUpload = false;
   };
 
@@ -177,7 +118,7 @@ const AddContactModal: React.FC<PropsFromRedux> = ({
       total_letters_sent: 0,
       profile_img_path: 'avatar.svg',
       last_letter_sent: null,
-      relationship: relationship,
+      relationship: 'Org Contact',
     };
     submitButton(token, orgId, volunteer, contact, resetValues, handleClose);
   };
@@ -368,30 +309,23 @@ const AddContactModal: React.FC<PropsFromRedux> = ({
                 }
               />
             </Col>
-            <Col>
-              <Form.Group controlId="selectRelationship">
-                <Form.Control
-                  as="select"
-                  custom
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    handleRelationshipChange(setRelationship, e)
-                  }
-                  defaultValue={relationship}>
-                  {/* TODO: Get full list of options */}
-                  <option value="Client">Client</option>
-                  <option value="Other">Other</option>
-                </Form.Control>
-              </Form.Group>
-            </Col>
           </Form.Row>
         </Form>
         <div className={vcState.failedUpload ? '' : 'hidden'}>
-          <h4>Oof - we're sorry. Having some trouble with our server.</h4>
-          <p>
-            {' '}
-            Shoot a message over to the Ameelio team and we'll take care of this
-            as soon as we can.{' '}
-          </p>
+          <Row>
+            <Col>
+              <h4>Oh no. We're having some trouble with our server!</h4>
+              <p>
+                {' '}
+                We already notified our engineering team, but feel free to email
+                us at support@ameelio.org with more details and we'll take care
+                of this as soon as we can.{' '}
+              </p>
+            </Col>
+          </Row>
+          <Row>
+            <Col className="d-flex justify-content-center">{serverFailure}</Col>
+          </Row>
         </div>
         <hr />
         <div className="d-flex flex-row justify-content-md-end mb-3">
