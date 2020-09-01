@@ -5,7 +5,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { RootState } from '../../../redux';
 import { STATES } from '../../../utils/utils';
-import { serverFailure } from './ServerFailure';
+import { ReactComponent as ServerFailure } from './ServerFailure.svg';
 
 interface AddContactModalProps {
   volunteer: Volunteer;
@@ -324,7 +324,9 @@ const AddContactModal: React.FC<PropsFromRedux> = ({
             </Col>
           </Row>
           <Row>
-            <Col className="d-flex justify-content-center">{serverFailure}</Col>
+            <Col className="d-flex justify-content-center">
+              <ServerFailure />
+            </Col>
           </Row>
         </div>
         <hr />
