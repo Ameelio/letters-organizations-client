@@ -45,6 +45,7 @@ export async function createNewsletter(
       page_count: pageCount,
       double_sided: newsletter.double_sided,
       color: newsletter.color,
+      mail_type: newsletter.standardMail ? 'usps_standard' : 'usps_first_class',
     }),
   };
   const response = await fetch(

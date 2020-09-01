@@ -20,6 +20,7 @@ const LOADING = 'newsletter/LOADING';
 const ERROR = 'newsletter/ERROR';
 const UPDATE_DOUBLESIDED = 'newsletter/UPDATE_DOUBLESIDED';
 const UPDATE_COLOR = 'newsletter/UPDATE_COLOR';
+const UPDATE_MAIL_CLASS = 'newsletter/UPDATE_MAIL_CLASS';
 
 interface LoadingAction {
   type: typeof LOADING;
@@ -99,6 +100,11 @@ interface UpdateColorAction {
   payload: boolean;
 }
 
+interface UpdateMailClass {
+  type: typeof UPDATE_MAIL_CLASS;
+  payload: boolean;
+}
+
 type NewsletterActionTypes =
   | SetNameAction
   | AddFilterAction
@@ -115,7 +121,8 @@ type NewsletterActionTypes =
   | LoadingAction
   | ErrorAction
   | UpdateColorAction
-  | UpdateDoublesidedAction;
+  | UpdateDoublesidedAction
+  | UpdateMailClass;
 
 // Action creators
 export const setName = (name: string): NewsletterActionTypes => {
@@ -229,6 +236,13 @@ export const loading = (): NewsletterActionTypes => {
   };
 };
 
+export const updateMailClass = (value: boolean): NewsletterActionTypes => {
+  return {
+    type: UPDATE_MAIL_CLASS,
+    payload: value,
+  };
+};
+
 // Reducer
 const initialState: NewsletterState = {
   newsletterName: '',
@@ -241,6 +255,7 @@ const initialState: NewsletterState = {
   loading: false,
   uploadDoubleSided: false,
   uploadColor: true,
+  standardMail: true,
 };
 
 export function newsletterReducer(
@@ -345,6 +360,11 @@ export function newsletterReducer(
       return {
         ...state,
         uploadColor: action.payload,
+      };
+    case UPDATE_MAIL_CLASS:
+      return {
+        ...state,
+        standardMail: action.payload,
       };
     default:
       return state;

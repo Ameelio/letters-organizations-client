@@ -4,6 +4,7 @@ interface DraftNewsletter {
   tags: Tags[];
   color: boolean;
   double_sided: boolean;
+  standardMail: boolean;
 }
 
 interface NewsletterLog {
