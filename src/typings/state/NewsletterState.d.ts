@@ -9,4 +9,5 @@ interface NewsletterState {
   selectedFilters: Tag[];
   error: ErrorResponse;
   loading: boolean;
+  standardMail: boolean;
 }

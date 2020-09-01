@@ -20,6 +20,7 @@ import {
   removeFile,
   updateUploadColor,
   updateUploadDoublesided,
+  updateMailClass,
 } from 'src/redux/modules/newsletter';
 import { loadTags } from 'src/redux/modules/tag';
 import ConfirmSendModal from './ConfirmSendModal';
@@ -54,6 +55,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       logout,
       updateUploadDoublesided,
       updateUploadColor,
+      updateMailClass,
     },
     dispatch,
   );
@@ -79,6 +81,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   logout,
   updateUploadColor,
   updateUploadDoublesided,
+  updateMailClass,
 }) => {
   const [newsletter, setNewsletter] = useState<DraftNewsletter>(
     {} as DraftNewsletter,
@@ -112,6 +115,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
         tags: newsletters.uploadSelectedTags,
         color: newsletters.uploadColor,
         double_sided: newsletters.uploadDoubleSided,
+        standardMail: newsletters.standardMail,
       });
       const obj = URL.createObjectURL(newsletters.uploadedFile);
       getPageCount(obj);
@@ -251,6 +255,15 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 setValue={updateUploadDoublesided}
                 defaultLabel="Single-Sided"
                 otherLabel="Double-Sided"
+              />
+            </div>
+            <div className="d-flex flex-column mt-3 mw-50">
+              <span className="p5 font-weight-bold">Mail Class</span>
+              <Toggle
+                value={newsletters.standardMail}
+                setValue={updateMailClass}
+                defaultLabel="First Class"
+                otherLabel="Standard Mail"
               />
             </div>
             <div className="d-flex flex-column my-3 mw-50">
