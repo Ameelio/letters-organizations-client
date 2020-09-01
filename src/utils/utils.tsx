@@ -88,3 +88,7 @@ export const STATES = [
   'WI',
   'WY',
 ];
+
+export function isBottom(el: HTMLElement) {
+  return el.scrollHeight - el.scrollTop === el.clientHeight;
+}

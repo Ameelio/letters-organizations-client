@@ -5,6 +5,7 @@ import { genImageUri } from 'src/utils/utils';
 export async function fetchContacts(
   token: string,
   org_id: number,
+  page: number,
 ): Promise<OrgContact[]> {
   const requestOptions: RequestInit = {
     method: 'GET',
@@ -15,7 +16,7 @@ export async function fetchContacts(
     },
   };
   const response = await fetch(
-    url.resolve(API_URL, `contacts/org/${org_id}`),
+    url.resolve(API_URL, `contacts/org/${org_id}?page=${page}`),
     requestOptions,
   );
   const body = await response.json();

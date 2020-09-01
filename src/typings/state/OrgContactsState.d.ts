@@ -12,4 +12,5 @@ interface OrgContactsState {
   uploadSelectedTags: Tag[];
   loading: boolean;
   error: ErrorResponse;
+  currPage: number;
 }

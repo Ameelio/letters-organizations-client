@@ -195,6 +195,7 @@ const initialState: OrgContactsState = {
   uploadSelectedTags: [],
   loading: false,
   error: {} as ErrorResponse,
+  currPage: 1,
 };
 
 export function orgContactsReducer(
@@ -203,7 +204,12 @@ export function orgContactsReducer(
 ): OrgContactsState {
   switch (action.type) {
     case SET_ORG_CONTACTS:
-      return { ...state, contacts: action.payload, loading: false };
+      return {
+        ...state,
+        contacts: state.contacts.concat(action.payload),
+        loading: false,
+        currPage: state.currPage + 1,
+      };
     case ADD_ORG_CONTACTS:
       return {
         ...state,
@@ -294,9 +300,10 @@ export function orgContactsReducer(
 export const loadOrgContacts = (
   token: string,
   org_id: number,
+  page: number,
 ): AppThunk => async (dispatch) => {
   dispatch(loading());
-  fetchContacts(token, org_id)
+  fetchContacts(token, org_id, page)
     .then((contactsData) => dispatch(setOrgContacts(contactsData)))
     .catch((error) => dispatch(handleError(error)));
 };
