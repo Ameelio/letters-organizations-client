@@ -29,3 +29,7 @@ export function generateTagColor(colors: TagColor[], label: string): string {
 export function genImageUri(img: string) {
   return img === 'avatar.svg' ? `${process.env.PUBLIC_URL}/avatar.svg` : img;
 }
+
+export function isBottom(el: HTMLElement) {
+  return el.scrollHeight - el.scrollTop === el.clientHeight;
+}

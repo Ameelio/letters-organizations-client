@@ -18,7 +18,7 @@ import Form from 'react-bootstrap/Form';
 import './index.css';
 import { Link } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
-import { unauthenticated } from 'src/utils/utils';
+import { unauthenticated, isBottom } from 'src/utils/utils';
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
@@ -54,9 +54,9 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   );
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
-  const contacts = orgContacts.contacts;
-  const token = user.user.token;
-  const org = user.user.org;
+  const { contacts } = orgContacts;
+  const { token } = user.user;
+  const { org } = user.user;
 
   useEffect(() => {
     if (!hasFetchedData && org) {
@@ -118,13 +118,9 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 
   const handleScroll = (e: UIEvent) => {
     const tableDiv = document.getElementById('tableDiv');
-    // const org = user.user.org;
 
     if (tableDiv) {
-      const isBottom =
-        tableDiv.scrollHeight - tableDiv.scrollTop === tableDiv.clientHeight;
-      if (isBottom && org) {
-        console.log('table bottom reached');
+      if (isBottom(tableDiv) && org) {
         loadOrgContacts(token, org.id, orgContacts.currPage);
       }
     }
