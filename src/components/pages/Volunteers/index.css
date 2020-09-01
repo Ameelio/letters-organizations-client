@@ -23,3 +23,7 @@
 #faded {
   opacity: 50%;
 }
+
+.hidden {
+  display: none;
+}

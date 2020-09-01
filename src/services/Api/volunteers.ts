@@ -104,10 +104,10 @@ export async function fetchVolunteerDetails(
     last_letter_sent: string | null;
     org_id: number | null;
   }
-  const contactsData: Contact[] = [];
+  const contactsData: VolunteerContact[] = [];
   contactsBody.data.data.forEach((contact: c) => {
     if (contact.org_id === null) {
-      const contactData: Contact = {
+      const contactData: VolunteerContact = {
         first_name: contact.first_name,
         middle_name: contact.middle_name,
         last_name: contact.last_name,

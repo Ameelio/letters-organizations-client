@@ -170,3 +170,61 @@ export async function createContacts(
   });
   return contactsData;
 }
+
+export async function createVolunteerContact(
+  token: string,
+  org_id: number,
+  user_id: number,
+  contact: VolunteerContact,
+): Promise<VolunteerContact> {
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      first_name: contact.first_name,
+      middle_name: contact.middle_name,
+      last_name: contact.last_name,
+      inmate_number: contact.inmate_number,
+      facility_name: contact.facility_name,
+      facility_address: contact.facility_address,
+      facility_city: contact.facility_city,
+      facility_state: contact.facility_state,
+      facility_postal: contact.facility_postal,
+      relationship: contact.relationship,
+      org_id: org_id,
+      s3_image_url: contact.profile_img_path,
+    }),
+  };
+  const response = await fetch(
+    url.resolve(API_URL, 'contact/' + user_id),
+    requestOptions,
+  );
+  const body = await response.json();
+  if (body.status === 'ERROR') {
+    throw body;
+  }
+  const contactResp: RawVolunteerContact = body.data;
+  const contactData: VolunteerContact = {
+    first_name: contactResp.first_name,
+    middle_name: contactResp.middle_name,
+    last_name: contactResp.last_name,
+    inmate_number: contactResp.inmate_number,
+    facility_name: contactResp.facility_name,
+    facility_address: contactResp.facility_address,
+    facility_city: contactResp.facility_city,
+    facility_state: contactResp.facility_state,
+    facility_postal: contactResp.facility_postal,
+    profile_img_path: genImageUri(contactResp.profile_img_path),
+    relationship: contactResp.relationship,
+    dorm: contactResp.dorm,
+    unit: contactResp.unit,
+    total_letters_sent: 0,
+    last_letter_sent: null,
+    org_id: contactResp.org_id,
+  };
+  return contactData;
+}

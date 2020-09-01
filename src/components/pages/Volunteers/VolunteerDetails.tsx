@@ -4,6 +4,7 @@ import ContactCard from './ContactCard';
 import { Button, Form } from 'react-bootstrap';
 import './VolunteerDetails.css';
 import { VolunteerActionTypes } from '../../../redux/modules/volunteer';
+import AddContactModal from './AddContactModal';
 
 interface VolunteerDetailsProps {
   volunteer: Volunteer;
@@ -41,8 +42,14 @@ const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
   handleError,
   user,
 }) => {
-  const [newRole, setNewRole] = useState(volunteer.role);
-  const [confirmRemove, setConfirmRemove] = useState(false);
+  const [newRole, setNewRole] = useState<string>(volunteer.role);
+  const [confirmRemove, setConfirmRemove] = useState<boolean>(false);
+  const [showAddContactModal, setAddContactModal] = useState<boolean>(false);
+  const handleShowAddContact = () => setAddContactModal(true);
+  const handleCloseAddContact = () => setAddContactModal(false);
+  const handleAddContactClick = (event: React.MouseEvent) => {
+    handleShowAddContact();
+  };
 
   useEffect(() => {
     if (!showUpdateForm) {
@@ -123,46 +130,69 @@ const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
     );
   } else {
     return (
-      <section
-        id={page_id}
-        className="volunteer-sidebar d-flex flex-column mr-4 bg-white shadow-sm mt-5 mb-5">
-        <Button
-          className="update-link"
-          variant="link"
-          onClick={handleUpdateShow}>
-          Edit
-        </Button>
-        <div className="d-flex flex-column align-items-center pt-5">
-          <Image src={volunteer.image} className="large-image" roundedCircle />
-          <span className="black-500 font-weight-bold p3 mt-3">
-            {volunteer.name}
-          </span>
-          <span className="black-400">{volunteer.role.toUpperCase()}</span>
+      <div>
+        <section
+          id={page_id}
+          className="volunteer-sidebar d-flex flex-column mr-4 bg-white shadow-sm mt-5 mb-5">
+          <Button
+            className="update-link"
+            variant="link"
+            onClick={handleUpdateShow}>
+            Edit
+          </Button>
+          <div className="d-flex flex-column align-items-center pt-5">
+            <Image
+              src={volunteer.image}
+              className="large-image"
+              roundedCircle
+            />
+            <span className="black-500 font-weight-bold p3 mt-3">
+              {volunteer.name}
+            </span>
+            <span className="black-400">{volunteer.role.toUpperCase()}</span>
+            {volunteer.details && (
+              <span className="black-400">{volunteer.details.email}</span>
+            )}
+            {volunteer.details && (
+              <span className="black-400">
+                {volunteer.details.city}, {volunteer.details.state}
+              </span>
+            )}
+          </div>
           {volunteer.details && (
-            <span className="black-400">{volunteer.details.email}</span>
+            <div className="pl-5 pr-5 mb-2">
+              <hr />
+            </div>
           )}
           {volunteer.details && (
-            <span className="black-400">
-              {volunteer.details.city}, {volunteer.details.state}
-            </span>
+            <div className="d-flex flex-column pl-5 pr-5 pb-5">
+              <div className="d-flex flex-row justify-content-between">
+                <span className="black-500 font-weight-bold">
+                  Contacts ({volunteer.details.contacts.length})
+                </span>
+                <Button
+                  className="btn-sm"
+                  variant="outline-primary"
+                  onClick={handleAddContactClick}>
+                  Add
+                </Button>
+              </div>
+              {volunteer.details.contacts.map((contact, index) => (
+                <ContactCard key={index} contact={contact} />
+              ))}
+            </div>
           )}
-        </div>
+        </section>
         {volunteer.details && (
-          <div className="pl-5 pr-5 mb-2">
-            <hr />
-          </div>
+          <AddContactModal
+            volunteer={volunteer}
+            show={showAddContactModal}
+            handleClose={handleCloseAddContact}
+            token={token}
+            orgId={orgId}
+          />
         )}
-        {volunteer.details && (
-          <div className="d-flex flex-column pl-5 pr-5 pb-5">
-            <span className="black-500 font-weight-bold">
-              Contacts ({volunteer.details.contacts.length})
-            </span>
-            {volunteer.details.contacts.map((contact, index) => (
-              <ContactCard key={index} contact={contact} />
-            ))}
-          </div>
-        )}
-      </section>
+      </div>
     );
   }
 };
