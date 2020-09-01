@@ -207,25 +207,7 @@ export async function createVolunteerContact(
   if (body.status === 'ERROR') {
     throw body;
   }
-  interface c {
-    first_name: string;
-    middle_name: string | null;
-    last_name: string;
-    inmate_number: string;
-    facility_name: string;
-    facility_address: string;
-    facility_city: string;
-    facility_state: string;
-    facility_postal: string;
-    profile_img_path: string;
-    relationship: string;
-    dorm: string | null;
-    unit: string | null;
-    total_letters_sent: number;
-    last_letter_sent: string | null;
-    org_id: number | null;
-  }
-  const contactResp: c = body.data;
+  const contactResp: RawVolunteerContact = body.data;
   const contactData: VolunteerContact = {
     first_name: contactResp.first_name,
     middle_name: contactResp.middle_name,
