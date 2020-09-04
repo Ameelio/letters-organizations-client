@@ -67,6 +67,7 @@ export async function createNewsletter(
     totalLettersCount: body.data.total_letter_count,
     estimatedArrival: null,
     tags: [],
+    status: null,
   };
   if (body.data.estimated_arrival) {
     newsletterData.estimatedArrival = new Date(body.data.estimated_arrival);
@@ -121,6 +122,7 @@ export async function fetchNewsletters(
     returned_count: number;
     created_at: string;
     estimated_arrival: string | null;
+    status: string;
     tags: t[];
   }
   const newslettersData: NewsletterLog[] = [];
@@ -136,6 +138,7 @@ export async function fetchNewsletters(
       estimatedArrival: null,
       tags: [],
       totalLettersCount: newsletter.total_letter_count,
+      status: newsletter.status,
     };
     if (newsletter.estimated_arrival) {
       newsletterData.estimatedArrival = new Date(newsletter.estimated_arrival);
@@ -146,9 +149,17 @@ export async function fetchNewsletters(
         numContacts: tag.total_contacts,
         label: tag.label,
       };
+
       newsletterData.tags.push(tagData);
     });
-    newslettersData.push(newsletterData);
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (
+      newsletterData.status !== 'error' ||
+      newsletterData.creationDate > yesterday
+    ) {
+      newslettersData.push(newsletterData);
+    }
   });
   return newslettersData;
 }
