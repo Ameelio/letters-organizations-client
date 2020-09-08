@@ -1,4 +1,5 @@
 import url from 'url';
+import { subDays } from 'date-fns';
 import { API_URL, BASE_URL } from './base';
 
 export async function createNewsletter(
@@ -152,8 +153,7 @@ export async function fetchNewsletters(
 
       newsletterData.tags.push(tagData);
     });
-    var yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterday = subDays(new Date(), 1);
     if (
       newsletterData.status !== 'error' ||
       newsletterData.creationDate > yesterday
