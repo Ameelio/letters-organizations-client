@@ -18,4 +18,5 @@ interface NewsletterLog {
   creationDate: Date;
   estimatedArrival: Date | null;
   tags: Tags[];
+  status: string | null;
 }

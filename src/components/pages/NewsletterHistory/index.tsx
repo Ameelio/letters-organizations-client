@@ -171,6 +171,7 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
                 <th>Estimated Arrival</th>
                 <th>Tags</th>
                 <th>File</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -202,6 +203,13 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
                           rel="noopener noreferrer">
                           Link
                         </a>
+                      </td>
+                      <td>
+                        {newsletter.status === 'error' ? (
+                          <span className="badge badge-danger">error</span>
+                        ) : (
+                          ''
+                        )}
                       </td>
                     </>
                   </tr>
