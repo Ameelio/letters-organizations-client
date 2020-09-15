@@ -1,6 +1,7 @@
 import url from 'url';
 import { API_URL } from './base';
 import { genImageUri } from 'src/utils/utils';
+import Contacts from 'src/components/pages/Contacts';
 
 export async function fetchContacts(
   token: string,
@@ -24,32 +25,9 @@ export async function fetchContacts(
     throw body;
   }
   const contactsData: OrgContact[] = [];
-  interface t {
-    id: number;
-    label: string;
-    total_contacts: number;
-  }
-  interface c {
-    first_name: string;
-    middle_name: string | null;
-    last_name: string;
-    inmate_number: string;
-    facility_name: string;
-    facility_address: string;
-    facility_city: string;
-    facility_state: string;
-    facility_postal: string;
-    profile_img_path: string;
-    relationship: string;
-    dorm: string | null;
-    unit: string | null;
-    total_letters_sent: number;
-    last_letter_sent: string | null;
-    org_id: number | null;
-    tags: Array<t>;
-  }
-  body.data.data.forEach((contact: c) => {
+  body.data.data.forEach((contact: RawOrgContact) => {
     const contactData: OrgContact = {
+      id: contact.id,
       first_name: contact.first_name,
       middle_name: contact.middle_name,
       last_name: contact.last_name,
@@ -67,11 +45,12 @@ export async function fetchContacts(
       last_letter_sent: null,
       org_id: contact.org_id,
       tags: [],
+      selected: false,
     };
     if (contact.last_letter_sent) {
       contactData.last_letter_sent = new Date(contact.last_letter_sent);
     }
-    contact.tags.forEach((tag: t) => {
+    contact.tags.forEach((tag: RawTag) => {
       const tagData: Tag = {
         label: tag.label,
         id: tag.id,
@@ -81,6 +60,7 @@ export async function fetchContacts(
     });
     contactsData.push(contactData);
   });
+  console.log(contactsData);
   return contactsData;
 }
 
@@ -112,32 +92,9 @@ export async function createContacts(
     throw body;
   }
   const contactsData: OrgContact[] = [];
-  interface t {
-    id: number;
-    label: string;
-    total_contacts: number;
-  }
-  interface c {
-    first_name: string;
-    middle_name: string | null;
-    last_name: string;
-    inmate_number: string;
-    facility_name: string;
-    facility_address: string;
-    facility_city: string;
-    facility_state: string;
-    facility_postal: string;
-    profile_img_path: string;
-    relationship: string;
-    dorm: string | null;
-    unit: string | null;
-    total_letters_sent: number;
-    last_letter_sent: string | null;
-    org_id: number | null;
-    tags: Array<t>;
-  }
-  body.data.data.contacts.forEach((contact: c) => {
+  body.data.data.contacts.forEach((contact: RawOrgContact) => {
     const contactData: OrgContact = {
+      id: 0,
       first_name: contact.first_name,
       middle_name: contact.middle_name,
       last_name: contact.last_name,
@@ -155,11 +112,12 @@ export async function createContacts(
       last_letter_sent: null,
       org_id: contact.org_id,
       tags: [],
+      selected: false,
     };
     if (contact.last_letter_sent) {
       contactData.last_letter_sent = new Date(contact.last_letter_sent);
     }
-    contact.tags.forEach((tag: t) => {
+    contact.tags.forEach((tag: RawTag) => {
       const tagData: Tag = {
         label: tag.label,
         id: tag.id,
@@ -228,4 +186,29 @@ export async function createVolunteerContact(
     org_id: contactResp.org_id,
   };
   return contactData;
+}
+
+// TODO: implement bulk delete endpoint to prevent overload of requests
+export async function deleteContacts(
+  token: string,
+  contacts: OrgContact[],
+): Promise<void> {
+  contacts.forEach(async (contact) => {
+    const requestOptions: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const response = await fetch(
+      url.resolve(API_URL, `contact/${contact.id}`),
+      requestOptions,
+    );
+    const body = await response.json();
+    if (body.status === 'ERROR') {
+      throw body;
+    }
+  });
 }

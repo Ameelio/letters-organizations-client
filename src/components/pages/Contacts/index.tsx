@@ -1,6 +1,6 @@
 import React, { useState, useEffect, UIEvent } from 'react';
 import { RootState } from 'src/redux';
-import Table from 'react-bootstrap/Table';
+import { Table, Button } from 'react-bootstrap';
 import Tag from 'src/components/tags/Tag';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
@@ -9,6 +9,7 @@ import {
   addFilter,
   removeFilter,
   loading,
+  deleteOrgContacts,
 } from 'src/redux/modules/orgcontacts';
 import { loadTags } from 'src/redux/modules/tag';
 import { logout } from '../../../redux/modules/user';
@@ -29,7 +30,15 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
-    { loadOrgContacts, addFilter, removeFilter, loadTags, loading, logout },
+    {
+      loadOrgContacts,
+      addFilter,
+      removeFilter,
+      loadTags,
+      loading,
+      logout,
+      deleteOrgContacts,
+    },
     dispatch,
   );
 
@@ -47,6 +56,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   removeFilter,
   user,
   logout,
+  deleteOrgContacts,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filteredOrgContact, setFilteredOrgContacts] = useState<OrgContact[]>(
@@ -170,9 +180,24 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           id="tableDiv"
           className="vh-100 w-100 shadow-sm p-5 bg-white overflow-auto"
           onScroll={handleScroll}>
+          <p> What do you want to do with the selected contacts... </p>
+          <div className="d-flex flex-row justify-content-around my-3">
+            <Button
+              onClick={() =>
+                deleteOrgContacts(
+                  token,
+                  contacts.filter((c) => c.selected),
+                )
+              }>
+              Delete
+            </Button>
+            <Button>Add Tag</Button>
+            <Button>Remove Tag</Button>
+          </div>
           <Table responsive hover>
             <thead>
               <tr>
+                <th></th>
                 <th>#</th>
                 <th>First Name</th>
                 <th>Last Name</th>
@@ -185,6 +210,14 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             <tbody>
               {contacts.map((contact, index) => (
                 <tr key={index}>
+                  <td>
+                    <Form.Check
+                      onChange={() => {
+                        contact.selected = !contact.selected;
+                        console.log(contact.selected);
+                      }}
+                    />
+                  </td>
                   <td>{index + 1}</td>
                   <td>{contact.first_name}</td>
                   <td>{contact.last_name}</td>
