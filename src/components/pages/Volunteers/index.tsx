@@ -146,12 +146,8 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     </Container>
   );
 
-  if (volunteers.loading) {
-    return spinner;
-  }
-
   let page_id = 'content';
-  if (volunteers.loading_details) {
+  if (volunteers.loading) {
     page_id = 'faded';
   }
 
@@ -182,7 +178,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         ))}
       </section>
 
-      {volunteers.loading_details && spinner}
+      {volunteers.loading && spinner}
 
       {problemLoadingDetails && (
         <Container id="problem-loading-info">
