@@ -257,7 +257,9 @@ const AddContactModal: React.FC<PropsFromRedux> = ({
                   }
                   defaultValue={facilityState}>
                   {STATES.map((state) => (
-                    <option value={state}>{state}</option>
+                    <option key={state} value={state}>
+                      {state}
+                    </option>
                   ))}
                 </Form.Control>
               </Form.Group>
