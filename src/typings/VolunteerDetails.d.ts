@@ -1,4 +1,5 @@
 interface VolunteerDetails {
+  name: string;
   email: string;
   letters: Letter[];
   contacts: Contacts[];

@@ -27,10 +27,9 @@ const VolunteerCard: React.FC<VolunteerProps> = ({
           Total letters sent: {volunteer.total_letters_sent}
         </span>
         <span className="black-400 p6">
-          Last letter sent:{' '}
           {volunteer.last_letter_sent
-            ? formatDate(volunteer.last_letter_sent)
-            : 'None'}
+            ? `Last letter sent: ${formatDate(volunteer.last_letter_sent)}`
+            : 'No letters were sent yet!'}
         </span>
       </div>
       <hr />

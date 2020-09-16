@@ -73,9 +73,6 @@ export async function fetchVolunteerDetails(
     throw body;
   }
 
-  const email = body.data.user.email;
-  const city = body.data.user.city;
-  const state = body.data.user.state;
   const user_id = body.data.user.id;
 
   const contactsResponse = await fetch(
@@ -140,14 +137,15 @@ export async function fetchVolunteerDetails(
   if (lettersBody.status === 'ERROR') {
     throw lettersBody.message;
   }
-  interface image {
+  interface Image {
     id: number;
     letter_id: number;
     img_src: string;
     created_at: string;
     updated_at: string;
   }
-  interface l {
+
+  interface LetterRaw {
     id: number;
     created_at: string;
     type: LetterType;
@@ -159,12 +157,19 @@ export async function fetchVolunteerDetails(
     page_count: number | null;
     user_name: string;
     contact_name: string;
-    images: image[];
+    images: Image[];
     delivered: boolean;
+    newsletter_id: number;
   }
+
   const lettersData: Letter[] = [];
-  lettersBody.data.data.forEach((letter: l) => {
-    if (!letter.lob_validation_error && letter.lob_status) {
+
+  lettersBody.data.data.forEach((letter: LetterRaw) => {
+    if (
+      !letter.lob_validation_error &&
+      letter.lob_status &&
+      !letter.newsletter_id
+    ) {
       const letterData: Letter = {
         id: letter.id,
         created_at: new Date(letter.created_at),
@@ -190,7 +195,10 @@ export async function fetchVolunteerDetails(
     }
   });
 
+  const { first_name, last_name, email, city, state } = body.data.user;
+
   volunteer.details = {
+    name: `${first_name} ${last_name}`,
     email: email,
     city: city,
     state: state,
