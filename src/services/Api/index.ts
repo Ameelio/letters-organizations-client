@@ -17,8 +17,9 @@ export async function onLogin(email: string, password: string): Promise<User> {
   const response = await fetch(url.resolve(API_URL, 'login'), requestOptions);
   const body = await response.json();
   if (body.status === 'ERROR') {
-    throw body['data'];
+    throw new Error('Invalid Credentials');
   }
+
   const userData: User = {
     id: body.data.id,
     token: body.data.token,
@@ -40,10 +41,12 @@ export async function onLogin(email: string, password: string): Promise<User> {
   );
   const orgBody = await orgResponse.json();
   if (orgBody.status === 'ERROR') {
-    throw orgBody.message;
+    throw new Error(orgBody.message);
   }
   if (orgBody.data.role === 'member') {
-    throw 'Must be registered as an organization admin.';
+    throw new Error(
+      'Invalid access. Must be registered as an organization admin.',
+    );
   }
   userData.org = {
     id: orgBody.data.org.id,
