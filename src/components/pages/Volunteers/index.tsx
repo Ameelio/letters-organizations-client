@@ -146,15 +146,20 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     </Container>
   );
 
-  let page_id = 'content';
+  let volunteers_id,
+    details_id = 'content';
   if (volunteers.loading) {
-    page_id = 'faded';
+    volunteers_id = 'faded';
+    details_id = 'faded';
+  }
+  if (volunteers.loading_details) {
+    details_id = 'faded';
   }
 
   return (
     <div className="d-flex flex-row">
       <section
-        id={page_id}
+        id={volunteers_id}
         className="volunteers-list-sidebar d-flex flex-column mw-27 border-right pl-4 shadow-sm bg-white rounded">
         <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
           <span className="black-500 p3">Volunteers</span>
@@ -178,7 +183,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         ))}
       </section>
 
-      {volunteers.loading && spinner}
+      {volunteers.loading_details && spinner}
 
       {problemLoadingDetails && (
         <Container id="problem-loading-info">
@@ -191,7 +196,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
       {volunteers.selected_volunteer.details && (
         <section
-          id={page_id}
+          id={details_id}
           className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">
           <span className="p3">Letters</span>
           <div className="d-flex flex-row">
@@ -226,7 +231,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
       {volunteers.selected_volunteer.details && org && (
         <VolunteerDetails
           volunteer={volunteers.selected_volunteer}
-          page_id={page_id}
+          page_id={details_id}
           showUpdateForm={showUpdateForm}
           handleUpdateClose={handleUpdateClose}
           handleUpdateShow={handleUpdateShow}
