@@ -173,7 +173,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         ))}
       </section>
 
-      {volunteers.loading_details && spinner}
+      {(volunteers.loading || volunteers.loading_details) && spinner}
 
       {problemLoadingDetails && (
         <Container id="problem-loading-info">
