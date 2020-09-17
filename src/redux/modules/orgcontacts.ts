@@ -1,3 +1,4 @@
+import Contacts from 'src/components/pages/Contacts';
 import { AppThunk } from 'src/redux/helpers';
 import {
   fetchContacts,
@@ -198,6 +199,15 @@ export const handleError = (error: ErrorResponse): OrgContactsActionTypes => {
   };
 };
 
+export const removeOrgContacts = (
+  contacts: OrgContact[],
+): OrgContactsActionTypes => {
+  return {
+    type: DELETE_CONTACTS,
+    payload: contacts,
+  };
+};
+
 const initialState: OrgContactsState = {
   contacts: [],
   selectedFilters: [],
@@ -306,6 +316,8 @@ export function orgContactsReducer(
     case DELETE_CONTACTS:
       return {
         ...state,
+        currPage: 1,
+        contacts: state.contacts.filter((c) => !action.payload.includes(c)),
       };
     default:
       return state;
@@ -316,10 +328,8 @@ export const deleteOrgContacts = (
   token: string,
   contacts: OrgContact[],
 ): AppThunk => async (dispatch) => {
-  console.log('clickeed');
-  console.log(contacts);
   deleteContacts(token, contacts)
-    .then(() => {})
+    .then(() => dispatch(removeOrgContacts(contacts)))
     .catch((error) => dispatch(handleError(error)));
 };
 
