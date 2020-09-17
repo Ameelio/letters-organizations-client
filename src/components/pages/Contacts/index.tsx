@@ -186,12 +186,14 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
               <Button
                 disabled={countContacts === 0}
                 className="mr-2"
-                onClick={() =>
+                onClick={() => {
                   deleteOrgContacts(
                     token,
                     contacts.filter((c) => c.selected),
-                  )
-                }>
+                  );
+                  setHasFetchedData(false);
+                  setCountContacts(0);
+                }}>
                 Delete Selected Contacts
               </Button>
               <Button disabled={countContacts === 0}>Add or Remove Tags</Button>
@@ -223,8 +225,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                           countContacts + (contact.selected ? -1 : 1),
                         );
                         contact.selected = !contact.selected;
-                        console.log(contact.selected);
                       }}
+                      checked={contact.selected}
                     />
                   </td>
                   <td>{index + 1}</td>
