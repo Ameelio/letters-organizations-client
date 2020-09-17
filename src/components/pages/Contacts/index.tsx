@@ -1,6 +1,6 @@
 import React, { useState, useEffect, UIEvent } from 'react';
 import { RootState } from 'src/redux';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Modal } from 'react-bootstrap';
 import Tag from 'src/components/tags/Tag';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
@@ -11,7 +11,7 @@ import {
   loading,
   deleteOrgContacts,
 } from 'src/redux/modules/orgcontacts';
-import { loadTags } from 'src/redux/modules/tag';
+import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import { logout } from '../../../redux/modules/user';
 import TagSelector from 'src/components/tags/TagSelector';
 import FormControl from 'react-bootstrap/FormControl';
@@ -38,6 +38,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       loading,
       logout,
       deleteOrgContacts,
+      addNewTag,
     },
     dispatch,
   );
@@ -57,6 +58,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   user,
   logout,
   deleteOrgContacts,
+  addNewTag,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [countContacts, setCountContacts] = useState<number>(0);
@@ -64,6 +66,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     [],
   );
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
+  const [showTagModal, setShowTagModal] = useState<boolean>(false);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   const { contacts } = orgContacts;
   const { token } = user.user;
@@ -177,6 +181,35 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 
         {orgContacts.loading && spinner}
 
+        <Modal show={showTagModal}>
+          <p className="m-2">
+            Select the tags you want to apply to all {countContacts} selected
+            contacts:
+          </p>
+          <TagSelector
+            tags={tags.tags}
+            selectedTags={selectedTags}
+            addTag={(tag) => {
+              setSelectedTags(selectedTags.concat(tag));
+            }}
+            removeTag={(tag) => {
+              setSelectedTags(selectedTags.filter((t) => t !== tag));
+            }}
+            showInputField={true}
+            token={token}
+            orgId={org ? org.id : null}
+            addNewTag={addNewTag}
+          />
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowTagModal(false)}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={() => setShowTagModal(false)}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <div
           id="tableDiv"
           className="vh-100 w-100 shadow-sm px-2 bg-white overflow-auto tableDiv"
@@ -196,7 +229,14 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                 }}>
                 Delete Selected Contacts
               </Button>
-              <Button disabled={countContacts === 0}>Add or Remove Tags</Button>
+              <Button
+                disabled={countContacts === 0}
+                onClick={(e: UIEvent<HTMLElement, MouseEvent>) => {
+                  e.preventDefault();
+                  setShowTagModal(true);
+                }}>
+                Add or Remove Tags
+              </Button>
             </div>
             <p className="contactCount"> {countContacts} Contacts Selected </p>
           </div>
