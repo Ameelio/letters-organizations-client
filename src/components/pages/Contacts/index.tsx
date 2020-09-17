@@ -59,6 +59,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   deleteOrgContacts,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [countContacts, setCountContacts] = useState<number>(0);
   const [filteredOrgContact, setFilteredOrgContacts] = useState<OrgContact[]>(
     [],
   );
@@ -163,7 +164,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
       </section>
 
       <section id={page_id} className="d-flex flex-column m-5 w-100">
-        <div className="d-flex flex-row justify-content-between">
+        <div className="d-flex flex-row justify-content-between persist">
           <span className="p2 mb-3">Contacts</span>
           <div>
             <Link to="/upload" className="btn btn-outline-primary">
@@ -178,21 +179,24 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 
         <div
           id="tableDiv"
-          className="vh-100 w-100 shadow-sm p-5 bg-white overflow-auto"
+          className="vh-100 w-100 shadow-sm px-2 bg-white overflow-auto tableDiv"
           onScroll={handleScroll}>
-          <p> What do you want to do with the selected contacts... </p>
-          <div className="d-flex flex-row justify-content-around my-3">
-            <Button
-              onClick={() =>
-                deleteOrgContacts(
-                  token,
-                  contacts.filter((c) => c.selected),
-                )
-              }>
-              Delete
-            </Button>
-            <Button>Add Tag</Button>
-            <Button>Remove Tag</Button>
+          <div className="d-flex flex-row justify-content-between my-3 pt-3 stickitude">
+            <div className="d-flex flex-row justify-content-start">
+              <Button
+                disabled={countContacts === 0}
+                className="mr-2"
+                onClick={() =>
+                  deleteOrgContacts(
+                    token,
+                    contacts.filter((c) => c.selected),
+                  )
+                }>
+                Delete Selected Contacts
+              </Button>
+              <Button disabled={countContacts === 0}>Add or Remove Tags</Button>
+            </div>
+            <p className="contactCount"> {countContacts} Contacts Selected </p>
           </div>
           <Table responsive hover>
             <thead>
@@ -209,10 +213,15 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             </thead>
             <tbody>
               {contacts.map((contact, index) => (
-                <tr key={index}>
+                <tr
+                  key={index}
+                  className={contact.selected ? 'selected_row' : ''}>
                   <td>
                     <Form.Check
                       onChange={() => {
+                        setCountContacts(
+                          countContacts + (contact.selected ? -1 : 1),
+                        );
                         contact.selected = !contact.selected;
                         console.log(contact.selected);
                       }}
