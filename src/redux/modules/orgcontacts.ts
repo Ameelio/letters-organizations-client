@@ -4,6 +4,7 @@ import {
   fetchContacts,
   createContacts,
   deleteContacts,
+  updateContacts,
 } from 'src/services/Api/contacts';
 import { loadTags } from './tag';
 
@@ -21,6 +22,7 @@ const ADD_ORG_CONTACTS = 'orgContacts/ADD_ORG_CONTACTS';
 const LOADING = 'orgContacts/LOADING';
 const ERROR = 'orgContacts/ERROR';
 const DELETE_CONTACTS = 'orgContacts/DELETE_CONTACTS';
+const EDIT_CONTACT_TAGS = 'orgContacts/EDIT_CONTACT_TAGS';
 
 interface SetOrgContactsAction {
   type: typeof SET_ORG_CONTACTS;
@@ -90,6 +92,11 @@ interface DeleteContactsAction {
   payload: OrgContact[];
 }
 
+interface EditContactsTags {
+  type: typeof EDIT_CONTACT_TAGS;
+  payload: (OrgContact[] | Tag[])[]; // First element is contacts, second is tags
+}
+
 type OrgContactsActionTypes =
   | SetOrgContactsAction
   | AddOrgContactsAction
@@ -104,7 +111,8 @@ type OrgContactsActionTypes =
   | RemoveAllUploadTagsAction
   | LoadingAction
   | ErrorAction
-  | DeleteContactsAction;
+  | DeleteContactsAction
+  | EditContactsTags;
 
 export const setOrgContacts = (
   contacts: OrgContact[],
@@ -205,6 +213,16 @@ export const removeOrgContacts = (
   return {
     type: DELETE_CONTACTS,
     payload: contacts,
+  };
+};
+
+export const editContactsTags = (
+  contacts: OrgContact[],
+  tags: Tag[],
+): OrgContactsActionTypes => {
+  return {
+    type: EDIT_CONTACT_TAGS,
+    payload: [contacts, tags],
   };
 };
 
@@ -319,10 +337,29 @@ export function orgContactsReducer(
         currPage: 1,
         contacts: state.contacts.filter((c) => !action.payload.includes(c)),
       };
+    case EDIT_CONTACT_TAGS:
+      return {
+        ...state,
+        currPage: 1,
+        contacts: [],
+      };
     default:
       return state;
   }
 }
+
+export const editContactTags = (
+  token: string,
+  contacts: OrgContact[],
+  tags: Tag[],
+): AppThunk => async (dispatch) => {
+  contacts.forEach((contact, i, arr) => {
+    arr[i].tags = tags;
+  });
+  updateContacts(token, contacts)
+    .then(() => dispatch(editContactsTags(contacts, tags)))
+    .catch((error) => dispatch(handleError(error)));
+};
 
 export const deleteOrgContacts = (
   token: string,

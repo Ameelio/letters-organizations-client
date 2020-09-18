@@ -10,6 +10,7 @@ import {
   removeFilter,
   loading,
   deleteOrgContacts,
+  editContactTags,
 } from 'src/redux/modules/orgcontacts';
 import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import { logout } from '../../../redux/modules/user';
@@ -39,6 +40,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       logout,
       deleteOrgContacts,
       addNewTag,
+      editContactTags,
     },
     dispatch,
   );
@@ -59,6 +61,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   logout,
   deleteOrgContacts,
   addNewTag,
+  editContactTags,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [countContacts, setCountContacts] = useState<number>(0);
@@ -204,7 +207,17 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             <Button variant="secondary" onClick={() => setShowTagModal(false)}>
               Close
             </Button>
-            <Button variant="primary" onClick={() => setShowTagModal(false)}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                editContactTags(
+                  token,
+                  contacts.filter((c) => c.selected),
+                  selectedTags,
+                );
+                setShowTagModal(false);
+                setHasFetchedData(false);
+              }}>
               Save Changes
             </Button>
           </Modal.Footer>
