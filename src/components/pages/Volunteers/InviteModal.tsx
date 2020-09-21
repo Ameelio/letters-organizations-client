@@ -86,7 +86,7 @@ const InviteModal: React.FC<PropsFromRedux> = ({
       </Modal.Header>
       <Modal.Body>
         <Form className="mb-3">
-          <Form.Label>Does your volunteer already have an account?</Form.Label>
+          <Form.Label>Does your volunteer have an Ameelio account?</Form.Label>
           <FormControl
             type="text"
             placeholder="Add existing user by email"
@@ -104,7 +104,7 @@ const InviteModal: React.FC<PropsFromRedux> = ({
           </Button>
           <hr className="w-100" />
           <span className="mt-3">
-            If not, they should create an account with the link below.
+            If not, invite them to create an account through this link.
           </span>
           <div className="d-flex flex-row mt-2">
             <Link2 />

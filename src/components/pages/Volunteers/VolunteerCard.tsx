@@ -29,7 +29,7 @@ const VolunteerCard: React.FC<VolunteerProps> = ({
         <span className="black-400 p6">
           {volunteer.last_letter_sent
             ? `Last letter sent: ${formatDate(volunteer.last_letter_sent)}`
-            : 'No letters were sent yet!'}
+            : 'No letters sent yet!'}
         </span>
       </div>
       <hr />
