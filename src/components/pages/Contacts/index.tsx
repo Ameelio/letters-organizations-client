@@ -193,7 +193,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
         <Modal show={showTagModal}>
           <p className="m-2">
             Select the tags you want to apply to all {countContacts} selected
-            contacts:
+            contacts. Any other tags currently on these contacts will be
+            removed:
           </p>
           <TagSelector
             tags={tags.tags}
@@ -238,7 +239,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           id="tableDiv"
           className="vh-100 w-100 shadow-sm px-2 bg-white overflow-auto tableDiv"
           onScroll={handleScroll}>
-          <div className="d-flex flex-row justify-content-between my-3 pt-3 stickitude">
+          <div className="d-flex flex-row justify-content-between my-3 pt-3 sticky-header">
             <div className="d-flex flex-row justify-content-start">
               <DropdownButton
                 title="Key Actions"
