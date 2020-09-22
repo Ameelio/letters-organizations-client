@@ -146,19 +146,10 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     </Container>
   );
 
-  if (volunteers.loading) {
-    return spinner;
-  }
-
-  let page_id = 'content';
-  if (volunteers.loading_details) {
-    page_id = 'faded';
-  }
-
   return (
     <div className="d-flex flex-row">
       <section
-        id={page_id}
+        id={volunteers.loading ? 'faded' : ''}
         className="volunteers-list-sidebar d-flex flex-column mw-27 border-right pl-4 shadow-sm bg-white rounded">
         <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
           <span className="black-500 p3">Volunteers</span>
@@ -182,7 +173,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
         ))}
       </section>
 
-      {volunteers.loading_details && spinner}
+      {(volunteers.loading || volunteers.loading_details) && spinner}
 
       {problemLoadingDetails && (
         <Container id="problem-loading-info">
@@ -195,14 +186,14 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
       {volunteers.selected_volunteer.details && (
         <section
-          id={page_id}
+          id={volunteers.loading || volunteers.loading_details ? 'faded' : ''}
           className="d-flex flex-column p-5 m-5 bg-white shadow-sm w-50">
           <span className="p3">Letters</span>
           <div className="d-flex flex-row">
             <div className="d-flex flex-column letter-category">
               <span className="black-400 p4">In transit</span>
               {volunteers.selected_volunteer.details.letters
-                .filter((letter) => letter.lob_status === 'letter.in_transit')
+                .filter((letter) => letter.sent && !letter.delivered) // TODO: handle returned to sender
                 .map((letter) => (
                   <LetterCard
                     key={letter.id}
@@ -230,7 +221,9 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
       {volunteers.selected_volunteer.details && org && (
         <VolunteerDetails
           volunteer={volunteers.selected_volunteer}
-          page_id={page_id}
+          page_id={
+            volunteers.loading || volunteers.loading_details ? 'faded' : ''
+          }
           showUpdateForm={showUpdateForm}
           handleUpdateClose={handleUpdateClose}
           handleUpdateShow={handleUpdateShow}

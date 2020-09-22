@@ -78,7 +78,6 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
-  const { contacts } = orgContacts;
   const { token } = user.user;
   const { org } = user.user;
 
@@ -294,6 +293,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                       checked={contact.selected}
                     />
                   </td>
+                <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{contact.first_name}</td>
                   <td>{contact.last_name}</td>
