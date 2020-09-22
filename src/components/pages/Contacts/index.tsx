@@ -1,6 +1,12 @@
 import React, { useState, useEffect, UIEvent } from 'react';
 import { RootState } from 'src/redux';
-import Table from 'react-bootstrap/Table';
+import {
+  Table,
+  Button,
+  Modal,
+  DropdownButton,
+  Dropdown,
+} from 'react-bootstrap';
 import Tag from 'src/components/tags/Tag';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
@@ -9,8 +15,10 @@ import {
   addFilter,
   removeFilter,
   loading,
+  deleteOrgContacts,
+  editContactTags,
 } from 'src/redux/modules/orgcontacts';
-import { loadTags } from 'src/redux/modules/tag';
+import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import { logout } from '../../../redux/modules/user';
 import TagSelector from 'src/components/tags/TagSelector';
 import FormControl from 'react-bootstrap/FormControl';
@@ -29,7 +37,17 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
-    { loadOrgContacts, addFilter, removeFilter, loadTags, loading, logout },
+    {
+      loadOrgContacts,
+      addFilter,
+      removeFilter,
+      loadTags,
+      loading,
+      logout,
+      deleteOrgContacts,
+      addNewTag,
+      editContactTags,
+    },
     dispatch,
   );
 
@@ -47,12 +65,18 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   removeFilter,
   user,
   logout,
+  deleteOrgContacts,
+  addNewTag,
+  editContactTags,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [countContacts, setCountContacts] = useState<number>(0);
   const [filteredOrgContact, setFilteredOrgContacts] = useState<OrgContact[]>(
     [],
   );
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
+  const [showTagModal, setShowTagModal] = useState<boolean>(false);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   const { token } = user.user;
   const { org } = user.user;
@@ -152,7 +176,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
       </section>
 
       <section id={page_id} className="d-flex flex-column m-5 w-100">
-        <div className="d-flex flex-row justify-content-between">
+        <div className="d-flex flex-row justify-content-between persist">
           <span className="p2 mb-3">Contacts</span>
           <div>
             <Link to="/upload" className="btn btn-outline-primary">
@@ -165,13 +189,85 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 
         {orgContacts.loading && spinner}
 
+        <Modal show={showTagModal}>
+          <p className="m-2">
+            Select the tags you want to apply to all {countContacts} selected
+            contacts. Any other tags currently on these contacts will be
+            removed:
+          </p>
+          <TagSelector
+            tags={tags.tags}
+            selectedTags={selectedTags}
+            addTag={(tag) => {
+              setSelectedTags(selectedTags.concat(tag));
+            }}
+            removeTag={(tag) => {
+              setSelectedTags(selectedTags.filter((t) => t !== tag));
+            }}
+            showInputField={true}
+            token={token}
+            orgId={org ? org.id : null}
+            addNewTag={addNewTag}
+          />
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowTagModal(false)}>
+              Close
+            </Button>
+            {/* TODO Refactor redux store. This org check should not be necessary. */}
+            {org && (
+              <Button
+                variant="primary"
+                onClick={async () => {
+                  loading();
+                  editContactTags(
+                    token,
+                    filteredOrgContact.filter((c) => c.selected),
+                    selectedTags,
+                    org.id,
+                  );
+                  setShowTagModal(false);
+                  setHasFetchedData(false);
+                }}>
+                Save Changes
+              </Button>
+            )}
+          </Modal.Footer>
+        </Modal>
+
         <div
           id="tableDiv"
-          className="vh-100 w-100 shadow-sm p-5 bg-white overflow-auto"
+          className="vh-100 w-100 shadow-sm px-2 bg-white overflow-auto tableDiv"
           onScroll={handleScroll}>
+          <div className="d-flex flex-row justify-content-between my-3 pt-3 sticky-header">
+            <div className="d-flex flex-row justify-content-start">
+              <DropdownButton
+                title="Key Actions"
+                disabled={countContacts === 0}>
+                <Dropdown.Item
+                  onClick={() => {
+                    deleteOrgContacts(
+                      token,
+                      filteredOrgContact.filter((c) => c.selected),
+                    );
+                    setHasFetchedData(false);
+                    setCountContacts(0);
+                  }}>
+                  Delete Selected Contacts
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => {
+                    setShowTagModal(true);
+                  }}>
+                  Edit Tags
+                </Dropdown.Item>
+              </DropdownButton>
+            </div>
+            <p className="contactCount"> {countContacts} Contacts Selected </p>
+          </div>
           <Table responsive hover>
             <thead>
               <tr>
+                <th></th>
                 <th>#</th>
                 <th>First Name</th>
                 <th>Last Name</th>
@@ -183,7 +279,20 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             </thead>
             <tbody>
               {filteredOrgContact.map((contact, index) => (
-                <tr key={index}>
+                <tr
+                  key={index}
+                  className={contact.selected ? 'selected_row' : ''}>
+                  <td>
+                    <Form.Check
+                      onChange={() => {
+                        setCountContacts(
+                          countContacts + (contact.selected ? -1 : 1),
+                        );
+                        contact.selected = !contact.selected;
+                      }}
+                      checked={contact.selected}
+                    />
+                  </td>
                   <td>{index + 1}</td>
                   <td>{contact.first_name}</td>
                   <td>{contact.last_name}</td>

@@ -9,3 +9,18 @@
 #faded {
   opacity: 50%;
 }
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #fff;
+}
+.selected_row {
+  background-color: #d5e9ff;
+  box-shadow: 0px -1px 0px #9ac1ec;
+}
+
+.contactCount {
+  color: #0089ff;
+}

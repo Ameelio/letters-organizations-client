@@ -1,5 +1,10 @@
 import { AppThunk } from 'src/redux/helpers';
-import { fetchContacts, createContacts } from 'src/services/Api/contacts';
+import {
+  fetchContacts,
+  createContacts,
+  deleteContacts,
+  updateContacts,
+} from 'src/services/Api/contacts';
 import { loadTags } from './tag';
 
 const SET_ORG_CONTACTS = 'orgContacts/SET_ORG_CONTACTS';
@@ -15,6 +20,8 @@ const REMOVE_ALL_UPLOAD_TAG = 'orgContacts/RESET_UPLOAD_TAG';
 const ADD_ORG_CONTACTS = 'orgContacts/ADD_ORG_CONTACTS';
 const LOADING = 'orgContacts/LOADING';
 const ERROR = 'orgContacts/ERROR';
+const DELETE_CONTACTS = 'orgContacts/DELETE_CONTACTS';
+const UPDATE_CONTACTS = 'orgContacts/UPDATE_CONTACTS';
 
 interface SetOrgContactsAction {
   type: typeof SET_ORG_CONTACTS;
@@ -79,6 +86,16 @@ interface ErrorAction {
   payload: ErrorResponse;
 }
 
+interface DeleteContactsAction {
+  type: typeof DELETE_CONTACTS;
+  payload: OrgContact[];
+}
+
+interface UpdateContactsAction {
+  type: typeof UPDATE_CONTACTS;
+  payload: OrgContact[]; // First element is contacts, second is tags
+}
+
 type OrgContactsActionTypes =
   | SetOrgContactsAction
   | AddOrgContactsAction
@@ -92,7 +109,9 @@ type OrgContactsActionTypes =
   | RemoveUploadTagAction
   | RemoveAllUploadTagsAction
   | LoadingAction
-  | ErrorAction;
+  | ErrorAction
+  | DeleteContactsAction
+  | UpdateContactsAction;
 
 export const setOrgContacts = (
   contacts: OrgContact[],
@@ -184,6 +203,24 @@ export const handleError = (error: ErrorResponse): OrgContactsActionTypes => {
   return {
     type: ERROR,
     payload: error,
+  };
+};
+
+export const removeOrgContacts = (
+  contacts: OrgContact[],
+): OrgContactsActionTypes => {
+  return {
+    type: DELETE_CONTACTS,
+    payload: contacts,
+  };
+};
+
+export const updateOrgContacts = (
+  contacts: OrgContact[],
+): OrgContactsActionTypes => {
+  return {
+    type: UPDATE_CONTACTS,
+    payload: contacts,
   };
 };
 
@@ -292,10 +329,48 @@ export function orgContactsReducer(
         loading: false,
         error: action.payload,
       };
+    case DELETE_CONTACTS:
+      return {
+        ...state,
+        currPage: 1,
+        contacts: state.contacts.filter((c) => !action.payload.includes(c)),
+      };
+    case UPDATE_CONTACTS:
+      return {
+        ...state,
+        contacts: action.payload,
+      };
     default:
       return state;
   }
 }
+
+export const editContactTags = (
+  token: string,
+  contacts: OrgContact[],
+  tags: Tag[],
+  orgId: number,
+): AppThunk => async (dispatch) => {
+  try {
+    await updateContacts(token, contacts, tags, orgId);
+    const updatedContacts = contacts.map((contact) => ({
+      ...contact,
+      tags: tags,
+    }));
+    dispatch(updateOrgContacts(updatedContacts));
+  } catch (e) {
+    dispatch(handleError(e));
+  }
+};
+
+export const deleteOrgContacts = (
+  token: string,
+  contacts: OrgContact[],
+): AppThunk => async (dispatch) => {
+  deleteContacts(token, contacts)
+    .then(() => dispatch(removeOrgContacts(contacts)))
+    .catch((error) => dispatch(handleError(error)));
+};
 
 export const loadOrgContacts = (
   token: string,
@@ -328,6 +403,7 @@ export const createOrgContacts = (
       unit: row[mapping.unit.index],
       dorm: row[mapping.dorm.index],
       relationship: 'Org Contact',
+      selected: false,
     } as OrgContact;
   });
   const tag_ids: number[] = tags.map((tag) => {
