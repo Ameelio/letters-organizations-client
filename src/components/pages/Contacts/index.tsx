@@ -217,13 +217,15 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             {org && (
               <Button
                 variant="primary"
-                onClick={() => {
+                onClick={async () => {
+                  loading();
                   editContactTags(
                     token,
                     contacts.filter((c) => c.selected),
                     selectedTags,
                     org.id,
                   );
+                  console.log('done editing');
                   setShowTagModal(false);
                   setHasFetchedData(false);
                 }}>
@@ -277,7 +279,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
               </tr>
             </thead>
             <tbody>
-              {contacts.map((contact, index) => (
+              {filteredOrgContact.map((contact, index) => (
                 <tr
                   key={index}
                   className={contact.selected ? 'selected_row' : ''}>

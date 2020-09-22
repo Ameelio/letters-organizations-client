@@ -1,7 +1,6 @@
 import url from 'url';
 import { API_URL } from './base';
 import { genImageUri } from 'src/utils/utils';
-import Contacts from 'src/components/pages/Contacts';
 
 export async function fetchContacts(
   token: string,
