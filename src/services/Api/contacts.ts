@@ -60,7 +60,6 @@ export async function fetchContacts(
     });
     contactsData.push(contactData);
   });
-  console.log(contactsData);
   return contactsData;
 }
 
@@ -236,7 +235,6 @@ export async function updateContacts(
     requestOptions,
   );
   const body = await response.json();
-  console.log(body);
 
   if (body.status === 'ERROR') {
     throw body;

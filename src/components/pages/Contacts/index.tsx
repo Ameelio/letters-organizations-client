@@ -1,6 +1,12 @@
 import React, { useState, useEffect, UIEvent } from 'react';
 import { RootState } from 'src/redux';
-import { Table, Button, Modal } from 'react-bootstrap';
+import {
+  Table,
+  Button,
+  Modal,
+  DropdownButton,
+  Dropdown,
+} from 'react-bootstrap';
 import Tag from 'src/components/tags/Tag';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
@@ -233,27 +239,27 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           onScroll={handleScroll}>
           <div className="d-flex flex-row justify-content-between my-3 pt-3 stickitude">
             <div className="d-flex flex-row justify-content-start">
-              <Button
-                disabled={countContacts === 0}
-                className="mr-2"
-                onClick={() => {
-                  deleteOrgContacts(
-                    token,
-                    contacts.filter((c) => c.selected),
-                  );
-                  setHasFetchedData(false);
-                  setCountContacts(0);
-                }}>
-                Delete Selected Contacts
-              </Button>
-              <Button
-                disabled={countContacts === 0}
-                onClick={(e: UIEvent<HTMLElement, MouseEvent>) => {
-                  e.preventDefault();
-                  setShowTagModal(true);
-                }}>
-                Add or Remove Tags
-              </Button>
+              <DropdownButton
+                title="Key Actions"
+                disabled={countContacts === 0}>
+                <Dropdown.Item
+                  onClick={() => {
+                    deleteOrgContacts(
+                      token,
+                      contacts.filter((c) => c.selected),
+                    );
+                    setHasFetchedData(false);
+                    setCountContacts(0);
+                  }}>
+                  Delete Selected Contacts
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => {
+                    setShowTagModal(true);
+                  }}>
+                  Edit Tags
+                </Dropdown.Item>
+              </DropdownButton>
             </div>
             <p className="contactCount"> {countContacts} Contacts Selected </p>
           </div>
