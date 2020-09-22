@@ -193,7 +193,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
             <div className="d-flex flex-column letter-category">
               <span className="black-400 p4">In transit</span>
               {volunteers.selected_volunteer.details.letters
-                .filter((letter) => letter.lob_status === 'letter.in_transit')
+                .filter((letter) => letter.sent && !letter.delivered) // TODO: handle returned to sender
                 .map((letter) => (
                   <LetterCard
                     key={letter.id}

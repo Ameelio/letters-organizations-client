@@ -147,17 +147,14 @@ const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
               roundedCircle
             />
             <span className="black-500 font-weight-bold p3 mt-3">
-              {volunteer.name}
+              {volunteer.details?.name}
             </span>
             <span className="black-400">{volunteer.role.toUpperCase()}</span>
-            {volunteer.details && (
-              <span className="black-400">{volunteer.details.email}</span>
-            )}
-            {volunteer.details && (
-              <span className="black-400">
-                {volunteer.details.city}, {volunteer.details.state}
-              </span>
-            )}
+            <span className="black-400">{volunteer.details?.email}</span>
+
+            <span className="black-400">
+              {volunteer.details?.city}, {volunteer.details?.state}
+            </span>
           </div>
           {volunteer.details && (
             <div className="pl-5 pr-5 mb-2">

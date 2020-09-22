@@ -43,7 +43,6 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-// TODO: API call upon clicking, we probably need to pass the Org object here to retrieve theh share link
 const InviteModal: React.FC<PropsFromRedux> = ({
   shareLink,
   show,
@@ -87,9 +86,10 @@ const InviteModal: React.FC<PropsFromRedux> = ({
       </Modal.Header>
       <Modal.Body>
         <Form className="mb-3">
+          <Form.Label>Does your volunteer have an Ameelio account?</Form.Label>
           <FormControl
             type="text"
-            placeholder="Add people by email"
+            placeholder="Add existing user by email"
             value={searchQuery}
             onChange={handleSearchChange}
             isInvalid={errorMessage !== ''}
@@ -100,10 +100,13 @@ const InviteModal: React.FC<PropsFromRedux> = ({
         </Form>
         <div className="d-flex flex-column">
           <Button block onClick={onSendInvite}>
-            Invite
+            Invite Existing User
           </Button>
-
-          <div className="d-flex flex-row mt-3">
+          <hr className="w-100" />
+          <span className="mt-3">
+            If not, invite them to create an account through this link.
+          </span>
+          <div className="d-flex flex-row mt-2">
             <Link2 />
             <span className="ml-3 mr-auto">Share Team Invite Link</span>
             <CopyToClipboard

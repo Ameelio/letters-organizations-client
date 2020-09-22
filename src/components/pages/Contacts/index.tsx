@@ -54,7 +54,6 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   );
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
-  const { contacts } = orgContacts;
   const { token } = user.user;
   const { org } = user.user;
 
@@ -183,7 +182,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
               </tr>
             </thead>
             <tbody>
-              {contacts.map((contact, index) => (
+              {filteredOrgContact.map((contact, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{contact.first_name}</td>
