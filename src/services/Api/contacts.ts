@@ -216,38 +216,29 @@ export async function deleteContacts(
 export async function updateContacts(
   token: string,
   contacts: OrgContact[],
+  tags: Tag[],
+  orgId: number,
 ): Promise<void> {
-  contacts.forEach(async (contact) => {
-    const requestOptions: RequestInit = {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        first_name: contact.first_name,
-        middle_name: contact.middle_name,
-        last_name: contact.last_name,
-        inmate_number: contact.inmate_number,
-        facility_name: contact.facility_name,
-        facility_address: contact.facility_address,
-        facility_city: contact.facility_city,
-        facility_state: contact.facility_state,
-        facility_postal: contact.facility_postal,
-        relationship: contact.relationship,
-        org_id: contact.org_id,
-        tags: contact.tags,
-        s3_image_url: contact.profile_img_path,
-      }),
-    };
-    const response = await fetch(
-      url.resolve(API_URL, `contacts/org/${contact.id}`),
-      requestOptions,
-    );
-    const body = await response.json();
-    if (body.status === 'ERROR') {
-      throw body;
-    }
-  });
+  const requestOptions: RequestInit = {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      contact_ids: contacts.map((contact) => contact.id),
+      tags: tags.map((tag) => tag.id),
+    }),
+  };
+  const response = await fetch(
+    url.resolve(API_URL, `contacts/org/${orgId}`),
+    requestOptions,
+  );
+  const body = await response.json();
+  console.log(body);
+
+  if (body.status === 'ERROR') {
+    throw body;
+  }
 }

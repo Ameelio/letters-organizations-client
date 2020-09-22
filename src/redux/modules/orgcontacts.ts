@@ -22,7 +22,7 @@ const ADD_ORG_CONTACTS = 'orgContacts/ADD_ORG_CONTACTS';
 const LOADING = 'orgContacts/LOADING';
 const ERROR = 'orgContacts/ERROR';
 const DELETE_CONTACTS = 'orgContacts/DELETE_CONTACTS';
-const EDIT_CONTACT_TAGS = 'orgContacts/EDIT_CONTACT_TAGS';
+const UPDATE_CONTACTS = 'orgContacts/UPDATE_CONTACTS';
 
 interface SetOrgContactsAction {
   type: typeof SET_ORG_CONTACTS;
@@ -92,9 +92,9 @@ interface DeleteContactsAction {
   payload: OrgContact[];
 }
 
-interface EditContactsTags {
-  type: typeof EDIT_CONTACT_TAGS;
-  payload: (OrgContact[] | Tag[])[]; // First element is contacts, second is tags
+interface UpdateContactsAction {
+  type: typeof UPDATE_CONTACTS;
+  payload: OrgContact[]; // First element is contacts, second is tags
 }
 
 type OrgContactsActionTypes =
@@ -112,7 +112,7 @@ type OrgContactsActionTypes =
   | LoadingAction
   | ErrorAction
   | DeleteContactsAction
-  | EditContactsTags;
+  | UpdateContactsAction;
 
 export const setOrgContacts = (
   contacts: OrgContact[],
@@ -216,13 +216,12 @@ export const removeOrgContacts = (
   };
 };
 
-export const editContactsTags = (
+export const updateOrgContacts = (
   contacts: OrgContact[],
-  tags: Tag[],
 ): OrgContactsActionTypes => {
   return {
-    type: EDIT_CONTACT_TAGS,
-    payload: [contacts, tags],
+    type: UPDATE_CONTACTS,
+    payload: contacts,
   };
 };
 
@@ -337,11 +336,10 @@ export function orgContactsReducer(
         currPage: 1,
         contacts: state.contacts.filter((c) => !action.payload.includes(c)),
       };
-    case EDIT_CONTACT_TAGS:
+    case UPDATE_CONTACTS:
       return {
         ...state,
-        currPage: 1,
-        contacts: [],
+        contacts: action.payload,
       };
     default:
       return state;
@@ -352,13 +350,18 @@ export const editContactTags = (
   token: string,
   contacts: OrgContact[],
   tags: Tag[],
+  orgId: number,
 ): AppThunk => async (dispatch) => {
-  contacts.forEach((contact, i, arr) => {
-    arr[i].tags = tags;
-  });
-  updateContacts(token, contacts)
-    .then(() => dispatch(editContactsTags(contacts, tags)))
-    .catch((error) => dispatch(handleError(error)));
+  try {
+    await updateContacts(token, contacts, tags, orgId);
+    const updatedContacts = contacts.map((contact) => ({
+      ...contact,
+      tags: tags,
+    }));
+    dispatch(updateOrgContacts(updatedContacts));
+  } catch (e) {
+    dispatch(handleError(e));
+  }
 };
 
 export const deleteOrgContacts = (

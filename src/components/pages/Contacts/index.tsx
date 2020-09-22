@@ -207,19 +207,23 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             <Button variant="secondary" onClick={() => setShowTagModal(false)}>
               Close
             </Button>
-            <Button
-              variant="primary"
-              onClick={() => {
-                editContactTags(
-                  token,
-                  contacts.filter((c) => c.selected),
-                  selectedTags,
-                );
-                setShowTagModal(false);
-                setHasFetchedData(false);
-              }}>
-              Save Changes
-            </Button>
+            {/* TODO Refactor redux store. This org check should not be necessary. */}
+            {org && (
+              <Button
+                variant="primary"
+                onClick={() => {
+                  editContactTags(
+                    token,
+                    contacts.filter((c) => c.selected),
+                    selectedTags,
+                    org.id,
+                  );
+                  setShowTagModal(false);
+                  setHasFetchedData(false);
+                }}>
+                Save Changes
+              </Button>
+            )}
           </Modal.Footer>
         </Modal>
 
