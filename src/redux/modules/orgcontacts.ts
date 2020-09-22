@@ -1,4 +1,3 @@
-import Contacts from 'src/components/pages/Contacts';
 import { AppThunk } from 'src/redux/helpers';
 import {
   fetchContacts,

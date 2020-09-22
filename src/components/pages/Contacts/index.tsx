@@ -217,7 +217,8 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             {org && (
               <Button
                 variant="primary"
-                onClick={() => {
+                onClick={async () => {
+                  loading();
                   editContactTags(
                     token,
                     contacts.filter((c) => c.selected),
@@ -277,7 +278,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
               </tr>
             </thead>
             <tbody>
-              {contacts.map((contact, index) => (
+              {filteredOrgContact.map((contact, index) => (
                 <tr
                   key={index}
                   className={contact.selected ? 'selected_row' : ''}>
