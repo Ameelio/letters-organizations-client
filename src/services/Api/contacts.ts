@@ -239,3 +239,48 @@ export async function updateContacts(
     throw body;
   }
 }
+    
+export async function fetchDrafts(
+  token: string,
+  orgId: number,
+): Promise<LetterDraft[]> {
+  console.log('made req');
+  const requestOptions: RequestInit = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await fetch(
+    url.resolve(API_URL, 'org/' + orgId + '/drafts'),
+    requestOptions,
+  );
+  const body = await response.json();
+  if (body.status === 'ERROR') {
+    throw body;
+  }
+  var draftsData: LetterDraft[] = [];
+  console.log(body.data);
+  body.data.forEach(
+    (user: { user: RawDraftSender; drafts: RawLetterDraft[] }) => {
+      user.drafts.forEach((draft: RawLetterDraft) => {
+        console.log(draft);
+        const letterDraft: LetterDraft = {
+          user_id: user.user.id,
+          contact_id: draft.contact_id,
+          first_name: user.user.first_name,
+          last_name: user.user.last_name,
+          contact_name: draft.contact_name,
+          updated_at: draft.updated_at,
+          content: draft.content,
+        };
+        console.log(letterDraft);
+        draftsData = [...draftsData, letterDraft];
+      });
+    },
+  );
+  console.log(draftsData);
+  return draftsData;
+}

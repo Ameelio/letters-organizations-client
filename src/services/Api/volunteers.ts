@@ -73,10 +73,11 @@ export async function fetchVolunteerDetails(
     requestOptions,
   );
   const contactsBody = await contactsResponse.json();
+
   if (contactsBody.status === 'ERROR') {
     throw contactsBody.message;
   }
-  interface c {
+  interface VolunteerContactRaw {
     first_name: string;
     middle_name: string | null;
     last_name: string;
@@ -94,10 +95,11 @@ export async function fetchVolunteerDetails(
     last_letter_sent: string | null;
     org_id: number | null;
   }
-  const contactsData: VolunteerContact[] = [];
-  contactsBody.data.data.forEach((contact: c) => {
-    if (contact.org_id === null) {
-      const contactData: VolunteerContact = {
+
+  const { data } = contactsBody.data;
+  const contactsData: VolunteerContact[] = data.map(
+    (contact: VolunteerContactRaw) =>
+      ({
         first_name: contact.first_name,
         middle_name: contact.middle_name,
         last_name: contact.last_name,
@@ -112,15 +114,12 @@ export async function fetchVolunteerDetails(
         dorm: contact.dorm,
         unit: contact.unit,
         total_letters_sent: contact.total_letters_sent,
-        last_letter_sent: null,
         org_id: contact.org_id,
-      };
-      if (contact.last_letter_sent) {
-        contactData.last_letter_sent = new Date(contact.last_letter_sent);
-      }
-      contactsData.push(contactData);
-    }
-  });
+        last_letter_sent: contact.last_letter_sent
+          ? new Date(contact.last_letter_sent)
+          : null,
+      } as VolunteerContact),
+  );
 
   const lettersResponse = await fetch(
     url.resolve(API_URL, `letters/${user_id}`),

@@ -1,0 +1,11 @@
+#contacts-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  opacity: 100%;
+  z-index: 100;
+}
+
+#faded {
+  opacity: 50%;
+}

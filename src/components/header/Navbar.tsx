@@ -1,6 +1,6 @@
 import React from 'react';
 import { RootState } from '../../redux';
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import { ReactComponent as Logo } from 'src/assets/logo.svg';
@@ -38,9 +38,16 @@ const NavBar: React.FC<PropsFromRedux> = ({ user, logout }) => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ml-auto">
-            <Nav.Link as={Link} to="/">
-              Volunteers
-            </Nav.Link>
+            <NavDropdown title="Volunteers" id="volunteer_dropdown">
+              <NavDropdown.Item to="/" href="/">
+                {' '}
+                Roster{' '}
+              </NavDropdown.Item>
+              <NavDropdown.Item to="/drafts" href="#drafts">
+                {' '}
+                Drafts{' '}
+              </NavDropdown.Item>
+            </NavDropdown>
             <Nav.Link as={Link} to="/contacts">
               Contacts
             </Nav.Link>
