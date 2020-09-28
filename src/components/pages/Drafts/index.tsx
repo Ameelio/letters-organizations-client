@@ -71,7 +71,7 @@ const UnconnectedDrafts: React.FC<PropsFromRedux> = ({
               {drafts.map((draft) => {
                 return (
                   <tr>
-                    <td>{draft.user_name}</td>
+                    <td>{draft.first_name + ' ' + draft.last_name}</td>
                     <td>{draft.content}</td>
                   </tr>
                 );
