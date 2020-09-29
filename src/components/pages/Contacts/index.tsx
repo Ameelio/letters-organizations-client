@@ -17,7 +17,10 @@ import {
   loading,
   deleteOrgContacts,
   editContactTags,
+  sendDirectMessage,
 } from 'src/redux/modules/orgcontacts';
+import Docdrop from 'src/components/docdrop/Docdrop';
+import FunnelButton from 'src/components/buttons/FunnelButton';
 import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import { logout } from '../../../redux/modules/user';
 import TagSelector from 'src/components/tags/TagSelector';
@@ -47,6 +50,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       deleteOrgContacts,
       addNewTag,
       editContactTags,
+      sendDirectMessage,
     },
     dispatch,
   );
@@ -68,6 +72,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   deleteOrgContacts,
   addNewTag,
   editContactTags,
+  sendDirectMessage,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [countContacts, setCountContacts] = useState<number>(0);
@@ -77,6 +82,13 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
+  const [showSendModal, setShowSendModal] = useState<boolean>(false);
+  const [
+    contactBeingSentMail,
+    setContactBeingSentMail,
+  ] = useState<OrgContact | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const { token } = user.user;
   const { org } = user.user;
@@ -234,6 +246,51 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           </Modal.Footer>
         </Modal>
 
+        <Modal show={showSendModal}>
+          <Modal.Body>
+            <p>
+              {' '}
+              Send a message to {contactBeingSentMail?.first_name}{' '}
+              {contactBeingSentMail?.last_name}
+            </p>
+            <Form className="d-flex flex-column">
+              <Form.Group controlId="formDocdrop">
+                <Form.Label>Attach file</Form.Label>
+                <Docdrop
+                  uploadFile={(file) => setUploadedFile(file)}
+                  uploadedFile={uploadedFile}
+                  acceptedFormat="application/pdf/*"
+                  acceptedFormatLabel="PDF"
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              onClick={() => {
+                setShowSendModal(false);
+                setContactBeingSentMail(null);
+              }}>
+              Close
+            </Button>
+            <Button
+              onClick={() => {
+                sendDirectMessage(token, {
+                  contact_id: contactBeingSentMail
+                    ? contactBeingSentMail.id
+                    : null,
+                  file: uploadedFile,
+                });
+                setShowSendModal(false);
+                setContactBeingSentMail(null);
+                setUploadedFile(null);
+              }}
+              disabled={uploadedFile == null}>
+              Send
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <div
           id="tableDiv"
           className="vh-100 w-100 shadow-sm px-2 bg-white overflow-auto tableDiv"
@@ -275,6 +332,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                 <th>City</th>
                 <th>State</th>
                 <th>Tags</th>
+                <th>Send</th>
               </tr>
             </thead>
             <tbody>
@@ -305,6 +363,16 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                         <Tag label={tag.label} />
                       </div>
                     ))}
+                  </td>
+                  <td>
+                    <Button
+                      title={'send ' + contact.first_name + ' a message'}
+                      onClick={() => {
+                        setShowSendModal(true);
+                        setContactBeingSentMail(contact);
+                      }}>
+                      <img src={require('./mail.svg')} />
+                    </Button>
                   </td>
                 </tr>
               ))}

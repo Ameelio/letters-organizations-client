@@ -1,5 +1,5 @@
 import url from 'url';
-import { API_URL } from './base';
+import { API_URL, BASE_URL } from './base';
 import { genImageUri } from 'src/utils/utils';
 
 export async function fetchContacts(
@@ -239,7 +239,7 @@ export async function updateContacts(
     throw body;
   }
 }
-    
+
 export async function fetchDrafts(
   token: string,
   orgId: number,
@@ -283,4 +283,69 @@ export async function fetchDrafts(
   );
   console.log(draftsData);
   return draftsData;
+}
+
+export async function createDirectLetter(
+  token: string,
+  newsletter: DraftDirectLetter,
+): Promise<DirectMailLog> {
+  let formData = new FormData();
+  formData.append('type', 'pdf');
+  if (newsletter?.file) {
+    formData.append('file', newsletter.file);
+  }
+
+  const s3requestOptions = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  };
+  const s3response = await fetch(
+    url.resolve(BASE_URL, 'file/upload'),
+    s3requestOptions,
+  );
+  const s3body = await s3response.json();
+  if (s3body.status === 'ERROR') {
+    throw s3body;
+  }
+  const s3_url = s3body.data;
+
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      contact_id: newsletter.contact_id,
+      pdf_path: s3_url,
+      content: 'bogus content to satisfy the server',
+      type: 'letter',
+    }),
+  };
+  const response = await fetch(url.resolve(API_URL, 'letter'), requestOptions);
+  const body = await response.json();
+  if (s3body.status === 'ERROR') {
+    throw s3body;
+  }
+
+  const newsletterData: DirectMailLog = {
+    id: body.data.id,
+    fileLink: body.data.pdf_path,
+    delivered: body.data.delivered_count,
+    inTransit: body.data.in_transit_count,
+    returned: body.data.returned_count,
+    creationDate: new Date(body.data.created_at),
+    totalLettersCount: body.data.total_letter_count,
+    estimatedArrival: null,
+    contact_id: newsletter.contact_id,
+    status: null,
+  };
+  if (body.data.estimated_arrival) {
+    newsletterData.estimatedArrival = new Date(body.data.estimated_arrival);
+  }
+  return newsletterData;
 }

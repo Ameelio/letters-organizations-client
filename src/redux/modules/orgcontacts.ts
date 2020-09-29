@@ -4,6 +4,7 @@ import {
   createContacts,
   deleteContacts,
   updateContacts,
+  createDirectLetter,
 } from 'src/services/Api/contacts';
 import { loadTags } from './tag';
 
@@ -22,6 +23,7 @@ const LOADING = 'orgContacts/LOADING';
 const ERROR = 'orgContacts/ERROR';
 const DELETE_CONTACTS = 'orgContacts/DELETE_CONTACTS';
 const UPDATE_CONTACTS = 'orgContacts/UPDATE_CONTACTS';
+const SEND_DIRECT_LETTER = 'orgContacts/SEND_DIRECT_LETTER';
 
 interface SetOrgContactsAction {
   type: typeof SET_ORG_CONTACTS;
@@ -96,6 +98,10 @@ interface UpdateContactsAction {
   payload: OrgContact[]; // First element is contacts, second is tags
 }
 
+interface SendDirectLetter {
+  type: typeof SEND_DIRECT_LETTER;
+}
+
 type OrgContactsActionTypes =
   | SetOrgContactsAction
   | AddOrgContactsAction
@@ -111,7 +117,8 @@ type OrgContactsActionTypes =
   | LoadingAction
   | ErrorAction
   | DeleteContactsAction
-  | UpdateContactsAction;
+  | UpdateContactsAction
+  | SendDirectLetter;
 
 export const setOrgContacts = (
   contacts: OrgContact[],
@@ -221,6 +228,13 @@ export const updateOrgContacts = (
   return {
     type: UPDATE_CONTACTS,
     payload: contacts,
+  };
+};
+
+export const sendDirectLetter = (): OrgContactsActionTypes => {
+  return {
+    type: SEND_DIRECT_LETTER,
+    payload: null,
   };
 };
 
@@ -340,6 +354,11 @@ export function orgContactsReducer(
         ...state,
         contacts: action.payload,
       };
+    case SEND_DIRECT_LETTER:
+      return {
+        ...state,
+        loading: false,
+      };
     default:
       return state;
   }
@@ -416,5 +435,15 @@ export const createOrgContacts = (
       tags.forEach((tag) => dispatch(removeFilter(tag)));
     })
     .then(() => dispatch(loadTags(token, org_id)))
+    .catch((error) => dispatch(handleError(error)));
+};
+
+export const sendDirectMessage = (
+  token: string,
+  letter: DraftDirectLetter,
+): AppThunk => async (dispatch) => {
+  dispatch(loading());
+  createDirectLetter(token, letter)
+    .then(() => dispatch(sendDirectLetter()))
     .catch((error) => dispatch(handleError(error)));
 };
