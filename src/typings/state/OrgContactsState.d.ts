@@ -13,4 +13,5 @@ interface OrgContactsState {
   loading: boolean;
   error: ErrorResponse;
   currPage: number;
+  sentDirectLetter: boolean;
 }

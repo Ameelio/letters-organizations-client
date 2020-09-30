@@ -20,7 +20,6 @@ import {
   sendDirectMessage,
 } from 'src/redux/modules/orgcontacts';
 import Docdrop from 'src/components/docdrop/Docdrop';
-import FunnelButton from 'src/components/buttons/FunnelButton';
 import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import { logout } from '../../../redux/modules/user';
 import TagSelector from 'src/components/tags/TagSelector';
@@ -89,6 +88,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
     setContactBeingSentMail,
   ] = useState<OrgContact | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
   const { token } = user.user;
   const { org } = user.user;
@@ -246,6 +246,27 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           </Modal.Footer>
         </Modal>
 
+        <Modal show={showSuccess}>
+          <Modal.Body>
+            {!orgContacts.sentDirectLetter ? (
+              <h4>Your letter is on it's way!</h4>
+            ) : (
+              <div>
+                <h4>Oh no! There was an error sending your letter:</h4>
+                <p>{orgContacts.error.message}</p>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              onClick={() => {
+                setShowSuccess(false);
+              }}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <Modal show={showSendModal}>
           <Modal.Body>
             <p>
@@ -284,6 +305,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                 setShowSendModal(false);
                 setContactBeingSentMail(null);
                 setUploadedFile(null);
+                setShowSuccess(true);
               }}
               disabled={uploadedFile == null}>
               Send

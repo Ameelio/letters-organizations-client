@@ -24,6 +24,7 @@ const ERROR = 'orgContacts/ERROR';
 const DELETE_CONTACTS = 'orgContacts/DELETE_CONTACTS';
 const UPDATE_CONTACTS = 'orgContacts/UPDATE_CONTACTS';
 const SEND_DIRECT_LETTER = 'orgContacts/SEND_DIRECT_LETTER';
+const SENT_DIRECT_LETTER = 'orgContacts/SENT_DIRECT_LETTER';
 
 interface SetOrgContactsAction {
   type: typeof SET_ORG_CONTACTS;
@@ -102,6 +103,10 @@ interface SendDirectLetter {
   type: typeof SEND_DIRECT_LETTER;
 }
 
+interface SentDirectLetter {
+  type: typeof SENT_DIRECT_LETTER;
+}
+
 type OrgContactsActionTypes =
   | SetOrgContactsAction
   | AddOrgContactsAction
@@ -118,7 +123,8 @@ type OrgContactsActionTypes =
   | ErrorAction
   | DeleteContactsAction
   | UpdateContactsAction
-  | SendDirectLetter;
+  | SendDirectLetter
+  | SentDirectLetter;
 
 export const setOrgContacts = (
   contacts: OrgContact[],
@@ -238,6 +244,13 @@ export const sendDirectLetter = (): OrgContactsActionTypes => {
   };
 };
 
+export const sentDirectLetter = (): OrgContactsActionTypes => {
+  return {
+    type: SENT_DIRECT_LETTER,
+    payload: null,
+  };
+};
+
 const initialState: OrgContactsState = {
   contacts: [],
   selectedFilters: [],
@@ -247,6 +260,7 @@ const initialState: OrgContactsState = {
   loading: false,
   error: {} as ErrorResponse,
   currPage: 1,
+  sentDirectLetter: false,
 };
 
 export function orgContactsReducer(
@@ -338,6 +352,8 @@ export function orgContactsReducer(
         loading: true,
       };
     case ERROR:
+      console.log('payload: ');
+      console.log(action.payload);
       return {
         ...state,
         loading: false,
@@ -358,6 +374,12 @@ export function orgContactsReducer(
       return {
         ...state,
         loading: false,
+        sentDirectLetter: false,
+      };
+    case SENT_DIRECT_LETTER:
+      return {
+        ...state,
+        sentDirectLetter: true,
       };
     default:
       return state;
@@ -445,5 +467,11 @@ export const sendDirectMessage = (
   dispatch(loading());
   createDirectLetter(token, letter)
     .then(() => dispatch(sendDirectLetter()))
-    .catch((error) => dispatch(handleError(error)));
+    .then((success) => {
+      if (success) dispatch(sentDirectLetter());
+    })
+    .catch((error) => {
+      console.log(error);
+      dispatch(handleError(error));
+    });
 };

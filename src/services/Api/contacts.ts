@@ -288,7 +288,7 @@ export async function fetchDrafts(
 export async function createDirectLetter(
   token: string,
   newsletter: DraftDirectLetter,
-): Promise<DirectMailLog> {
+): Promise<boolean> {
   let formData = new FormData();
   formData.append('type', 'pdf');
   if (newsletter?.file) {
@@ -328,24 +328,8 @@ export async function createDirectLetter(
   };
   const response = await fetch(url.resolve(API_URL, 'letter'), requestOptions);
   const body = await response.json();
-  if (s3body.status === 'ERROR') {
-    throw s3body;
+  if (body.status === 'ERROR') {
+    throw body;
   }
-
-  const newsletterData: DirectMailLog = {
-    id: body.data.id,
-    fileLink: body.data.pdf_path,
-    delivered: body.data.delivered_count,
-    inTransit: body.data.in_transit_count,
-    returned: body.data.returned_count,
-    creationDate: new Date(body.data.created_at),
-    totalLettersCount: body.data.total_letter_count,
-    estimatedArrival: null,
-    contact_id: newsletter.contact_id,
-    status: null,
-  };
-  if (body.data.estimated_arrival) {
-    newsletterData.estimatedArrival = new Date(body.data.estimated_arrival);
-  }
-  return newsletterData;
+  return true;
 }
