@@ -23,29 +23,22 @@ export async function fetchVolunteers(
     throw body;
   }
   const volunteersData: Volunteer[] = [];
-  interface v {
+  interface RawVolunteer {
     id: number;
     user_id: number;
     name: string;
     image: string;
     role: string;
-    total_letters_sent: number;
-    last_letter_sent: string | null;
   }
-  body.data.data.forEach((volunteer: v) => {
+  body.data.data.forEach((volunteer: RawVolunteer) => {
     const volunteerData: Volunteer = {
       id: volunteer.id,
       user_id: volunteer.user_id,
       name: volunteer.name,
       image: volunteer.image,
       role: volunteer.role,
-      total_letters_sent: volunteer.total_letters_sent,
-      last_letter_sent: null,
       details: null,
     };
-    if (volunteer.last_letter_sent) {
-      volunteerData.last_letter_sent = new Date(volunteer.last_letter_sent);
-    }
     volunteersData.push(volunteerData);
   });
   return volunteersData;
@@ -238,18 +231,12 @@ export async function addVolunteer(
   const volunteerData: Volunteer = {
     id: body.data.org_user.id,
     user_id: body.data.org_user.user_id,
-    name: body.data.org_user.name,
-    image: body.data.org_user.image,
+    name: `${body.data.user.first_name} ${body.data.user.last_name}`,
+    image: body.data.user.profile_img_path,
     role: body.data.org_user.role,
-    total_letters_sent: body.data.org_user.total_letters_sent,
-    last_letter_sent: null,
     details: null,
   };
-  if (body.data.org_user.last_letter_sent) {
-    volunteerData.last_letter_sent = new Date(
-      body.data.org_user.last_letter_sent,
-    );
-  }
+
   return volunteerData;
 }
 
@@ -286,8 +273,6 @@ export async function updateVolunteer(
     name: volunteer.name,
     image: volunteer.image,
     role: body.data.role,
-    total_letters_sent: volunteer.total_letters_sent,
-    last_letter_sent: volunteer.last_letter_sent,
     details: null,
   };
   return volunteerData;
