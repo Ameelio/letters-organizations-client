@@ -23,14 +23,6 @@ const VolunteerCard: React.FC<VolunteerProps> = ({
       <Image className="small-image p4" src={volunteer.image} roundedCircle />
       <div className="ml-4 d-flex flex-column">
         <span className={`${fontColor} p4`}>{volunteer.name}</span>
-        <span className="black-400 p6">
-          Total letters sent: {volunteer.total_letters_sent}
-        </span>
-        <span className="black-400 p6">
-          {volunteer.last_letter_sent
-            ? `Last letter sent: ${formatDate(volunteer.last_letter_sent)}`
-            : 'No letters sent yet!'}
-        </span>
       </div>
       <hr />
     </div>
