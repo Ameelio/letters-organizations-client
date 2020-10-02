@@ -248,12 +248,13 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 
         <Modal show={showSuccess}>
           <Modal.Body>
-            {!orgContacts.sentDirectLetter ? (
+            {orgContacts.sentDirectLetter ? (
               <h4>Your letter is on it's way!</h4>
             ) : (
               <div>
                 <h4>Oh no! There was an error sending your letter:</h4>
                 <p>{orgContacts.error.message}</p>
+                <p>{orgContacts.error.data}</p>
               </div>
             )}
           </Modal.Body>

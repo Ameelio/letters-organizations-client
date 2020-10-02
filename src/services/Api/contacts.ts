@@ -322,7 +322,7 @@ export async function createDirectLetter(
     body: JSON.stringify({
       contact_id: newsletter.contact_id,
       pdf_path: s3_url,
-      content: 'bogus content to satisfy the server',
+      content: 'legal_mail',
       type: 'letter',
     }),
   };
