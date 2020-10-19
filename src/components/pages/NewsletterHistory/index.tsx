@@ -170,7 +170,7 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
                 <th>Returned</th>
                 <th>Estimated Arrival</th>
                 <th>Tags</th>
-                <th>File</th>
+                {/* <th>File</th> */}
                 <th></th>
               </tr>
             </thead>
@@ -196,14 +196,14 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
                           </div>
                         ))}
                       </td>
-                      <td>
+                      {/* <td>
                         <a
                           href={newsletter.fileLink}
                           target="_blank"
                           rel="noopener noreferrer">
                           Link
                         </a>
-                      </td>
+                      </td> */}
                       <td>
                         {newsletter.status === 'error' ? (
                           <span className="badge badge-danger">error</span>
