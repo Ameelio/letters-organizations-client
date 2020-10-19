@@ -31,6 +31,7 @@ import FunnelButton from 'src/components/buttons/FunnelButton';
 import { Container, Spinner } from 'react-bootstrap';
 import { unauthenticated } from 'src/utils/utils';
 import Toggle from './Toggle';
+import { track } from 'src/utils/segment';
 
 const mapStateToProps = (state: RootState) => ({
   tags: state.tags,
@@ -147,6 +148,11 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
 
   const handleSubmission = (event: React.MouseEvent) => {
     sendNewsletter(token, newsletter, pageCount);
+    track('Newsletter - Send Newsletter Success', {
+      sheets: pageCount / (Number(newsletters.uploadDoubleSided) + 1),
+      type: newsletters.standardMail ? 'Standard' : 'First Class',
+      color: newsletters.uploadColor ? 'Color' : 'Black and White',
+    });
     setShowSuccessModal(true);
     updateFileUploadStep(newsletters.uploadStep + 1);
   };

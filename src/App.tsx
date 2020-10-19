@@ -10,8 +10,11 @@ import UploadContactsPage from './components/pages/UploadContacts';
 import NewsletterHistoryPage from './components/pages/NewsletterHistory';
 import DraftsPage from './components/pages/Drafts';
 import PrivateRoute from './hoc/PrivateRoute';
+import { loadSegment, track } from 'src/utils/segment';
 
 function App() {
+  loadSegment();
+  track('Website Open');
   return (
     <Router>
       <NavBar />

@@ -20,6 +20,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/redux": "^3.6.0",
     "@types/redux-thunk": "^2.1.0",
+    "amplitude-js": "^7.3.0",
     "bootstrap": "^4.5.0",
     "date-fns": "^2.15.0",
     "env-cmd": "^10.1.0",
@@ -36,7 +37,7 @@
     "react-papaparse": "^3.4.0",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.1",
+    "react-scripts": "^3.4.3",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "typescript": "^3.9.6",
@@ -78,6 +79,7 @@
     ]
   },
   "devDependencies": {
+    "@types/segment-analytics": "0.0.32",
     "eslint-config-airbnb": "^18.2.0",
     "gh-pages": "^3.1.0",
     "husky": "^4.2.5",

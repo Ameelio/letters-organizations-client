@@ -33,7 +33,7 @@ const UnconnectedDrafts: React.FC<PropsFromRedux> = ({
       loadLetterDrafts(token, org.id);
       setHasFetchedData(true);
     }
-  });
+  }, [hasFetchedData, org, loadLetterDrafts, token]);
 
   const spinner = (
     <Container id="contacts-spinner">

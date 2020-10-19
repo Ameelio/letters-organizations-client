@@ -7,6 +7,7 @@ import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import './index.css';
 
 import { Redirect } from 'react-router-dom';
+import { identify } from 'src/utils/segment';
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
@@ -34,14 +35,18 @@ const UnconnectedLogin: React.FC<PropsFromRedux> = ({
     setEmailError(error.toString());
   };
 
-  const tryLogin = (e: React.MouseEvent) => {
+  const tryLogin = async (e: React.MouseEvent) => {
     e.preventDefault();
     setEmailError('');
     setPasswordError('');
     loadingUser();
-    onLogin(email, password)
-      .then((userData) => login(userData))
-      .catch((error) => onError(error));
+    try {
+      const userData = await onLogin(email, password);
+      login(userData);
+      identify(email, { org: userData.org?.name });
+    } catch (error) {
+      onError(error);
+    }
   };
 
   if (user.authInfo.isLoadingToken) {
