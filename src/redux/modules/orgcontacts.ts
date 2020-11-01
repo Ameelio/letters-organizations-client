@@ -460,7 +460,7 @@ export const createOrgContacts = (
     .catch((error) => dispatch(handleError(error)));
 };
 
-export const sendDirectMessage = (
+export const sendLetter = (
   token: string,
   letter: DraftDirectLetter,
 ): AppThunk => async (dispatch) => {

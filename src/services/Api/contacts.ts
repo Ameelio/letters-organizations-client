@@ -244,7 +244,6 @@ export async function fetchDrafts(
   token: string,
   orgId: number,
 ): Promise<LetterDraft[]> {
-  console.log('made req');
   const requestOptions: RequestInit = {
     method: 'GET',
     headers: {
@@ -254,7 +253,7 @@ export async function fetchDrafts(
     },
   };
   const response = await fetch(
-    url.resolve(API_URL, 'org/' + orgId + '/drafts'),
+    url.resolve(API_URL, 'org/${orgID}/drafts'),
     requestOptions,
   );
   const body = await response.json();
@@ -262,11 +261,9 @@ export async function fetchDrafts(
     throw body;
   }
   var draftsData: LetterDraft[] = [];
-  console.log(body.data);
   body.data.forEach(
     (user: { user: RawDraftSender; drafts: RawLetterDraft[] }) => {
       user.drafts.forEach((draft: RawLetterDraft) => {
-        console.log(draft);
         const letterDraft: LetterDraft = {
           user_id: user.user.id,
           contact_id: draft.contact_id,
@@ -289,6 +286,9 @@ export async function createDirectLetter(
   token: string,
   newsletter: DraftDirectLetter,
 ): Promise<boolean> {
+  if (!newsletter.file) {
+    throw 'no file uploaded';
+  }
   let formData = new FormData();
   formData.append('type', 'pdf');
   if (newsletter?.file) {

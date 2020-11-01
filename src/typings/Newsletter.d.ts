@@ -12,19 +12,6 @@ interface DraftDirectLetter {
   contact_id: number | null;
 }
 
-interface DirectMailLog {
-  id: number;
-  fileLink: string;
-  totalLettersCount: number;
-  delivered: number;
-  inTransit: number;
-  returned: number;
-  creationDate: Date;
-  estimatedArrival: Date | null;
-  contact_id: number | null;
-  status: string | null;
-}
-
 interface NewsletterLog {
   id: number;
   title: string;

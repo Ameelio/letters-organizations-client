@@ -11,7 +11,7 @@ const SELECT_VOLUNTEER = 'volunteer/SET_VOLUNTEER';
 const LOADING = 'volunteer/LOADING';
 const LOADING_DETAILS = 'volunteer/LOADING_DETAILS';
 const ERROR = 'volunteer/ERROR';
-const LOAD_DRAFTS = 'volunteer/LOAD_DRAFTS';
+const SET_DRAFTS = 'volunteer/SET_DRAFTS';
 
 interface SetVolunteersAction {
   type: typeof SET_VOLUNTEERS;
@@ -38,8 +38,8 @@ interface LoadingDetailsAction {
   payload: null;
 }
 
-interface LoadDrafts {
-  type: typeof LOAD_DRAFTS;
+interface SetDraftsAction {
+  type: typeof SET_DRAFTS;
   payload: LetterDraft[];
 }
 
@@ -49,7 +49,7 @@ export type VolunteerActionTypes =
   | LoadingAction
   | LoadingDetailsAction
   | ErrorAction
-  | LoadDrafts;
+  | SetDraftsAction;
 
 // Action Creators
 const setVolunteers = (volunteers: Volunteer[]): VolunteerActionTypes => {
@@ -87,9 +87,9 @@ const loadingDetails = (): VolunteerActionTypes => {
   };
 };
 
-const loadDrafts = (drafts: LetterDraft[]): VolunteerActionTypes => {
+const setDrafts = (drafts: LetterDraft[]): VolunteerActionTypes => {
   return {
-    type: LOAD_DRAFTS,
+    type: SET_DRAFTS,
     payload: drafts,
   };
 };
@@ -150,7 +150,7 @@ export function volunteersReducer(
         loading_details: false,
         selected_volunteer: action.payload,
       };
-    case LOAD_DRAFTS:
+    case SET_DRAFTS:
       return {
         ...state,
         drafts: action.payload,
@@ -168,7 +168,7 @@ export const loadVolunteers = (
   fetchVolunteers(token, org_id)
     .then((volunteersData) => dispatch(setVolunteers(volunteersData)))
     .then((action) => {
-      if (action.type === 'volunteer/SET_VOLUNTEERS') {
+      if (action.type === SET_VOLUNTEERS) {
         dispatch(selectVolunteer(token, action.payload[0]));
       }
     })
@@ -208,6 +208,6 @@ export const loadLetterDrafts = (
   orgId: number,
 ): AppThunk => async (dispatch) => {
   fetchDrafts(token, orgId)
-    .then((drafts: LetterDraft[]) => dispatch(loadDrafts(drafts)))
+    .then((drafts: LetterDraft[]) => dispatch(setDrafts(drafts)))
     .catch((error) => dispatch(handleError(error)));
 };

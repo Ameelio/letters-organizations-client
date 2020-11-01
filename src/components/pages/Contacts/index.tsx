@@ -17,7 +17,7 @@ import {
   loading,
   deleteOrgContacts,
   editContactTags,
-  sendDirectMessage,
+  sendLetter,
 } from 'src/redux/modules/orgcontacts';
 import Docdrop from 'src/components/docdrop/Docdrop';
 import { loadTags, addNewTag } from 'src/redux/modules/tag';
@@ -29,6 +29,7 @@ import './index.css';
 import { Link } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 import { unauthenticated, isBottom } from 'src/utils/utils';
+import mail_icon from './mail.svg';
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
@@ -49,7 +50,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       deleteOrgContacts,
       addNewTag,
       editContactTags,
-      sendDirectMessage,
+      sendLetter,
     },
     dispatch,
   );
@@ -71,7 +72,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   deleteOrgContacts,
   addNewTag,
   editContactTags,
-  sendDirectMessage,
+  sendLetter,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [countContacts, setCountContacts] = useState<number>(0);
@@ -82,11 +83,9 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
-  const [showSendModal, setShowSendModal] = useState<boolean>(false);
-  const [
-    contactBeingSentMail,
-    setContactBeingSentMail,
-  ] = useState<OrgContact | null>(null);
+  const [selectedContact, setselectedContact] = useState<OrgContact | null>(
+    null,
+  );
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
@@ -268,12 +267,12 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           </Modal.Footer>
         </Modal>
 
-        <Modal show={showSendModal}>
+        <Modal show={!!selectedContact}>
           <Modal.Body>
             <p>
               {' '}
-              Send a message to {contactBeingSentMail?.first_name}{' '}
-              {contactBeingSentMail?.last_name}
+              Send a message to {selectedContact?.first_name}{' '}
+              {selectedContact?.last_name}
             </p>
             <Form className="d-flex flex-column">
               <Form.Group controlId="formDocdrop">
@@ -290,21 +289,17 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           <Modal.Footer>
             <Button
               onClick={() => {
-                setShowSendModal(false);
-                setContactBeingSentMail(null);
+                setselectedContact(null);
               }}>
               Close
             </Button>
             <Button
               onClick={() => {
-                sendDirectMessage(token, {
-                  contact_id: contactBeingSentMail
-                    ? contactBeingSentMail.id
-                    : null,
+                sendLetter(token, {
+                  contact_id: selectedContact ? selectedContact.id : null,
                   file: uploadedFile,
                 });
-                setShowSendModal(false);
-                setContactBeingSentMail(null);
+                setselectedContact(null);
                 setUploadedFile(null);
                 setShowSuccess(true);
               }}
@@ -389,12 +384,11 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                   </td>
                   <td>
                     <Button
-                      title={'send ' + contact.first_name + ' a message'}
+                      title={'send mail to' + contact.first_name}
                       onClick={() => {
-                        setShowSendModal(true);
-                        setContactBeingSentMail(contact);
+                        setselectedContact(contact);
                       }}>
-                      <img src={require('./mail.svg')} />
+                      <img src={mail_icon} />
                     </Button>
                   </td>
                 </tr>
