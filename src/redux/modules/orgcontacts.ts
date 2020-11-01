@@ -6,6 +6,7 @@ import {
   updateContacts,
   createDirectLetter,
 } from 'src/services/Api/contacts';
+import { track } from 'src/utils/segment';
 import { loadTags } from './tag';
 
 const SET_ORG_CONTACTS = 'orgContacts/SET_ORG_CONTACTS';
@@ -454,6 +455,7 @@ export const createOrgContacts = (
   createContacts(token, org_id, tag_ids, contacts)
     .then((contactsData) => dispatch(addOrgContacts(contactsData)))
     .then(() => {
+      track('Contacts - Upload Contacts Success');
       tags.forEach((tag) => dispatch(removeFilter(tag)));
     })
     .then(() => dispatch(loadTags(token, org_id)))
@@ -468,10 +470,12 @@ export const sendLetter = (
   createDirectLetter(token, letter)
     .then(() => dispatch(sendDirectLetter()))
     .then((success) => {
-      if (success) dispatch(sentDirectLetter());
+      if (success) {
+        track('Contacts - Send Letter Success');
+        dispatch(sentDirectLetter());
+      }
     })
     .catch((error) => {
-      console.log(error);
       dispatch(handleError(error));
     });
 };

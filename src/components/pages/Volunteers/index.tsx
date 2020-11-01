@@ -25,6 +25,7 @@ import {
 import { unauthenticated } from 'src/utils/utils';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, Container, Spinner } from 'react-bootstrap';
+import { track } from 'src/utils/segment';
 
 const mapStateToProps = (state: RootState) => ({
   volunteers: state.volunteers,
@@ -86,6 +87,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     event: React.MouseEvent,
     volunteer: Volunteer,
   ) => {
+    track('Volunteers - Click on Volunteer Card');
     handleUpdateClose();
     selectVolunteer(token, volunteer);
   };

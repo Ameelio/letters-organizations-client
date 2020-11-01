@@ -187,7 +187,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
               <Docdrop
                 uploadFile={uploadCsv}
                 uploadedFile={uploadedCsv.file}
-                acceptedFormat="text/csv/*"
+                acceptedFormat=".csv"
                 acceptedFormatLabel="CSV"
               />
               <div className="ml-auto">
