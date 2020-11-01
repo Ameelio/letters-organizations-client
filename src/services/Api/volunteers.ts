@@ -5,6 +5,7 @@ import { genImageUri } from 'src/utils/utils';
 export async function fetchVolunteers(
   token: string,
   org_id: number,
+  page: number,
 ): Promise<Volunteer[]> {
   const requestOptions: RequestInit = {
     method: 'GET',
@@ -15,7 +16,7 @@ export async function fetchVolunteers(
     },
   };
   const response = await fetch(
-    url.resolve(API_URL, `org/${org_id}/users`),
+    url.resolve(API_URL, `org/${org_id}/users?page=${page}`),
     requestOptions,
   );
   const body = await response.json();

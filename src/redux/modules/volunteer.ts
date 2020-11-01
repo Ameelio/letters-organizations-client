@@ -102,6 +102,7 @@ const initialState: VolunteerState = {
   loading_details: false,
   selected_volunteer: {} as Volunteer,
   drafts: [] as LetterDraft[],
+  page: 1,
 };
 
 export function volunteersReducer(
@@ -130,7 +131,9 @@ export function volunteersReducer(
     case SET_VOLUNTEERS:
       return {
         ...state,
-        all_volunteers: action.payload,
+        all_volunteers: state.all_volunteers.concat(action.payload),
+        page: state.page + 1,
+        loading: false,
       };
     case LOADING_DETAILS:
       return {
@@ -163,12 +166,13 @@ export function volunteersReducer(
 export const loadVolunteers = (
   token: string,
   org_id: number,
+  page: number,
 ): AppThunk => async (dispatch) => {
   dispatch(loading());
-  fetchVolunteers(token, org_id)
+  fetchVolunteers(token, org_id, page)
     .then((volunteersData) => dispatch(setVolunteers(volunteersData)))
     .then((action) => {
-      if (action.type === SET_VOLUNTEERS) {
+      if (action.type === SET_VOLUNTEERS && action.payload[0]) {
         dispatch(selectVolunteer(token, action.payload[0]));
       }
     })

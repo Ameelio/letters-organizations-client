@@ -22,7 +22,7 @@ import {
   updateVolunteer,
   removeVolunteer,
 } from '../../../services/Api/volunteers';
-import { unauthenticated } from 'src/utils/utils';
+import { unauthenticated, isBottom } from 'src/utils/utils';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, Container, Spinner } from 'react-bootstrap';
 import { track } from 'src/utils/segment';
@@ -107,7 +107,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
   useEffect(() => {
     if (!hasFetchedVolunteers && org) {
-      loadVolunteers(token, org.id);
+      loadVolunteers(token, org.id, volunteers.page);
       setHasFetchedVolunteers(true);
     }
     const results = volunteers.all_volunteers.filter((volunteer) =>
@@ -148,31 +148,46 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     </Container>
   );
 
+  const handleScroll = () => {
+    const volunteersDiv = document.getElementById('volunteersDiv');
+
+    if (volunteersDiv) {
+      if (isBottom(volunteersDiv) && org) {
+        loadVolunteers(token, org.id, volunteers.page);
+      }
+    }
+  };
+
   return (
     <div className="d-flex flex-row">
       <section
         id={volunteers.loading ? 'faded' : ''}
         className="volunteers-list-sidebar d-flex flex-column mw-27 border-right pl-4 shadow-sm bg-white rounded">
-        <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
-          <span className="black-500 p3">Volunteers</span>
-          <Button onClick={handleInviteClick}>Invite</Button>
+        <div
+          id="volunteersDiv"
+          className="vh-100 overflow-auto"
+          onScroll={handleScroll}>
+          <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
+            <span className="black-500 p3">Volunteers</span>
+            <Button onClick={handleInviteClick}>Invite</Button>
+          </div>
+          <Form className="mr-3 mb-3">
+            <FormControl
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </Form>
+          {filteredVolunteers.map((volunteer) => (
+            <VolunteerCard
+              handleClick={(e) => handleVolunteerClick(e, volunteer)}
+              volunteer={volunteer}
+              key={volunteer.id}
+              isActive={volunteer.id === volunteers.selected_volunteer.id}
+            />
+          ))}
         </div>
-        <Form className="mr-3 mb-3">
-          <FormControl
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </Form>
-        {filteredVolunteers.map((volunteer) => (
-          <VolunteerCard
-            handleClick={(e) => handleVolunteerClick(e, volunteer)}
-            volunteer={volunteer}
-            key={volunteer.id}
-            isActive={volunteer.id === volunteers.selected_volunteer.id}
-          />
-        ))}
       </section>
 
       {(volunteers.loading || volunteers.loading_details) && spinner}
@@ -237,6 +252,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
           loadVolunteers={loadVolunteers}
           handleError={handleError}
           user={user.user}
+          page={volunteers.page}
         />
       )}
 
