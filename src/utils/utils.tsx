@@ -110,11 +110,13 @@ export async function getAuthenticatedJson({
   token,
   endpoint,
   body = null,
+  baseUrl = API_URL,
 }: {
   method: string;
   token: string;
   endpoint: string;
   body?: string | null;
+  baseUrl: string;
 }): Promise<Response> {
   const requestOptions: RequestInit = {
     method: 'GET',
@@ -126,5 +128,5 @@ export async function getAuthenticatedJson({
     body: body,
   };
 
-  return await fetch(url.resolve(API_URL, endpoint), requestOptions);
+  return await fetch(url.resolve(baseUrl, endpoint), requestOptions);
 }
