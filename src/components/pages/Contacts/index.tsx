@@ -388,7 +388,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                       onClick={() => {
                         setselectedContact(contact);
                       }}>
-                      <img src={mail_icon} />
+                      <img src={mail_icon} alt="mail icon" />
                     </Button>
                   </td>
                 </tr>

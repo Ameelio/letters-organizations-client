@@ -4,7 +4,6 @@ import Table from 'react-bootstrap/Table';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
 import './index.css';
-import { Container, Spinner } from 'react-bootstrap';
 import { loadLetterDrafts } from 'src/redux/modules/volunteer';
 
 const mapStateToProps = (state: RootState) => ({
@@ -34,14 +33,6 @@ const UnconnectedDrafts: React.FC<PropsFromRedux> = ({
       setHasFetchedData(true);
     }
   }, [hasFetchedData, org, loadLetterDrafts, token]);
-
-  const spinner = (
-    <Container id="contacts-spinner">
-      <Spinner animation="border" role="status" variant="primary">
-        <span className="sr-only">Loading...</span>
-      </Spinner>
-    </Container>
-  );
 
   return (
     <div className="d-flex flex-row">

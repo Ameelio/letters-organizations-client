@@ -244,7 +244,7 @@ export async function createDirectLetter(
   newsletter: DraftDirectLetter,
 ): Promise<boolean> {
   if (!newsletter.file) {
-    throw 'no file uploaded';
+    throw new Error('no file uploaded');
   }
   let formData = new FormData();
   formData.append('type', 'pdf');

@@ -114,6 +114,9 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
       volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredVolunteers(results);
+    // we don't want to include volunteers.page as dependency
+    // because this will result in infintely fetching new pages
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     hasFetchedVolunteers,
     loadVolunteers,
