@@ -1,30 +1,19 @@
 import url from 'url';
 import { API_URL } from './base';
+import { getAuthenticatedJson } from 'src/utils/utils';
 
 export async function fetchTags(token: string, org_id: number): Promise<Tag[]> {
-  const requestOptions: RequestInit = {
+  const response = await getAuthenticatedJson({
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await fetch(
-    url.resolve(API_URL, `org/${org_id}/tags`),
-    requestOptions,
-  );
+    token: token,
+    endpoint: `org/${org_id}/tags`,
+  });
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
   }
   const tagsData: Tag[] = [];
-  interface t {
-    id: number;
-    label: string;
-    total_contacts: number;
-  }
-  body.data.data.forEach((tag: t) => {
+  body.data.data.forEach((tag: RawTag) => {
     const tagData = {
       id: tag.id,
       label: tag.label,
@@ -40,19 +29,15 @@ export async function createTag(
   org_id: number,
   label: string,
 ): Promise<Tag> {
-  const requestOptions: RequestInit = {
+  const response = await getAuthenticatedJson({
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    token: token,
+    endpoint: `org/tag`,
     body: JSON.stringify({
       org_id: org_id,
       label: label,
     }),
-  };
-  const response = await fetch(url.resolve(API_URL, `org/tag`), requestOptions);
+  });
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
