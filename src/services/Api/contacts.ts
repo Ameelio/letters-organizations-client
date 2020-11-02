@@ -1,5 +1,4 @@
-import url from 'url';
-import { API_URL, BASE_URL } from './base';
+import { BASE_URL } from './base';
 import { genImageUri, getAuthenticatedJson } from 'src/utils/utils';
 
 export async function fetchContacts(
