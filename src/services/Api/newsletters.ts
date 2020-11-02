@@ -1,6 +1,5 @@
-import url from 'url';
 import { subDays } from 'date-fns';
-import { API_URL, BASE_URL } from './base';
+import { BASE_URL } from './base';
 import { getAuthJson } from 'src/utils/utils';
 
 export async function createNewsletter(

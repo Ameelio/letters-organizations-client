@@ -1,4 +1,4 @@
-import React, { useState, useEffect, UIEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RootState } from 'src/redux';
 import Table from 'react-bootstrap/Table';
 import { bindActionCreators, Dispatch } from 'redux';

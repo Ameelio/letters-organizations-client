@@ -1,6 +1,6 @@
 import React from 'react';
 import { RootState } from '../../redux';
-import { Navbar, Nav, NavDropdown, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import { ReactComponent as Logo } from 'src/assets/logo.svg';
