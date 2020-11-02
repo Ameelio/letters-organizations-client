@@ -14,14 +14,14 @@ interface DraftDirectLetter {
 
 interface RawNewsletterLog {
   id: number;
-  title: string;
-  fileLink: string;
-  totalLettersCount: number;
-  delivered: number;
-  inTransit: number;
-  returned: number;
-  creationDate: Date;
-  estimatedArrival: Date | null;
+  name: string;
+  pdf_path: string;
+  total_letter_count: number;
+  delivered_count: number;
+  in_transit_count: number;
+  returned_count: number;
+  created_at: Date;
+  estimated_arrival: Date | null;
   tags: RawTag[];
   status: string | null;
 }

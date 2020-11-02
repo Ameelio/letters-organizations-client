@@ -119,7 +119,7 @@ export async function getAuthJson({
   baseUrl?: string;
 }): Promise<Response> {
   const requestOptions: RequestInit = {
-    method: 'GET',
+    method: method,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
