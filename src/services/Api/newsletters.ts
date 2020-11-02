@@ -1,6 +1,7 @@
 import url from 'url';
 import { subDays } from 'date-fns';
 import { API_URL, BASE_URL } from './base';
+import { getAuthenticatedJson } from 'src/utils/utils';
 
 export async function createNewsletter(
   token: string,
@@ -11,18 +12,15 @@ export async function createNewsletter(
   let formData = new FormData();
   formData.append('type', 'pdf');
   formData.append('file', newsletter.file);
-  const s3requestOptions = {
+
+  const s3response = await getAuthenticatedJson({
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    token: token,
+    endpoint: 'file/upload',
     body: formData,
-  };
-  const s3response = await fetch(
-    url.resolve(BASE_URL, 'file/upload'),
-    s3requestOptions,
-  );
+    baseUrl: BASE_URL,
+  });
+
   const s3body = await s3response.json();
   if (s3body.status === 'ERROR') {
     throw s3body;
@@ -31,13 +29,11 @@ export async function createNewsletter(
   const s3_url = s3body.data;
   let tagIds: number[] = [];
   newsletter.tags.forEach((tag) => tagIds.push(tag.id));
-  const requestOptions: RequestInit = {
+
+  const response = await getAuthenticatedJson({
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    token: token,
+    endpoint: 'newsletter',
     body: JSON.stringify({
       name: newsletter.title,
       s3_path: s3_url,
@@ -48,11 +44,8 @@ export async function createNewsletter(
       color: newsletter.color,
       mail_type: newsletter.standardMail ? 'usps_standard' : 'usps_first_class',
     }),
-  };
-  const response = await fetch(
-    url.resolve(API_URL, 'newsletter'),
-    requestOptions,
-  );
+  });
+
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
@@ -92,18 +85,12 @@ export async function createNewsletter(
 export async function fetchNewsletters(
   token: string,
 ): Promise<NewsletterLog[]> {
-  const requestOptions: RequestInit = {
+  const response = await getAuthenticatedJson({
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'text/plain',
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await fetch(
-    url.resolve(API_URL, 'newsletters'),
-    requestOptions,
-  );
+    token: token,
+    endpoint: 'newsletters',
+  });
+
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
