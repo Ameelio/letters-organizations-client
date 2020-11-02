@@ -95,41 +95,23 @@ export async function fetchNewsletters(
   if (body.status === 'ERROR') {
     throw body;
   }
-  interface t {
-    id: number;
-    label: string;
-    total_contacts: number;
-  }
-  interface n {
-    id: number;
-    name: string;
-    pdf_path: string;
-    total_letter_count: number;
-    delivered_count: number;
-    in_transit_count: number;
-    returned_count: number;
-    created_at: string;
-    estimated_arrival: string | null;
-    status: string;
-    tags: t[];
-  }
   const newslettersData: NewsletterLog[] = [];
-  body.data.data.forEach((newsletter: n) => {
+  body.data.data.forEach((newsletter: RawNewsletterLog) => {
     const newsletterData: NewsletterLog = {
       id: newsletter.id,
-      title: newsletter.name,
-      fileLink: newsletter.pdf_path,
-      delivered: newsletter.delivered_count,
-      inTransit: newsletter.in_transit_count,
-      returned: newsletter.returned_count,
-      creationDate: new Date(newsletter.created_at),
+      title: newsletter.title,
+      fileLink: newsletter.fileLink,
+      delivered: newsletter.delivered,
+      inTransit: newsletter.inTransit,
+      returned: newsletter.returned,
+      creationDate: new Date(newsletter.creationDate),
       estimatedArrival: null,
       tags: [],
-      totalLettersCount: newsletter.total_letter_count,
+      totalLettersCount: newsletter.totalLettersCount,
       status: newsletter.status,
     };
-    if (newsletter.estimated_arrival) {
-      newsletterData.estimatedArrival = new Date(newsletter.estimated_arrival);
+    if (newsletter.estimatedArrival) {
+      newsletterData.estimatedArrival = new Date(newsletter.estimatedArrival);
     }
     newsletter.tags.forEach((tag) => {
       const tagData: Tag = {
