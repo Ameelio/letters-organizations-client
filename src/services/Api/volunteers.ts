@@ -1,36 +1,20 @@
-import url from 'url';
-import { API_URL } from './base';
-import { genImageUri } from 'src/utils/utils';
+import { genImageUri, getAuthenticatedJson } from 'src/utils/utils';
 
 export async function fetchVolunteers(
   token: string,
   org_id: number,
   page: number,
 ): Promise<Volunteer[]> {
-  const requestOptions: RequestInit = {
+  const response = await getAuthenticatedJson({
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await fetch(
-    url.resolve(API_URL, `org/${org_id}/users?page=${page}`),
-    requestOptions,
-  );
+    token: token,
+    endpoint: `org/${org_id}/users?page=${page}`,
+  });
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
   }
   const volunteersData: Volunteer[] = [];
-  interface RawVolunteer {
-    id: number;
-    user_id: number;
-    name: string;
-    image: string;
-    role: string;
-  }
   body.data.data.forEach((volunteer: RawVolunteer) => {
     const volunteerData: Volunteer = {
       id: volunteer.id,
@@ -49,19 +33,12 @@ export async function fetchVolunteerDetails(
   token: string,
   volunteer: Volunteer,
 ): Promise<Volunteer> {
-  const requestOptions = {
+  const response = await getAuthenticatedJson({
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  };
+    token: token,
+    endpoint: `org/user/${volunteer.id}`,
+  });
 
-  const response = await fetch(
-    url.resolve(API_URL, `org/user/${volunteer.id}`),
-    requestOptions,
-  );
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
@@ -69,37 +46,20 @@ export async function fetchVolunteerDetails(
 
   const user_id = body.data.user.id;
 
-  const contactsResponse = await fetch(
-    url.resolve(API_URL, `contacts/${user_id}`),
-    requestOptions,
-  );
+  const contactsResponse = await getAuthenticatedJson({
+    method: 'GET',
+    token: token,
+    endpoint: `contacts/${user_id}`,
+  });
   const contactsBody = await contactsResponse.json();
 
   if (contactsBody.status === 'ERROR') {
     throw contactsBody.message;
   }
-  interface VolunteerContactRaw {
-    first_name: string;
-    middle_name: string | null;
-    last_name: string;
-    inmate_number: string;
-    facility_name: string;
-    facility_address: string;
-    facility_city: string;
-    facility_state: string;
-    facility_postal: string;
-    profile_img_path: string;
-    relationship: string;
-    dorm: string | null;
-    unit: string | null;
-    total_letters_sent: number;
-    last_letter_sent: string | null;
-    org_id: number | null;
-  }
 
   const { data } = contactsBody.data;
   const contactsData: VolunteerContact[] = data.map(
-    (contact: VolunteerContactRaw) =>
+    (contact: RawVolunteerContact) =>
       ({
         first_name: contact.first_name,
         middle_name: contact.middle_name,
@@ -122,42 +82,19 @@ export async function fetchVolunteerDetails(
       } as VolunteerContact),
   );
 
-  const lettersResponse = await fetch(
-    url.resolve(API_URL, `letters/${user_id}`),
-    requestOptions,
-  );
+  const lettersResponse = await getAuthenticatedJson({
+    method: 'GET',
+    token: token,
+    endpoint: `letters/${user_id}`,
+  });
   const lettersBody = await lettersResponse.json();
   if (lettersBody.status === 'ERROR') {
     throw lettersBody.message;
   }
-  interface Image {
-    id: number;
-    letter_id: number;
-    img_src: string;
-    created_at: string;
-    updated_at: string;
-  }
-
-  interface LetterRaw {
-    id: number;
-    created_at: string;
-    type: LetterType;
-    content: string;
-    sent: boolean;
-    lob_validation_error: boolean;
-    lob_status: string | null;
-    last_lob_status_update: string | null;
-    page_count: number | null;
-    user_name: string;
-    contact_name: string;
-    images: Image[];
-    delivered: boolean;
-    newsletter_id: number;
-  }
 
   const lettersData: Letter[] = [];
 
-  lettersBody.data.data.forEach((letter: LetterRaw) => {
+  lettersBody.data.data.forEach((letter: RawLetter) => {
     if (
       !letter.lob_validation_error &&
       letter.lob_status &&
@@ -207,23 +144,16 @@ export async function addVolunteer(
   org_id: number,
   email: string,
 ): Promise<Volunteer> {
-  const requestOptions = {
+  const response = await getAuthenticatedJson({
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    token: token,
+    endpoint: 'org/user',
     body: JSON.stringify({
       org_id: org_id,
       user_email: email,
       role: 'member',
     }),
-  };
-  const response = await fetch(
-    url.resolve(API_URL, 'org/user'),
-    requestOptions,
-  );
+  });
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
@@ -246,23 +176,16 @@ export async function updateVolunteer(
   role: string,
   volunteer: Volunteer,
 ): Promise<Volunteer> {
-  const requestOptions = {
+  const response = await getAuthenticatedJson({
     method: 'PUT',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    token: token,
+    endpoint: `org/user/${volunteer.id}`,
     body: JSON.stringify({
       org_id: org_id,
       user_id: volunteer.user_id,
       role: role,
     }),
-  };
-  const response = await fetch(
-    url.resolve(API_URL, `org/user/${volunteer.id}`),
-    requestOptions,
-  );
+  });
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
@@ -282,18 +205,11 @@ export async function removeVolunteer(
   token: string,
   volunteer: Volunteer,
 ): Promise<void> {
-  const requestOptions = {
+  const response = await getAuthenticatedJson({
     method: 'DELETE',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await fetch(
-    url.resolve(API_URL, `org/user/${volunteer.id}`),
-    requestOptions,
-  );
+    token: token,
+    endpoint: `org/user/${volunteer.id}`,
+  });
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;

@@ -1,5 +1,3 @@
-import url from 'url';
-import { API_URL } from './base';
 import { getAuthenticatedJson } from 'src/utils/utils';
 
 export async function fetchTags(token: string, org_id: number): Promise<Tag[]> {
