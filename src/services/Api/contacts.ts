@@ -1,12 +1,12 @@
 import { BASE_URL } from './base';
-import { genImageUri, getAuthenticatedJson } from 'src/utils/utils';
+import { genImageUri, getAuthJson } from 'src/utils/utils';
 
 export async function fetchContacts(
   token: string,
   org_id: number,
   page: number,
 ): Promise<OrgContact[]> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'GET',
     token: token,
     endpoint: `contacts/org/${org_id}?page=${page}`,
@@ -60,7 +60,7 @@ export async function createContacts(
   tag_ids: number[],
   contacts: Contact[],
 ): Promise<OrgContact[]> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'POST',
     token: token,
     endpoint: 'contacts/org',
@@ -119,7 +119,7 @@ export async function createVolunteerContact(
   user_id: number,
   contact: VolunteerContact,
 ): Promise<VolunteerContact> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'POST',
     token: token,
     endpoint: `contact/${user_id}`,
@@ -171,7 +171,7 @@ export async function deleteContacts(
   contacts: OrgContact[],
 ): Promise<void> {
   contacts.forEach(async (contact) => {
-    const response = await getAuthenticatedJson({
+    const response = await getAuthJson({
       method: 'DELETE',
       token: token,
       endpoint: `contact/${contact.id}`,
@@ -189,7 +189,7 @@ export async function updateContacts(
   tags: Tag[],
   orgId: number,
 ): Promise<void> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'PUT',
     token: token,
     endpoint: `contacts/org/${orgId}`,
@@ -209,7 +209,7 @@ export async function fetchDrafts(
   token: string,
   orgId: number,
 ): Promise<LetterDraft[]> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'GET',
     token: token,
     endpoint: `org/${orgId}/drafts`,
@@ -252,7 +252,7 @@ export async function createDirectLetter(
     formData.append('file', newsletter.file);
   }
 
-  const s3response = await getAuthenticatedJson({
+  const s3response = await getAuthJson({
     method: 'POST',
     token: token,
     endpoint: 'file/upload',
@@ -266,7 +266,7 @@ export async function createDirectLetter(
   }
   const s3_url = s3body.data;
 
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'POST',
     token: token,
     endpoint: 'letter',

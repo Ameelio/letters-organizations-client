@@ -1,7 +1,7 @@
-import { getAuthenticatedJson } from 'src/utils/utils';
+import { getAuthJson } from 'src/utils/utils';
 
 export async function fetchTags(token: string, org_id: number): Promise<Tag[]> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'GET',
     token: token,
     endpoint: `org/${org_id}/tags`,
@@ -27,7 +27,7 @@ export async function createTag(
   org_id: number,
   label: string,
 ): Promise<Tag> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'POST',
     token: token,
     endpoint: `org/tag`,

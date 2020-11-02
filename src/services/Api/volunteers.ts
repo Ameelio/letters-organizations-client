@@ -1,11 +1,11 @@
-import { genImageUri, getAuthenticatedJson } from 'src/utils/utils';
+import { genImageUri, getAuthJson } from 'src/utils/utils';
 
 export async function fetchVolunteers(
   token: string,
   org_id: number,
   page: number,
 ): Promise<Volunteer[]> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'GET',
     token: token,
     endpoint: `org/${org_id}/users?page=${page}`,
@@ -33,7 +33,7 @@ export async function fetchVolunteerDetails(
   token: string,
   volunteer: Volunteer,
 ): Promise<Volunteer> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'GET',
     token: token,
     endpoint: `org/user/${volunteer.id}`,
@@ -46,7 +46,7 @@ export async function fetchVolunteerDetails(
 
   const user_id = body.data.user.id;
 
-  const contactsResponse = await getAuthenticatedJson({
+  const contactsResponse = await getAuthJson({
     method: 'GET',
     token: token,
     endpoint: `contacts/${user_id}`,
@@ -82,7 +82,7 @@ export async function fetchVolunteerDetails(
       } as VolunteerContact),
   );
 
-  const lettersResponse = await getAuthenticatedJson({
+  const lettersResponse = await getAuthJson({
     method: 'GET',
     token: token,
     endpoint: `letters/${user_id}`,
@@ -144,7 +144,7 @@ export async function addVolunteer(
   org_id: number,
   email: string,
 ): Promise<Volunteer> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'POST',
     token: token,
     endpoint: 'org/user',
@@ -176,7 +176,7 @@ export async function updateVolunteer(
   role: string,
   volunteer: Volunteer,
 ): Promise<Volunteer> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'PUT',
     token: token,
     endpoint: `org/user/${volunteer.id}`,
@@ -205,7 +205,7 @@ export async function removeVolunteer(
   token: string,
   volunteer: Volunteer,
 ): Promise<void> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'DELETE',
     token: token,
     endpoint: `org/user/${volunteer.id}`,

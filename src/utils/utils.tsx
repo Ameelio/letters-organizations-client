@@ -105,7 +105,7 @@ export function isBottom(el: HTMLElement) {
   return el.scrollHeight - el.scrollTop === el.clientHeight;
 }
 
-export async function getAuthenticatedJson({
+export async function getAuthJson({
   method,
   token,
   endpoint,

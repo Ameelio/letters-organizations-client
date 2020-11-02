@@ -1,6 +1,6 @@
 import url from 'url';
 import { API_URL } from './base';
-import { getAuthenticatedJson } from 'src/utils/utils';
+import { getAuthJson } from 'src/utils/utils';
 
 export async function onLogin(email: string, password: string): Promise<User> {
   const requestOptions: RequestInit = {
@@ -27,7 +27,7 @@ export async function onLogin(email: string, password: string): Promise<User> {
     org: null,
   };
 
-  const orgResponse = await getAuthenticatedJson({
+  const orgResponse = await getAuthJson({
     method: 'GET',
     token: userData.token,
     endpoint: `user/${userData.id}/org`,

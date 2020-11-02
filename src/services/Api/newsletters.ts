@@ -1,7 +1,7 @@
 import url from 'url';
 import { subDays } from 'date-fns';
 import { API_URL, BASE_URL } from './base';
-import { getAuthenticatedJson } from 'src/utils/utils';
+import { getAuthJson } from 'src/utils/utils';
 
 export async function createNewsletter(
   token: string,
@@ -13,7 +13,7 @@ export async function createNewsletter(
   formData.append('type', 'pdf');
   formData.append('file', newsletter.file);
 
-  const s3response = await getAuthenticatedJson({
+  const s3response = await getAuthJson({
     method: 'POST',
     token: token,
     endpoint: 'file/upload',
@@ -30,7 +30,7 @@ export async function createNewsletter(
   let tagIds: number[] = [];
   newsletter.tags.forEach((tag) => tagIds.push(tag.id));
 
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'POST',
     token: token,
     endpoint: 'newsletter',
@@ -85,7 +85,7 @@ export async function createNewsletter(
 export async function fetchNewsletters(
   token: string,
 ): Promise<NewsletterLog[]> {
-  const response = await getAuthenticatedJson({
+  const response = await getAuthJson({
     method: 'GET',
     token: token,
     endpoint: 'newsletters',
