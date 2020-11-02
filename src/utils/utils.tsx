@@ -1,3 +1,15 @@
+import url from 'url';
+
+export const API_URL =
+  process.env && process.env.REACT_APP_API_URL
+    ? process.env.REACT_APP_API_URL
+    : '';
+
+export const BASE_URL =
+  process.env && process.env.REACT_APP_BASE_URL
+    ? process.env.REACT_APP_BASE_URL
+    : '';
+
 export const formatDate = (date: Date) => {
   return `${date.getMonth() + 1}/${date.getDate()}`;
 };
@@ -91,4 +103,28 @@ export const STATES = [
 
 export function isBottom(el: HTMLElement) {
   return el.scrollHeight - el.scrollTop === el.clientHeight;
+}
+
+export async function getAuthenticatedJson({
+  method,
+  token,
+  endpoint,
+  body = null,
+}: {
+  method: string;
+  token: string;
+  endpoint: string;
+  body?: string | null;
+}): Promise<Response> {
+  const requestOptions: RequestInit = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: body,
+  };
+
+  return await fetch(url.resolve(API_URL, endpoint), requestOptions);
 }
