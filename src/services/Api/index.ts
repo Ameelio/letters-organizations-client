@@ -1,5 +1,6 @@
 import url from 'url';
 import { API_URL } from './base';
+import { getAuthenticatedJson } from 'src/utils/utils';
 
 export async function onLogin(email: string, password: string): Promise<User> {
   const requestOptions: RequestInit = {
@@ -26,19 +27,12 @@ export async function onLogin(email: string, password: string): Promise<User> {
     org: null,
   };
 
-  const orgRequestOptions: RequestInit = {
+  const orgResponse = await getAuthenticatedJson({
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${userData.token}`,
-    },
-  };
+    token: userData.token,
+    endpoint: `user/${userData.id}/org`,
+  });
 
-  const orgResponse = await fetch(
-    url.resolve(API_URL, `user/${userData.id}/org`),
-    orgRequestOptions,
-  );
   const orgBody = await orgResponse.json();
   if (orgBody.status === 'ERROR') {
     throw new Error(orgBody.message);
