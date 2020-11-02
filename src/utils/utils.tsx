@@ -115,8 +115,8 @@ export async function getAuthenticatedJson({
   method: string;
   token: string;
   endpoint: string;
-  body?: string | null;
-  baseUrl: string;
+  body?: BodyInit | null;
+  baseUrl?: string;
 }): Promise<Response> {
   const requestOptions: RequestInit = {
     method: 'GET',
