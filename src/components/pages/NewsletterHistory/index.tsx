@@ -14,7 +14,7 @@ import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import { Link } from 'react-router-dom';
 import Tag from 'src/components/tags/Tag';
-import { formatDate, unauthenticated } from 'src/utils/utils';
+import { unauthenticated } from 'src/utils/utils';
 import TagSelector from '../../tags/TagSelector';
 import { logout } from '../../../redux/modules/user';
 import { loadTags } from '../../../redux/modules/tag';
@@ -168,9 +168,7 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
                 <th>Delivered</th>
                 <th>In Transit</th>
                 <th>Returned</th>
-                <th>Estimated Arrival</th>
                 <th>Tags</th>
-                {/* <th>File</th> */}
                 <th></th>
               </tr>
             </thead>
@@ -184,11 +182,6 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
                       <td>{newsletter.delivered}</td>
                       <td>{newsletter.inTransit}</td>
                       <td>{newsletter.returned}</td>
-                      <td>
-                        {newsletter.estimatedArrival
-                          ? formatDate(newsletter.estimatedArrival)
-                          : 'There was a problem estimating the arrival date.'}
-                      </td>
                       <td className="d-flex flex-column">
                         {newsletter.tags.map((tag, index) => (
                           <div className="mb-3" key={index}>
@@ -196,14 +189,6 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
                           </div>
                         ))}
                       </td>
-                      {/* <td>
-                        <a
-                          href={newsletter.fileLink}
-                          target="_blank"
-                          rel="noopener noreferrer">
-                          Link
-                        </a>
-                      </td> */}
                       <td>
                         {newsletter.status === 'error' ? (
                           <span className="badge badge-danger">error</span>

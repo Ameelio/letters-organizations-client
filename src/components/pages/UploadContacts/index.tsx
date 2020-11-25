@@ -101,16 +101,16 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   const handleSubmission = (event: React.MouseEvent) => {
     const contacts: OrgContact[] = uploadedCsv.data.map((row) => {
       return {
-        first_name: row[mapping.firstName.index],
-        last_name: row[mapping.lastName.index],
-        inmate_number: row[mapping.inmateNumber.index],
-        facility_name: row[mapping.facilityName.index],
-        facility_state: row[mapping.facilityState.index],
-        facility_city: row[mapping.facilityCity.index],
-        facility_address: row[mapping.facilityAddress.index],
-        facility_postal: row[mapping.facilityPostal.index],
-        unit: row[mapping.unit.index],
-        dorm: row[mapping.dorm.index],
+        first_name: row[mapping.firstName.index].trim(),
+        last_name: row[mapping.lastName.index].trim(),
+        inmate_number: row[mapping.inmateNumber.index].trim(),
+        facility_name: row[mapping.facilityName.index].trim(),
+        facility_state: row[mapping.facilityState.index].trim(),
+        facility_city: row[mapping.facilityCity.index].trim(),
+        facility_address: row[mapping.facilityAddress.index].trim(),
+        facility_postal: row[mapping.facilityPostal.index].trim(),
+        unit: row[mapping.unit.index].trim(),
+        dorm: row[mapping.dorm.index].trim(),
         relationship: 'Org Contact',
         selected: false,
       } as OrgContact;

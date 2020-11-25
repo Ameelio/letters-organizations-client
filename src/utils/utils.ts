@@ -140,10 +140,11 @@ export function validateContactUpload(
     let errors = [];
 
     const firstLine = `${contact.first_name} ${contact.last_name}, ${contact.inmate_number}`;
-    if (firstLine.length >= 40) {
+    if (firstLine.length > 40) {
       errors.push("Please abbreviate the person's name.");
     }
-    if (contact.facility_state.length === 2) {
+    if (contact.facility_state.length !== 2) {
+      console.log(contact.facility_state);
       errors.push('Must use 2 letter state short-name code');
     }
     if (contact.facility_name.length > 40) {
@@ -154,9 +155,10 @@ export function validateContactUpload(
     if (contact.facility_address.length >= 64) {
       errors.push('Facility address is too long. Must be under 64 characters');
     }
-    if (/(^\d{5}$)|(^\d{5}-\d{4}$)/.test(contact.facility_postal)) {
-      console.log(contact.facility_postal);
-      errors.push('Wrong zip code format.');
+    if (!/(^\d{5}$)|(^\d{5}-\d{4}$)/.test(contact.facility_postal)) {
+      errors.push(
+        'Must follow the ZIP format of 12345 or ZIP+4 format of 12345-1234',
+      );
     }
 
     if (errors.length > 0) {

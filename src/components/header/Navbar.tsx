@@ -31,9 +31,12 @@ const NavBar: React.FC<PropsFromRedux> = ({ user, logout }) => {
         variant="light"
         sticky="top">
         <Navbar.Brand>
-          <Link to="/">
-            <Logo width="150" />
-          </Link>
+          <div className="d-flex">
+            <Link to="/">
+              <Logo width="150" />
+            </Link>
+            <span className="align-self-end">{user.user.org?.name}</span>
+          </div>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
