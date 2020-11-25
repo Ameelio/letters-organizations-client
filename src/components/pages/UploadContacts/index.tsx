@@ -27,7 +27,8 @@ import { Clock } from 'react-feather';
 import Tag from 'src/components/tags/Tag';
 import { Link } from 'react-router-dom';
 import { logout } from '../../../redux/modules/user';
-import { unauthenticated } from 'src/utils/utils';
+import { unauthenticated, validateContactUpload } from 'src/utils/utils';
+import Modal from 'src/components/modals/Modal';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
@@ -83,6 +84,8 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
 
   const [feedback, setFeedback] = useState<ErrorFeedback | null>();
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
+  const [errors, setErrors] = useState<InvalidContact[]>();
+  const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
 
   const handleNextClick = (event: React.MouseEvent) => {
     updateCsvUploadStep(uploadStep + 1);
@@ -96,8 +99,28 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   const org = user.user.org;
 
   const handleSubmission = (event: React.MouseEvent) => {
-    if (org) {
-      createOrgContacts(token, org.id, mapping, uploadedCsv, selectedTags);
+    const contacts: OrgContact[] = uploadedCsv.data.map((row) => {
+      return {
+        first_name: row[mapping.firstName.index],
+        last_name: row[mapping.lastName.index],
+        inmate_number: row[mapping.inmateNumber.index],
+        facility_name: row[mapping.facilityName.index],
+        facility_state: row[mapping.facilityState.index],
+        facility_city: row[mapping.facilityCity.index],
+        facility_address: row[mapping.facilityAddress.index],
+        facility_postal: row[mapping.facilityPostal.index],
+        unit: row[mapping.unit.index],
+        dorm: row[mapping.dorm.index],
+        relationship: 'Org Contact',
+        selected: false,
+      } as OrgContact;
+    });
+    const [validContacts, invalidContacts] = validateContactUpload(contacts);
+    if (invalidContacts.length > 0) {
+      setErrors(invalidContacts);
+      setShowErrorModal(true);
+    } else if (org) {
+      createOrgContacts(token, org.id, validContacts, selectedTags);
       updateCsvUploadStep(uploadStep + 1);
     }
   };
@@ -227,6 +250,28 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
 
           {uploadStep === 2 && (
             <div className="upload-file-step-container">
+              {showErrorModal && errors && (
+                <Modal
+                  title={`${errors.length} contacts are incorrectly formatted`}
+                  show={true}
+                  handleDone={() => setShowErrorModal(false)}
+                  buttonCta="Close">
+                  <div className="d-flex flex-column">
+                    {errors.map((error) => (
+                      <div className="d-flex flex-column mt-3">
+                        <b>
+                          {error.contact.first_name} {error.contact.last_name}
+                        </b>{' '}
+                        <ul>
+                          {error.errors.map((error) => (
+                            <li>{error}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </Modal>
+              )}
               <span>
                 Assign existing tags or create new ones for your contacts.
               </span>

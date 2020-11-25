@@ -428,26 +428,9 @@ export const loadOrgContacts = (
 export const createOrgContacts = (
   token: string,
   org_id: number,
-  mapping: ContactFieldMap,
-  uploadedCsv: CSV,
+  contacts: OrgContact[],
   tags: Tag[],
 ): AppThunk => async (dispatch) => {
-  const contacts: OrgContact[] = uploadedCsv.data.map((row) => {
-    return {
-      first_name: row[mapping.firstName.index],
-      last_name: row[mapping.lastName.index],
-      inmate_number: row[mapping.inmateNumber.index],
-      facility_name: row[mapping.facilityName.index],
-      facility_state: row[mapping.facilityState.index],
-      facility_city: row[mapping.facilityCity.index],
-      facility_address: row[mapping.facilityAddress.index],
-      facility_postal: row[mapping.facilityPostal.index],
-      unit: row[mapping.unit.index],
-      dorm: row[mapping.dorm.index],
-      relationship: 'Org Contact',
-      selected: false,
-    } as OrgContact;
-  });
   const tag_ids: number[] = tags.map((tag) => {
     return tag.id;
   });

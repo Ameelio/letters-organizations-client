@@ -1,3 +1,4 @@
+import url from 'url';
 import { subDays } from 'date-fns';
 import { BASE_URL } from './base';
 import { getAuthJson } from 'src/utils/utils';
@@ -12,15 +13,17 @@ export async function createNewsletter(
   formData.append('type', 'pdf');
   formData.append('file', newsletter.file);
 
-  const s3response = await getAuthJson({
+  const s3requestOptions = {
     method: 'POST',
-    token: token,
-    endpoint: 'file/upload',
     body: formData,
-    baseUrl: BASE_URL,
-  });
-
+  };
+  const s3response = await fetch(
+    url.resolve(BASE_URL, 'file/upload'),
+    s3requestOptions,
+  );
   const s3body = await s3response.json();
+
+  console.log(s3body);
   if (s3body.status === 'ERROR') {
     throw s3body;
   }
@@ -46,6 +49,8 @@ export async function createNewsletter(
   });
 
   const body = await response.json();
+  console.log('Error');
+  console.log(body);
   if (body.status === 'ERROR') {
     throw body;
   }

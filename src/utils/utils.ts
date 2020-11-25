@@ -130,3 +130,40 @@ export async function getAuthJson({
 
   return await fetch(url.resolve(baseUrl, endpoint), requestOptions);
 }
+
+export function validateContactUpload(
+  contacts: OrgContact[],
+): [OrgContact[], InvalidContact[]] {
+  let invalidContacts: InvalidContact[] = [];
+  let validContacts: OrgContact[] = [];
+  for (const contact of contacts) {
+    let errors = [];
+
+    const firstLine = `${contact.first_name} ${contact.last_name}, ${contact.inmate_number}`;
+    if (firstLine.length >= 40) {
+      errors.push("Please abbreviate the person's name.");
+    }
+    if (contact.facility_state.length === 2) {
+      errors.push('Must use 2 letter state short-name code');
+    }
+    if (contact.facility_name.length > 40) {
+      errors.push(
+        'Please abbreviate the facility name. Must be under 40 characters',
+      );
+    }
+    if (contact.facility_address.length >= 64) {
+      errors.push('Facility address is too long. Must be under 64 characters');
+    }
+    if (/(^\d{5}$)|(^\d{5}-\d{4}$)/.test(contact.facility_postal)) {
+      console.log(contact.facility_postal);
+      errors.push('Wrong zip code format.');
+    }
+
+    if (errors.length > 0) {
+      invalidContacts.push({ contact, errors });
+    } else {
+      validContacts.push(contact);
+    }
+  }
+  return [validContacts, invalidContacts];
+}
