@@ -27,7 +27,11 @@ import { Clock } from 'react-feather';
 import Tag from 'src/components/tags/Tag';
 import { Link } from 'react-router-dom';
 import { logout } from '../../../redux/modules/user';
-import { unauthenticated, validateContactUpload } from 'src/utils/utils';
+import {
+  unauthenticated,
+  validateContactUpload,
+  rowHasInfo,
+} from 'src/utils/utils';
 import Modal from 'src/components/modals/Modal';
 
 const mapStateToProps = (state: RootState) => ({
@@ -99,18 +103,21 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   const org = user.user.org;
 
   const handleSubmission = (event: React.MouseEvent) => {
-    const contacts: OrgContact[] = uploadedCsv.data.map((row) => {
+    const rowsWithData: string[][] = uploadedCsv.data.filter((row) =>
+      rowHasInfo(row),
+    );
+    const contacts: OrgContact[] = rowsWithData.map((row) => {
       return {
-        first_name: row[mapping.firstName.index].trim(),
-        last_name: row[mapping.lastName.index].trim(),
-        inmate_number: row[mapping.inmateNumber.index].trim(),
-        facility_name: row[mapping.facilityName.index].trim(),
-        facility_state: row[mapping.facilityState.index].trim(),
-        facility_city: row[mapping.facilityCity.index].trim(),
-        facility_address: row[mapping.facilityAddress.index].trim(),
-        facility_postal: row[mapping.facilityPostal.index].trim(),
-        unit: row[mapping.unit.index].trim(),
-        dorm: row[mapping.dorm.index].trim(),
+        first_name: row[mapping.firstName.index]?.trim(),
+        last_name: row[mapping.lastName.index]?.trim(),
+        inmate_number: row[mapping.inmateNumber.index]?.trim(),
+        facility_name: row[mapping.facilityName.index]?.trim(),
+        facility_state: row[mapping.facilityState.index]?.trim(),
+        facility_city: row[mapping.facilityCity.index]?.trim(),
+        facility_address: row[mapping.facilityAddress.index]?.trim(),
+        facility_postal: row[mapping.facilityPostal.index]?.trim(),
+        unit: row[mapping.unit.index]?.trim(),
+        dorm: row[mapping.dorm.index]?.trim(),
         relationship: 'Org Contact',
         selected: false,
       } as OrgContact;

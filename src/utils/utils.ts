@@ -140,19 +140,40 @@ export function validateContactUpload(
     let errors = [];
 
     const firstLine = `${contact.first_name} ${contact.last_name}, ${contact.inmate_number}`;
-    if (firstLine.length > 40) {
-      errors.push("Please abbreviate the person's name.");
+    if (contact.inmate_number && contact.inmate_number.length === 0) {
+      errors.push('Inmate ID is missing');
     }
-    if (contact.facility_state.length !== 2) {
-      console.log(contact.facility_state);
+    if (contact.first_name && contact.first_name.length === 0) {
+      errors.push('First name is missing');
+    }
+    if (contact.last_name && contact.last_name.length === 0) {
+      errors.push('Last name is missing');
+    }
+    if (contact.facility_city && contact.facility_city.length === 0) {
+      errors.push('Facility city is missing');
+    }
+    if (contact.facility_address && contact.facility_address.length === 0) {
+      errors.push('Facility address is missing');
+    }
+    if (contact.facility_postal && contact.facility_postal.length === 0) {
+      errors.push('Facility postal is missing');
+    }
+    if (contact.facility_name && contact.facility_name.length === 0) {
+      errors.push('Facility name is missing');
+    }
+
+    if (firstLine.length > 40) {
+      errors.push('Name is too long. Please abbreviate.');
+    }
+    if (contact.facility_state && contact.facility_state.length !== 2) {
       errors.push('Must use 2 letter state short-name code');
     }
-    if (contact.facility_name.length > 40) {
+    if (contact.facility_name && contact.facility_name.length > 40) {
       errors.push(
         'Please abbreviate the facility name. Must be under 40 characters',
       );
     }
-    if (contact.facility_address.length >= 64) {
+    if (contact.facility_address && contact.facility_address.length >= 64) {
       errors.push('Facility address is too long. Must be under 64 characters');
     }
     if (!/(^\d{5}$)|(^\d{5}-\d{4}$)/.test(contact.facility_postal)) {
@@ -168,4 +189,8 @@ export function validateContactUpload(
     }
   }
   return [validContacts, invalidContacts];
+}
+
+export function rowHasInfo(row: string[]): boolean {
+  return row.some((item) => item && item.length > 0);
 }
