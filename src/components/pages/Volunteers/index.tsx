@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import VolunteerCard from './VolunteerCard';
 import VolunteerDetails from './VolunteerDetails';
 import LetterCard from './LetterCard';
@@ -12,7 +12,6 @@ import { RootState } from '../../../redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { logout } from '../../../redux/modules/user';
 import {
-  loadVolunteers,
   selectVolunteer,
   loading,
   inviteVolunteer,
@@ -21,6 +20,7 @@ import {
 import {
   updateVolunteer,
   removeVolunteer,
+  getVolunteers,
 } from '../../../services/Api/volunteers';
 import { unauthenticated, isBottom } from 'src/utils/utils';
 import { connect, ConnectedProps } from 'react-redux';
@@ -35,7 +35,6 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
-      loadVolunteers,
       selectVolunteer,
       loading,
       logout,
@@ -49,7 +48,6 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 // TODO move each section to its own container
 const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
-  loadVolunteers,
   volunteers,
   selectVolunteer,
   loading,
@@ -70,9 +68,6 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
-  const [hasFetchedVolunteers, setHasFetchedVolunteers] = useState<boolean>(
-    false,
-  );
 
   const handleLetterClose = () => setShowLetterModal(false);
   const handleLetterShow = () => setShowLetterModal(true);
@@ -106,25 +101,19 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (!hasFetchedVolunteers && org) {
-      loadVolunteers(token, org.id, volunteers.page);
-      setHasFetchedVolunteers(true);
+    try {
+      getVolunteers();
+    } catch (err) {
+      console.log(err);
     }
+  }, []);
+
+  useMemo(() => {
     const results = volunteers.all_volunteers.filter((volunteer) =>
       volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredVolunteers(results);
-    // we don't want to include volunteers.page as dependency
-    // because this will result in infintely fetching new pages
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    hasFetchedVolunteers,
-    loadVolunteers,
-    volunteers.all_volunteers,
-    searchQuery,
-    org,
-    token,
-  ]);
+  }, [searchQuery, volunteers.all_volunteers]);
 
   if (unauthenticated([volunteers.error.message])) {
     loading();
@@ -155,8 +144,8 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     const volunteersDiv = document.getElementById('volunteersDiv');
 
     if (volunteersDiv) {
-      if (isBottom(volunteersDiv) && org) {
-        loadVolunteers(token, org.id, volunteers.page);
+      if (isBottom(volunteersDiv)) {
+        getVolunteers();
       }
     }
   };
@@ -252,7 +241,6 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
           updateVolunteer={updateVolunteer}
           selectVolunteer={selectVolunteer}
           removeVolunteer={removeVolunteer}
-          loadVolunteers={loadVolunteers}
           handleError={handleError}
           user={session.user}
           page={volunteers.page}

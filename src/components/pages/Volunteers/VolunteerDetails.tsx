@@ -6,7 +6,7 @@ import './VolunteerDetails.css';
 import { VolunteerActionTypes } from '../../../redux/modules/volunteer';
 import AddContactModal from './AddContactModal';
 
-interface VolunteerDetailsProps {
+interface Props {
   volunteer: Volunteer;
   page_id: string;
   showUpdateForm: boolean;
@@ -22,13 +22,12 @@ interface VolunteerDetailsProps {
   ) => Promise<Volunteer>;
   selectVolunteer: (token: string, volunteer: Volunteer) => void;
   removeVolunteer: (token: string, volunteer: Volunteer) => Promise<void>;
-  loadVolunteers: (token: string, org_id: number, page: number) => void;
   handleError: (error: ErrorResponse) => VolunteerActionTypes;
   user: User;
   page: number;
 }
 
-const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
+const VolunteerDetails: React.FC<Props> = ({
   volunteer,
   page_id,
   showUpdateForm,
@@ -39,7 +38,6 @@ const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
   updateVolunteer,
   selectVolunteer,
   removeVolunteer,
-  loadVolunteers,
   handleError,
   user,
   page,
@@ -67,7 +65,6 @@ const VolunteerDetails: React.FC<VolunteerDetailsProps> = ({
   const handleRemove = (event: React.MouseEvent) => {
     if (confirmRemove) {
       removeVolunteer(token, volunteer)
-        .then(() => loadVolunteers(token, orgId, page))
         .then(() => handleUpdateClose())
         .then(() => setConfirmRemove(false))
         .catch((error) => handleError(error));

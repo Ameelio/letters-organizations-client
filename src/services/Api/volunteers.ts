@@ -1,57 +1,65 @@
+import store from 'src';
+import {
+  setVolunteers,
+  setSelectedVolunteer,
+  deleteVolunteer,
+} from 'src/redux/modules/volunteer';
 import { genImageUri, getAuthJson } from 'src/utils/utils';
+import { fetchAuthenticated } from './base';
 
-export async function fetchVolunteers(
-  token: string,
-  org_id: number,
-  page: number,
-): Promise<Volunteer[]> {
-  const response = await getAuthJson({
-    method: 'GET',
-    token: token,
-    endpoint: `org/${org_id}/users?page=${page}`,
-  });
-  const body = await response.json();
-  if (body.status === 'ERROR') {
+interface RawVolunteer {
+  id: number;
+  user_id: number;
+  name: string;
+  image: string;
+  role: string;
+}
+
+interface RawVolunteerResponse {
+  current_page: number;
+  data: RawVolunteer[];
+}
+export async function getVolunteers(): Promise<void> {
+  const body = await fetchAuthenticated(
+    `org/${store.getState().session.orgUser.org.id}/users?page=${
+      store.getState().volunteers.page
+    }`,
+    {
+      method: 'GET',
+    },
+  );
+  if (body.status !== 'OK') {
     throw body;
   }
-  const volunteersData: Volunteer[] = [];
-  body.data.data.forEach((volunteer: RawVolunteer) => {
-    const volunteerData: Volunteer = {
-      id: volunteer.id,
-      user_id: volunteer.user_id,
-      name: volunteer.name,
-      image: volunteer.image,
-      role: volunteer.role,
-      details: null,
-    };
-    volunteersData.push(volunteerData);
-  });
-  return volunteersData;
+  const data = body.data as RawVolunteerResponse;
+  const volunteers: Volunteer[] = data.data.map((volunteer) => ({
+    id: volunteer.id,
+    user_id: volunteer.user_id,
+    name: volunteer.name,
+    image: volunteer.image,
+    role: volunteer.role,
+    details: null,
+  }));
+  store.dispatch(setVolunteers(volunteers));
+  store.dispatch(setSelectedVolunteer(volunteers[0]));
 }
 
 export async function fetchVolunteerDetails(
-  token: string,
   volunteer: Volunteer,
 ): Promise<Volunteer> {
-  const response = await getAuthJson({
+  const body = await fetchAuthenticated(`org/user/${volunteer.id}`, {
     method: 'GET',
-    token: token,
-    endpoint: `org/user/${volunteer.id}`,
   });
 
-  const body = await response.json();
-  if (body.status === 'ERROR') {
+  if (body.status !== 'OK') {
     throw body;
   }
 
   const user_id = body.data.user.id;
 
-  const contactsResponse = await getAuthJson({
+  const contactsBody = await fetchAuthenticated(`contacts/${user_id}`, {
     method: 'GET',
-    token: token,
-    endpoint: `contacts/${user_id}`,
   });
-  const contactsBody = await contactsResponse.json();
 
   if (contactsBody.status === 'ERROR') {
     throw contactsBody.message;
@@ -82,12 +90,10 @@ export async function fetchVolunteerDetails(
       } as VolunteerContact),
   );
 
-  const lettersResponse = await getAuthJson({
+  const lettersBody = await fetchAuthenticated(`letters/${user_id}`, {
     method: 'GET',
-    token: token,
-    endpoint: `letters/${user_id}`,
   });
-  const lettersBody = await lettersResponse.json();
+
   if (lettersBody.status === 'ERROR') {
     throw lettersBody.message;
   }
@@ -214,4 +220,5 @@ export async function removeVolunteer(
   if (body.status === 'ERROR') {
     throw body;
   }
+  store.dispatch(deleteVolunteer(volunteer));
 }

@@ -1,9 +1,6 @@
 import { AppThunk } from 'src/redux/helpers';
 import { fetchDrafts } from 'src/services/Api/contacts';
-import {
-  fetchVolunteerDetails,
-  fetchVolunteers,
-} from '../../services/Api/volunteers';
+import { fetchVolunteerDetails } from '../../services/Api/volunteers';
 
 // Action Constants & Shapes
 const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
@@ -12,6 +9,7 @@ const LOADING = 'volunteer/LOADING';
 const LOADING_DETAILS = 'volunteer/LOADING_DETAILS';
 const ERROR = 'volunteer/ERROR';
 const SET_DRAFTS = 'volunteer/SET_DRAFTS';
+const DELETE_VOLUNTEER = 'volunteer/DELETE_VOLUNTEER';
 
 interface SetVolunteersAction {
   type: typeof SET_VOLUNTEERS;
@@ -43,16 +41,23 @@ interface SetDraftsAction {
   payload: LetterDraft[];
 }
 
+interface DeleteVolunteerAction {
+  type: typeof DELETE_VOLUNTEER;
+  payload: Volunteer;
+}
 export type VolunteerActionTypes =
   | SetVolunteersAction
   | SelectVolunteerAction
   | LoadingAction
   | LoadingDetailsAction
   | ErrorAction
-  | SetDraftsAction;
+  | SetDraftsAction
+  | DeleteVolunteerAction;
 
 // Action Creators
-const setVolunteers = (volunteers: Volunteer[]): VolunteerActionTypes => {
+export const setVolunteers = (
+  volunteers: Volunteer[],
+): VolunteerActionTypes => {
   return {
     type: SET_VOLUNTEERS,
     payload: volunteers,
@@ -73,7 +78,9 @@ export const handleError = (error: ErrorResponse): VolunteerActionTypes => {
   };
 };
 
-const setSelectedVolunteer = (volunteer: Volunteer): VolunteerActionTypes => {
+export const setSelectedVolunteer = (
+  volunteer: Volunteer,
+): VolunteerActionTypes => {
   return {
     type: SELECT_VOLUNTEER,
     payload: volunteer,
@@ -91,6 +98,13 @@ const setDrafts = (drafts: LetterDraft[]): VolunteerActionTypes => {
   return {
     type: SET_DRAFTS,
     payload: drafts,
+  };
+};
+
+export const deleteVolunteer = (volunteer: Volunteer): VolunteerActionTypes => {
+  return {
+    type: DELETE_VOLUNTEER,
+    payload: volunteer,
   };
 };
 
@@ -158,26 +172,17 @@ export function volunteersReducer(
         ...state,
         drafts: action.payload,
       };
+    case DELETE_VOLUNTEER:
+      return {
+        ...state,
+        all_volunteers: state.all_volunteers.filter(
+          (volunteer) => volunteer.id !== action.payload.id,
+        ),
+      };
     default:
       return state;
   }
 }
-
-export const loadVolunteers = (
-  token: string,
-  org_id: number,
-  page: number,
-): AppThunk => async (dispatch) => {
-  dispatch(loading());
-  fetchVolunteers(token, org_id, page)
-    .then((volunteersData) => dispatch(setVolunteers(volunteersData)))
-    .then((action) => {
-      if (action.type === SET_VOLUNTEERS && action.payload[0]) {
-        dispatch(selectVolunteer(token, action.payload[0]));
-      }
-    })
-    .catch((error) => dispatch(handleError(error)));
-};
 
 export const selectVolunteer = (
   token: string,
@@ -187,7 +192,7 @@ export const selectVolunteer = (
     dispatch(setSelectedVolunteer(volunteer));
   } else {
     dispatch(loadingDetails());
-    fetchVolunteerDetails(token, volunteer)
+    fetchVolunteerDetails(volunteer)
       .then((volunteer) => dispatch(setSelectedVolunteer(volunteer)))
       .catch((error) => dispatch(handleError(error)));
   }
