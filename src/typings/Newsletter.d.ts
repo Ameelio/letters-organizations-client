@@ -12,27 +12,15 @@ interface DraftDirectLetter {
   contact_id: number | null;
 }
 
-interface RawNewsletterLog {
-  id: number;
-  name: string;
-  pdf_path: string;
-  total_letter_count: number;
-  delivered_count: number;
-  in_transit_count: number;
-  returned_count: number;
-  created_at: Date;
-  estimated_arrival: Date | null;
-  tags: RawTag[];
-  status: string | null;
-}
-
 interface NewsletterLog {
   id: number;
   title: string;
   fileLink: string;
   totalLettersCount: number;
-  delivered: number;
+  nullCount: number;
+  processingCount: number;
   inTransit: number;
+  delivered: number;
   returned: number;
   creationDate: Date;
   estimatedArrival: Date | null;

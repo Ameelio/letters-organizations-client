@@ -3,6 +3,21 @@ import { subDays } from 'date-fns';
 import { BASE_URL } from './base';
 import { getAuthJson } from 'src/utils/utils';
 
+interface RawNewsletterLog {
+  id: number;
+  name: string;
+  pdf_path: string;
+  total_letter_count: number;
+  delivered_count: number;
+  in_transit_count: number;
+  processing_count: number;
+  null_count: number;
+  returned_count: number;
+  created_at: Date;
+  tags: RawTag[];
+  status: string | null;
+}
+
 export async function createNewsletter(
   token: string,
   newsletter: DraftNewsletter,
@@ -49,8 +64,6 @@ export async function createNewsletter(
   });
 
   const body = await response.json();
-  console.log('Error');
-  console.log(body);
   if (body.status === 'ERROR') {
     throw body;
   }
@@ -63,6 +76,8 @@ export async function createNewsletter(
     returned: body.data.returned_count,
     creationDate: new Date(body.data.created_at),
     totalLettersCount: body.data.total_letter_count,
+    nullCount: body.data.null_count,
+    processingCount: body.data.processing_count,
     estimatedArrival: null,
     tags: [],
     status: null,
@@ -99,6 +114,7 @@ export async function fetchNewsletters(
   if (body.status === 'ERROR') {
     throw body;
   }
+  console.log(body);
   const newslettersData: NewsletterLog[] = [];
   body.data.data.forEach((newsletter: RawNewsletterLog) => {
     const newsletterData: NewsletterLog = {
@@ -106,6 +122,8 @@ export async function fetchNewsletters(
       title: newsletter.name,
       fileLink: newsletter.pdf_path,
       delivered: newsletter.delivered_count,
+      nullCount: newsletter.null_count,
+      processingCount: newsletter.processing_count,
       inTransit: newsletter.in_transit_count,
       returned: newsletter.returned_count,
       creationDate: new Date(newsletter.created_at),
@@ -114,9 +132,6 @@ export async function fetchNewsletters(
       totalLettersCount: newsletter.total_letter_count,
       status: newsletter.status,
     };
-    if (newsletter.estimated_arrival) {
-      newsletterData.estimatedArrival = new Date(newsletter.estimated_arrival);
-    }
     newsletter.tags.forEach((tag) => {
       const tagData: Tag = {
         id: tag.id,
