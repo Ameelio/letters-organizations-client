@@ -35,7 +35,7 @@ import { track } from 'src/utils/segment';
 
 const mapStateToProps = (state: RootState) => ({
   tags: state.tags,
-  user: state.user,
+  session: state.session,
   newsletters: state.newsletters,
 });
 
@@ -77,7 +77,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   removeAllUploadTags,
   sendNewsletter,
   newsletters,
-  user,
+  session,
   loading,
   logout,
   updateUploadColor,
@@ -95,8 +95,8 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   const handleModalClose = () => setShowModal(false);
   const handleModalShow = () => setShowModal(true);
 
-  const token = user.user.token;
-  const org = user.user.org;
+  const { token } = session.user;
+  const { org } = session.orgUser;
 
   const getPageCount = useCallback(async (fileURL: string) => {
     pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;

@@ -23,7 +23,7 @@ import { Container, Spinner } from 'react-bootstrap';
 const mapStateToProps = (state: RootState) => ({
   newsletters: state.newsletters,
   tags: state.tags,
-  user: state.user,
+  session: state.session,
   filters: state.newsletters.selectedFilters,
 });
 
@@ -46,7 +46,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
   newsletters,
   loadNewsletters,
-  user,
+  session,
   tags,
   filters,
   loadTags,
@@ -61,8 +61,8 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
     NewsletterLog[]
   >([]);
 
-  const token = user.user.token;
-  const org = user.user.org;
+  const token = session.user.token;
+  const org = session.orgUser.org;
 
   useEffect(() => {
     if (!hasFetched && org) {

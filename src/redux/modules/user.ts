@@ -1,11 +1,21 @@
-// Constants & Shapes
-const LOGIN = 'user/LOGIN';
-const LOGOUT = 'user/LOGOUT';
-const LOADING = 'user/LOADING';
+// Reducer state
+interface AuthInfo {
+  isLoggedIn: boolean;
+}
 
-interface LoginAction {
-  type: typeof LOGIN;
-  payload: User;
+export interface SessionState {
+  authInfo: AuthInfo;
+  user: User;
+  orgUser: OrgUser;
+}
+
+// Constants & Shapes
+const SET_SESSION = 'user/SET_SESSION';
+const LOGOUT = 'user/LOGOUT';
+
+interface SetSessionAction {
+  type: typeof SET_SESSION;
+  payload: SessionState;
 }
 
 interface LogoutAction {
@@ -13,18 +23,13 @@ interface LogoutAction {
   payload: null;
 }
 
-interface LoadingAction {
-  type: typeof LOADING;
-  payload: null;
-}
-
-type UserActionTypes = LoginAction | LogoutAction | LoadingAction;
+type UserActionTypes = SetSessionAction | LogoutAction;
 
 // Action Creators
-export const login = (user: User): UserActionTypes => {
+export const setSession = (session: SessionState): UserActionTypes => {
   return {
-    type: LOGIN,
-    payload: user,
+    type: SET_SESSION,
+    payload: session,
   };
 };
 
@@ -35,68 +40,50 @@ export const logout = (): UserActionTypes => {
   };
 };
 
-export const loadingUser = (): UserActionTypes => {
-  return {
-    type: LOADING,
-    payload: null,
-  };
-};
-
-const fromStorage: string | null = sessionStorage.getItem('userState');
-let storedUserState: UserState | null = null;
+// Reducer
+const fromStorage: string | null = sessionStorage.getItem('SessionState');
+let storedSessionState: SessionState | null = null;
 if (fromStorage) {
-  storedUserState = JSON.parse(fromStorage);
+  storedSessionState = JSON.parse(fromStorage);
 }
 
-// Reducer
-let initialState: UserState = storedUserState || {
+const zeroState: SessionState = {
   authInfo: {
-    isLoadingToken: false,
     isLoggedIn: false,
   },
   user: {
     id: -1,
+    firstName: '',
+    lastName: '',
+    email: '',
+    addrLine1: '',
+    addrLine2: '',
+    postal: '',
+    city: '',
+    state: '',
+    credit: 0,
+    coins: 0,
+    profileImgPath: '',
+    country: '',
     token: '',
-    org: null,
+    remember: '',
   },
+  orgUser: {} as OrgUser,
 };
+
+let initialState: SessionState = storedSessionState || zeroState;
 
 export function userReducer(
   state = initialState,
   action: UserActionTypes,
-): UserState {
+): SessionState {
   switch (action.type) {
-    case LOADING:
-      return {
-        ...state,
-        authInfo: {
-          isLoadingToken: true,
-          isLoggedIn: false,
-        },
-      };
-    case LOGIN:
-      const userState: UserState = {
-        authInfo: {
-          isLoadingToken: false,
-          isLoggedIn: true,
-        },
-        user: action.payload,
-      };
-      sessionStorage.setItem('userState', JSON.stringify(userState));
-      return userState;
+    case SET_SESSION:
+      sessionStorage.setItem('SessionState', JSON.stringify(action.payload));
+      return action.payload;
     case LOGOUT:
       sessionStorage.clear();
-      return {
-        authInfo: {
-          isLoadingToken: false,
-          isLoggedIn: false,
-        },
-        user: {
-          id: -1,
-          token: '',
-          org: null,
-        },
-      };
+      return zeroState;
     default:
       return state;
   }

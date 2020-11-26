@@ -1,55 +1,43 @@
 import React, { useState } from 'react';
 import { RootState } from '../../../redux';
-import { loadingUser, login, logout } from '../../../redux/modules/user';
-import { onLogin } from '../../../services/Api';
+import { login } from '../../../services/Api';
 import { connect, ConnectedProps } from 'react-redux';
 import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import './index.css';
 
 import { Redirect } from 'react-router-dom';
-import { identify } from 'src/utils/segment';
 
 const mapStateToProps = (state: RootState) => ({
-  user: state.user,
+  session: state.session,
 });
 
-const mapDispatchToProps = { loadingUser, login, logout };
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const UnconnectedLogin: React.FC<PropsFromRedux> = ({
-  loadingUser,
-  login,
-  logout,
-  user,
-}) => {
+const UnconnectedLogin: React.FC<PropsFromRedux> = ({ session }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onError = (error: Error) => {
-    logout();
     setEmailError(error.toString());
   };
 
   const tryLogin = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setEmailError('');
-    setPasswordError('');
-    loadingUser();
+    setLoading(true);
     try {
-      const userData = await onLogin(email, password);
-      login(userData);
-      identify(email, { org: userData.org?.name });
+      await login(email, password);
+      setLoading(false);
     } catch (error) {
-      onError(error);
+      onError(error.message || error);
+      setLoading(false);
     }
   };
 
-  if (user.authInfo.isLoadingToken) {
+  if (loading) {
     return (
       <Container id="login-spinner">
         <Spinner animation="border" role="status" variant="primary">
@@ -59,7 +47,7 @@ const UnconnectedLogin: React.FC<PropsFromRedux> = ({
     );
   }
 
-  if (user.authInfo.isLoggedIn) {
+  if (session.authInfo.isLoggedIn) {
     return <Redirect to="/" />;
   }
 
@@ -90,11 +78,7 @@ const UnconnectedLogin: React.FC<PropsFromRedux> = ({
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                isInvalid={passwordError !== ''}
               />
-              <Form.Control.Feedback type="invalid">
-                {passwordError}
-              </Form.Control.Feedback>
             </Form.Group>
             <Button variant="primary" block type="submit" onClick={tryLogin}>
               Login

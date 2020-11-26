@@ -32,7 +32,7 @@ import { unauthenticated, isBottom } from 'src/utils/utils';
 import mail_icon from './mail.svg';
 
 const mapStateToProps = (state: RootState) => ({
-  user: state.user,
+  session: state.session,
   tags: state.tags,
   orgContacts: state.orgContacts,
   filters: state.orgContacts.selectedFilters,
@@ -67,7 +67,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   loadOrgContacts,
   addFilter,
   removeFilter,
-  user,
+  session,
   logout,
   deleteOrgContacts,
   addNewTag,
@@ -89,11 +89,11 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
-  const { token } = user.user;
-  const { org } = user.user;
+  const { token } = session.user;
+  const { org } = session.orgUser;
 
   useEffect(() => {
-    if (!hasFetchedData && org) {
+    if (!hasFetchedData) {
       loadOrgContacts(token, org.id, orgContacts.currPage);
       loadTags(token, org.id);
       setHasFetchedData(true);
@@ -181,7 +181,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             addTag={addFilter}
             removeTag={removeFilter}
             token={token}
-            orgId={org ? org.id : null}
+            orgId={org.id}
           />
         </div>
       </section>

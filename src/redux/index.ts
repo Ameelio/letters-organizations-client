@@ -7,7 +7,7 @@ import { orgContactsReducer } from './modules/orgcontacts';
 import { volunteerContactReducer } from './modules/volunteerContacts';
 
 export const rootReducer = combineReducers({
-  user: userReducer,
+  session: userReducer,
   volunteers: volunteersReducer,
   newsletters: newsletterReducer,
   tags: tagsReducer,

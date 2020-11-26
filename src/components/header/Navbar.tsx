@@ -8,7 +8,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { logout } from '../../redux/modules/user';
 
 const mapStateToProps = (state: RootState) => ({
-  user: state.user,
+  session: state.session,
 });
 const mapDispatchToProps = {
   logout,
@@ -16,13 +16,13 @@ const mapDispatchToProps = {
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const NavBar: React.FC<PropsFromRedux> = ({ user, logout }) => {
+const NavBar: React.FC<PropsFromRedux> = ({ session, logout }) => {
   const onLogout = (e: React.MouseEvent) => {
     e.preventDefault();
     logout();
   };
 
-  if (user.authInfo.isLoggedIn) {
+  if (session.authInfo.isLoggedIn) {
     return (
       <Navbar
         collapseOnSelect
@@ -35,7 +35,7 @@ const NavBar: React.FC<PropsFromRedux> = ({ user, logout }) => {
             <Link to="/">
               <Logo width="150" />
             </Link>
-            <span className="align-self-end">{user.user.org?.name}</span>
+            <span className="align-self-end">{session.orgUser.org.name}</span>
           </div>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />

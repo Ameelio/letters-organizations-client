@@ -40,7 +40,7 @@ const mapStateToProps = (state: RootState) => ({
   tags: state.tags,
   selectedTags: state.orgContacts.uploadSelectedTags,
   error: state.orgContacts.error,
-  user: state.user,
+  session: state.session,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -79,7 +79,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   selectedTags,
   createOrgContacts,
   error,
-  user,
+  session,
   logout,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
@@ -99,8 +99,8 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     updateCsvUploadStep(uploadStep - 1);
   };
 
-  const token = user.user.token;
-  const org = user.user.org;
+  const token = session.user.token;
+  const org = session.orgUser.org;
 
   const handleSubmission = (event: React.MouseEvent) => {
     const rowsWithData: string[][] = uploadedCsv.data.filter((row) =>

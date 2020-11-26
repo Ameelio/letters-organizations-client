@@ -7,7 +7,7 @@ import './index.css';
 import { loadLetterDrafts } from 'src/redux/modules/volunteer';
 
 const mapStateToProps = (state: RootState) => ({
-  user: state.user,
+  session: state.session,
   drafts: state.volunteers.drafts,
 });
 
@@ -19,16 +19,16 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const UnconnectedDrafts: React.FC<PropsFromRedux> = ({
   loadLetterDrafts,
-  user,
+  session,
   drafts,
 }) => {
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
 
-  const { token } = user.user;
-  const { org } = user.user;
+  const { token } = session.user;
+  const { org } = session.orgUser;
 
   useEffect(() => {
-    if (!hasFetchedData && org) {
+    if (!hasFetchedData) {
       loadLetterDrafts(token, org.id);
       setHasFetchedData(true);
     }

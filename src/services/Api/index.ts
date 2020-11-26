@@ -1,8 +1,12 @@
 import url from 'url';
 import { API_URL } from './base';
 import { getAuthJson } from 'src/utils/utils';
+import { camelizeKeys } from 'humps';
+import store from 'src';
+import { setSession, SessionState } from 'src/redux/modules/user';
+import { identify } from 'src/utils/segment';
 
-export async function onLogin(email: string, password: string): Promise<User> {
+export async function login(email: string, password: string): Promise<void> {
   const requestOptions: RequestInit = {
     method: 'POST',
     headers: {
@@ -17,49 +21,36 @@ export async function onLogin(email: string, password: string): Promise<User> {
 
   const response = await fetch(url.resolve(API_URL, 'login'), requestOptions);
   const body = await response.json();
-  if (body.status === 'ERROR') {
-    throw new Error('Invalid Credentials');
-  }
+  if (body.status !== 'OK') throw body;
 
-  const userData: User = {
-    id: body.data.id,
-    token: body.data.token,
-    org: null,
-  };
+  const user = (camelizeKeys(body.data) as unknown) as User;
 
-  const orgResponse = await getAuthJson({
+  const { id, token } = user;
+
+  const responseOrg = await getAuthJson({
     method: 'GET',
-    token: userData.token,
-    endpoint: `user/${userData.id}/org`,
+    token: token,
+    endpoint: `user/${id}/org`,
   });
 
-  const orgBody = await orgResponse.json();
-  if (orgBody.status === 'ERROR') {
-    throw new Error(orgBody.message);
-  }
-  if (orgBody.data.role === 'member') {
+  const bodyOrg = await responseOrg.json();
+  if (bodyOrg.status !== 'OK') throw bodyOrg;
+
+  const orgUser = (camelizeKeys(bodyOrg.data) as unknown) as OrgUser;
+
+  if (orgUser.role === 'member') {
     throw new Error(
       'Invalid access. Must be registered as an organization admin.',
     );
   }
-  userData.org = {
-    id: orgBody.data.org.id,
-    name: orgBody.data.org.name,
-    business_name: orgBody.data.org.business_name,
-    ein: orgBody.data.org.ein,
-    website: orgBody.data.org.website,
-    address_line_1: orgBody.data.org.address_line_1,
-    address_line_2: orgBody.data.org.address_line_2,
-    city: orgBody.data.org.city,
-    state: orgBody.data.org.state,
-    postal: orgBody.data.org.postal,
-    paid_balance: orgBody.data.org.paid_balance,
-    color_first_page_price: orgBody.data.org.color_first_page_price,
-    color_extra_page_price: orgBody.data.org.color_extra_page_price,
-    bw_first_page_price: orgBody.data.org.bw_first_page_price,
-    bw_extra_page_price: orgBody.data.org.bw_extra_page_price,
-    share_link: orgBody.data.org.share_link,
-  };
 
-  return userData;
+  identify(email, { org: orgUser.org.name });
+
+  store.dispatch(
+    setSession({
+      orgUser,
+      user,
+      authInfo: { isLoadingToken: false, isLoggedIn: true },
+    } as SessionState),
+  );
 }

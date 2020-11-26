@@ -29,7 +29,7 @@ import { track } from 'src/utils/segment';
 
 const mapStateToProps = (state: RootState) => ({
   volunteers: state.volunteers,
-  user: state.user,
+  session: state.session,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -53,15 +53,15 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   volunteers,
   selectVolunteer,
   loading,
-  user,
+  session,
   logout,
 }) => {
   const [filteredVolunteers, setFilteredVolunteers] = useState<Volunteer[]>(
     volunteers.all_volunteers,
   );
 
-  const token = user.user.token;
-  const org = user.user.org;
+  const token = session.user.token;
+  const org = session.orgUser.org;
 
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -254,7 +254,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
           removeVolunteer={removeVolunteer}
           loadVolunteers={loadVolunteers}
           handleError={handleError}
-          user={user.user}
+          user={session.user}
           page={volunteers.page}
         />
       )}
@@ -269,7 +269,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
       {org && (
         <InviteModal
-          shareLink={org.share_link}
+          shareLink={org.shareLink}
           show={showInviteModal}
           handleClose={handleInviteClose}
           token={token}

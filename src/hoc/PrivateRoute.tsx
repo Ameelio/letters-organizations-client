@@ -19,7 +19,7 @@ class PrivateRoute extends Route<Props> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  authenticated: state.user.authInfo.isLoggedIn,
+  authenticated: state.session.authInfo.isLoggedIn,
 });
 
 export default connect(mapStateToProps)(PrivateRoute);
