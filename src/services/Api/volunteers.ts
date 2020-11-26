@@ -41,7 +41,9 @@ export async function getVolunteers(): Promise<void> {
     details: null,
   }));
   store.dispatch(setVolunteers(volunteers));
-  store.dispatch(setSelectedVolunteer(volunteers[0]));
+  if (volunteers.length > 0) {
+    store.dispatch(setSelectedVolunteer(volunteers[0]));
+  }
 }
 
 export async function fetchVolunteerDetails(
