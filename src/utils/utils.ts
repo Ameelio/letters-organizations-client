@@ -185,3 +185,45 @@ export function validateContactUpload(
 export function rowHasInfo(row: string[]): boolean {
   return row.some((item) => item && item.length > 0);
 }
+
+export const EXTRA_POSTAGE = 2.36;
+export const ADDT_PAGE_COLOR = 0.21;
+export const ADDT_PAGE_BW = 0.11;
+
+export const FIRST_CLASS_COLOR = 0.8;
+export const FIRST_CLASS_BW = 0.76;
+export const STANDARD_COLOR = 0.59;
+export const STANDARD_BW = 0.55;
+
+const getFirstPageCost = (isStandard: boolean, isColor: boolean): number => {
+  if (isStandard) {
+    return isColor ? STANDARD_COLOR : STANDARD_BW;
+  } else {
+    return isColor ? FIRST_CLASS_COLOR : FIRST_CLASS_BW;
+  }
+};
+
+const getExtraPostageFee = (numSheets: number): number => {
+  return numSheets > 6 ? EXTRA_POSTAGE : 0;
+};
+
+const getAddtlPageCost = (isColor: boolean): number => {
+  return isColor ? ADDT_PAGE_COLOR : ADDT_PAGE_BW;
+};
+
+export function calculateNewsletterCost(
+  isStandard: boolean,
+  isColor: boolean,
+  numPages: number,
+  numSheets: number,
+) {
+  console.log(getFirstPageCost(isStandard, isColor));
+  console.log(getAddtlPageCost(isColor) * (numPages - 1));
+  return Number(
+    (
+      getFirstPageCost(isStandard, isColor) +
+      getAddtlPageCost(isColor) * (numPages - 1) +
+      getExtraPostageFee(numSheets)
+    ).toFixed(2),
+  );
+}

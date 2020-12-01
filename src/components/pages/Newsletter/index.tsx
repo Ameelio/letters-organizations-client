@@ -27,7 +27,7 @@ import TagSelector from 'src/components/tags/TagSelector';
 import ProgressBarHeader from 'src/components/progress/ProgressBarHeader';
 import FunnelButton from 'src/components/buttons/FunnelButton';
 import { Container, Spinner } from 'react-bootstrap';
-import { unauthenticated } from 'src/utils/utils';
+import { calculateNewsletterCost, unauthenticated } from 'src/utils/utils';
 import Toggle from './Toggle';
 import { track } from 'src/utils/segment';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -340,8 +340,23 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 </Document>
               </div>
               <div className="d-flex flex-column ml-4">
+                <div className="d-flex flex-row justify-content-between">
+                  <div className="d-flex flex-column ">
+                    <span className="black-400 mb-1">Contacts</span>
+                    <span className="font-weight-bold p3">
+                      {newsletters.uploadSelectedTags.reduce(
+                        (prev, curr) => prev + curr.numContacts,
+                        0,
+                      )}
+                    </span>
+                  </div>
+                  <div className="d-flex flex-column">
+                    <span className="black-400 mb-1">Pages</span>
+                    <span className="font-weight-bold p3">{numPages}</span>
+                  </div>
+                </div>
                 <div className="d-flex flex-column mt-3 mw-50">
-                  <span className="p5 font-weight-bold">Printing</span>
+                  <span className="p5 black-400">Printing</span>
                   <Toggle
                     value={newsletters.uploadDoubleSided}
                     setValue={updateUploadDoublesided}
@@ -350,7 +365,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                   />
                 </div>
                 <div className="d-flex flex-column mt-3 mw-50">
-                  <span className="p5 font-weight-bold">Mail Class</span>
+                  <span className="p5 black-400">Mail Class</span>
                   <Toggle
                     value={newsletters.standardMail}
                     setValue={updateMailClass}
@@ -359,13 +374,49 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                   />
                 </div>
                 <div className="d-flex flex-column my-3 mw-50">
-                  <span className="p5 font-weight-bold">Color</span>
+                  <span className="p5 black-400">Color</span>
                   <Toggle
                     value={newsletters.uploadColor}
                     setValue={updateUploadColor}
                     defaultLabel="Black and White"
                     otherLabel="Colored"
                   />
+                </div>
+                <div className="d-flex flex-row justify-content-between my-3 align-items-center">
+                  <span className="p5 black-400 mr-1">Unit Cost</span>
+                  <span>
+                    $
+                    {calculateNewsletterCost(
+                      newsletters.standardMail,
+                      newsletters.uploadColor,
+                      numPages,
+                      newsletters.uploadDoubleSided
+                        ? Math.ceil(numPages / 2)
+                        : numPages,
+                    )}
+                  </span>
+                </div>
+                <div className="d-flex flex-row justify-content-between my-3 align-items-center">
+                  <span className="p5 black-400 mr-1">Total</span>
+                  <span className="font-weight-bold p3">
+                    $
+                    {Number(
+                      (
+                        calculateNewsletterCost(
+                          newsletters.standardMail,
+                          newsletters.uploadColor,
+                          numPages,
+                          newsletters.uploadDoubleSided
+                            ? Math.ceil(numPages / 2)
+                            : numPages,
+                        ) *
+                        newsletters.uploadSelectedTags.reduce(
+                          (prev, curr) => prev + curr.numContacts,
+                          0,
+                        )
+                      ).toFixed(2),
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
