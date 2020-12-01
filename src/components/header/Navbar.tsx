@@ -1,6 +1,6 @@
 import React from 'react';
 import { RootState } from '../../redux';
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import { ReactComponent as Logo } from 'src/assets/logo.svg';
@@ -8,7 +8,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { logout } from '../../redux/modules/user';
 
 const mapStateToProps = (state: RootState) => ({
-  user: state.user,
+  session: state.session,
 });
 const mapDispatchToProps = {
   logout,
@@ -16,13 +16,13 @@ const mapDispatchToProps = {
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const NavBar: React.FC<PropsFromRedux> = ({ user, logout }) => {
+const NavBar: React.FC<PropsFromRedux> = ({ session, logout }) => {
   const onLogout = (e: React.MouseEvent) => {
     e.preventDefault();
     logout();
   };
 
-  if (user.authInfo.isLoggedIn) {
+  if (session.authInfo.isLoggedIn) {
     return (
       <Navbar
         collapseOnSelect
@@ -31,16 +31,26 @@ const NavBar: React.FC<PropsFromRedux> = ({ user, logout }) => {
         variant="light"
         sticky="top">
         <Navbar.Brand>
-          <Link to="/">
-            <Logo width="150" />
-          </Link>
+          <div className="d-flex">
+            <Link to="/">
+              <Logo width="150" />
+            </Link>
+            <span className="align-self-end">{session.orgUser.org.name}</span>
+          </div>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ml-auto">
-            <Nav.Link as={Link} to="/">
-              Volunteers
-            </Nav.Link>
+            <NavDropdown title="Volunteers" id="volunteer_dropdown">
+              <NavDropdown.Item to="/" href="/">
+                {' '}
+                Roster{' '}
+              </NavDropdown.Item>
+              <NavDropdown.Item to="/drafts" href="#drafts">
+                {' '}
+                Drafts{' '}
+              </NavDropdown.Item>
+            </NavDropdown>
             <Nav.Link as={Link} to="/contacts">
               Contacts
             </Nav.Link>

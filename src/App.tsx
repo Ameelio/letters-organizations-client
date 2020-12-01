@@ -8,9 +8,13 @@ import NewsletterCreationPage from './components/pages/Newsletter';
 import ContactsPage from './components/pages/Contacts';
 import UploadContactsPage from './components/pages/UploadContacts';
 import NewsletterHistoryPage from './components/pages/NewsletterHistory';
+import DraftsPage from './components/pages/Drafts';
 import PrivateRoute from './hoc/PrivateRoute';
+import { loadSegment, track } from 'src/utils/segment';
 
 function App() {
+  loadSegment();
+  track('Website Open');
   return (
     <Router>
       <NavBar />
@@ -26,6 +30,7 @@ function App() {
           path="/newsletter/create"
           component={NewsletterCreationPage}
         />
+        <PrivateRoute exact path="/drafts" component={DraftsPage} />
         <PrivateRoute exact path="/contacts" component={ContactsPage} />
         <PrivateRoute exact path="/upload" component={UploadContactsPage} />
         <PrivateRoute exact path="/" component={VolunteerPage} />

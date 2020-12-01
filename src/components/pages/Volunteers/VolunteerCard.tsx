@@ -1,7 +1,6 @@
 import React from 'react';
 import Image from 'react-bootstrap/Image';
 import './VolunteerCard.css';
-import { formatDate } from 'src/utils/utils';
 
 interface VolunteerProps {
   volunteer: Volunteer;

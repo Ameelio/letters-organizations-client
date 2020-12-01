@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import VolunteerCard from './VolunteerCard';
 import VolunteerDetails from './VolunteerDetails';
 import LetterCard from './LetterCard';
@@ -12,7 +12,6 @@ import { RootState } from '../../../redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { logout } from '../../../redux/modules/user';
 import {
-  loadVolunteers,
   selectVolunteer,
   loading,
   inviteVolunteer,
@@ -21,20 +20,21 @@ import {
 import {
   updateVolunteer,
   removeVolunteer,
+  getVolunteers,
 } from '../../../services/Api/volunteers';
-import { unauthenticated } from 'src/utils/utils';
+import { unauthenticated, isBottom } from 'src/utils/utils';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, Container, Spinner } from 'react-bootstrap';
+import { track } from 'src/utils/segment';
 
 const mapStateToProps = (state: RootState) => ({
   volunteers: state.volunteers,
-  user: state.user,
+  session: state.session,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
-      loadVolunteers,
       selectVolunteer,
       loading,
       logout,
@@ -48,19 +48,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 // TODO move each section to its own container
 const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
-  loadVolunteers,
   volunteers,
   selectVolunteer,
   loading,
-  user,
+  session,
   logout,
 }) => {
   const [filteredVolunteers, setFilteredVolunteers] = useState<Volunteer[]>(
     volunteers.all_volunteers,
   );
 
-  const token = user.user.token;
-  const org = user.user.org;
+  const token = session.user.token;
+  const org = session.orgUser.org;
 
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -69,9 +68,6 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
-  const [hasFetchedVolunteers, setHasFetchedVolunteers] = useState<boolean>(
-    false,
-  );
 
   const handleLetterClose = () => setShowLetterModal(false);
   const handleLetterShow = () => setShowLetterModal(true);
@@ -86,6 +82,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     event: React.MouseEvent,
     volunteer: Volunteer,
   ) => {
+    track('Volunteers - Click on Volunteer Card');
     handleUpdateClose();
     selectVolunteer(token, volunteer);
   };
@@ -104,22 +101,19 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
   };
 
   useEffect(() => {
-    if (!hasFetchedVolunteers && org) {
-      loadVolunteers(token, org.id);
-      setHasFetchedVolunteers(true);
+    try {
+      getVolunteers();
+    } catch (err) {
+      console.log(err);
     }
+  }, []);
+
+  useMemo(() => {
     const results = volunteers.all_volunteers.filter((volunteer) =>
       volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredVolunteers(results);
-  }, [
-    hasFetchedVolunteers,
-    loadVolunteers,
-    volunteers.all_volunteers,
-    searchQuery,
-    org,
-    token,
-  ]);
+  }, [searchQuery, volunteers.all_volunteers]);
 
   if (unauthenticated([volunteers.error.message])) {
     loading();
@@ -146,31 +140,46 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
     </Container>
   );
 
+  const handleScroll = () => {
+    const volunteersDiv = document.getElementById('volunteersDiv');
+
+    if (volunteersDiv) {
+      if (isBottom(volunteersDiv)) {
+        getVolunteers();
+      }
+    }
+  };
+
   return (
     <div className="d-flex flex-row">
       <section
         id={volunteers.loading ? 'faded' : ''}
         className="volunteers-list-sidebar d-flex flex-column mw-27 border-right pl-4 shadow-sm bg-white rounded">
-        <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
-          <span className="black-500 p3">Volunteers</span>
-          <Button onClick={handleInviteClick}>Invite</Button>
+        <div
+          id="volunteersDiv"
+          className="vh-100 overflow-auto"
+          onScroll={handleScroll}>
+          <div className="d-flex flex-row justify-content-between align-items-center mt-5 mb-3 mr-3 ">
+            <span className="black-500 p3">Volunteers</span>
+            <Button onClick={handleInviteClick}>Invite</Button>
+          </div>
+          <Form className="mr-3 mb-3">
+            <FormControl
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </Form>
+          {filteredVolunteers.map((volunteer) => (
+            <VolunteerCard
+              handleClick={(e) => handleVolunteerClick(e, volunteer)}
+              volunteer={volunteer}
+              key={volunteer.id}
+              isActive={volunteer.id === volunteers.selected_volunteer.id}
+            />
+          ))}
         </div>
-        <Form className="mr-3 mb-3">
-          <FormControl
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </Form>
-        {filteredVolunteers.map((volunteer) => (
-          <VolunteerCard
-            handleClick={(e) => handleVolunteerClick(e, volunteer)}
-            volunteer={volunteer}
-            key={volunteer.id}
-            isActive={volunteer.id === volunteers.selected_volunteer.id}
-          />
-        ))}
       </section>
 
       {(volunteers.loading || volunteers.loading_details) && spinner}
@@ -232,9 +241,9 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
           updateVolunteer={updateVolunteer}
           selectVolunteer={selectVolunteer}
           removeVolunteer={removeVolunteer}
-          loadVolunteers={loadVolunteers}
           handleError={handleError}
-          user={user.user}
+          user={session.user}
+          page={volunteers.page}
         />
       )}
 
@@ -248,7 +257,7 @@ const UnconnectedVolunteers: React.FC<PropsFromRedux> = ({
 
       {org && (
         <InviteModal
-          shareLink={org.share_link}
+          shareLink={org.shareLink}
           show={showInviteModal}
           handleClose={handleInviteClose}
           token={token}

@@ -16,3 +16,8 @@ interface Contact {
   last_letter_sent: Date | null;
   org_id: number | null;
 }
+
+interface InvalidContact {
+  contact: OrgContact;
+  errors: string[];
+}

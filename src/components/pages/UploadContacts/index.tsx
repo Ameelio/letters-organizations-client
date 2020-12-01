@@ -27,7 +27,12 @@ import { Clock } from 'react-feather';
 import Tag from 'src/components/tags/Tag';
 import { Link } from 'react-router-dom';
 import { logout } from '../../../redux/modules/user';
-import { unauthenticated } from 'src/utils/utils';
+import {
+  unauthenticated,
+  validateContactUpload,
+  rowHasInfo,
+} from 'src/utils/utils';
+import Modal from 'src/components/modals/Modal';
 
 const mapStateToProps = (state: RootState) => ({
   uploadedCsv: state.orgContacts.uploadedCsv,
@@ -35,7 +40,7 @@ const mapStateToProps = (state: RootState) => ({
   tags: state.tags,
   selectedTags: state.orgContacts.uploadSelectedTags,
   error: state.orgContacts.error,
-  user: state.user,
+  session: state.session,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
@@ -74,7 +79,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
   selectedTags,
   createOrgContacts,
   error,
-  user,
+  session,
   logout,
 }) => {
   const [mapping, setMapping] = useState<ContactFieldMap>(
@@ -83,6 +88,8 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
 
   const [feedback, setFeedback] = useState<ErrorFeedback | null>();
   const [hasFetchedData, setHasFetchedData] = useState<boolean>(false);
+  const [errors, setErrors] = useState<InvalidContact[]>();
+  const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
 
   const handleNextClick = (event: React.MouseEvent) => {
     updateCsvUploadStep(uploadStep + 1);
@@ -92,12 +99,35 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
     updateCsvUploadStep(uploadStep - 1);
   };
 
-  const token = user.user.token;
-  const org = user.user.org;
+  const token = session.user.token;
+  const org = session.orgUser.org;
 
   const handleSubmission = (event: React.MouseEvent) => {
-    if (org) {
-      createOrgContacts(token, org.id, mapping, uploadedCsv, selectedTags);
+    const rowsWithData: string[][] = uploadedCsv.data.filter((row) =>
+      rowHasInfo(row),
+    );
+    const contacts: OrgContact[] = rowsWithData.map((row) => {
+      return {
+        first_name: row[mapping.firstName.index]?.trim(),
+        last_name: row[mapping.lastName.index]?.trim(),
+        inmate_number: row[mapping.inmateNumber.index]?.trim(),
+        facility_name: row[mapping.facilityName.index]?.trim(),
+        facility_state: row[mapping.facilityState.index]?.trim(),
+        facility_city: row[mapping.facilityCity.index]?.trim(),
+        facility_address: row[mapping.facilityAddress.index]?.trim(),
+        facility_postal: row[mapping.facilityPostal.index]?.trim(),
+        unit: row[mapping.unit.index]?.trim(),
+        dorm: row[mapping.dorm.index]?.trim(),
+        relationship: 'Org Contact',
+        selected: false,
+      } as OrgContact;
+    });
+    const [validContacts, invalidContacts] = validateContactUpload(contacts);
+    if (invalidContacts.length > 0) {
+      setErrors(invalidContacts);
+      setShowErrorModal(true);
+    } else if (org) {
+      createOrgContacts(token, org.id, validContacts, selectedTags);
       updateCsvUploadStep(uploadStep + 1);
     }
   };
@@ -187,7 +217,7 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
               <Docdrop
                 uploadFile={uploadCsv}
                 uploadedFile={uploadedCsv.file}
-                acceptedFormat="text/csv/*"
+                acceptedFormat=".csv"
                 acceptedFormatLabel="CSV"
               />
               <div className="ml-auto">
@@ -227,6 +257,28 @@ const UnconnectedUploadContacts: React.FC<PropsFromRedux> = ({
 
           {uploadStep === 2 && (
             <div className="upload-file-step-container">
+              {showErrorModal && errors && (
+                <Modal
+                  title={`${errors.length} contacts are incorrectly formatted`}
+                  show={true}
+                  handleDone={() => setShowErrorModal(false)}
+                  buttonCta="Close">
+                  <div className="d-flex flex-column">
+                    {errors.map((error) => (
+                      <div className="d-flex flex-column mt-3">
+                        <b>
+                          {error.contact.first_name} {error.contact.last_name}
+                        </b>{' '}
+                        <ul>
+                          {error.errors.map((error) => (
+                            <li>{error}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </Modal>
+              )}
               <span>
                 Assign existing tags or create new ones for your contacts.
               </span>

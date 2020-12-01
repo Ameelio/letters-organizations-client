@@ -17,7 +17,9 @@ import {
   loading,
   deleteOrgContacts,
   editContactTags,
+  sendLetter,
 } from 'src/redux/modules/orgcontacts';
+import Docdrop from 'src/components/docdrop/Docdrop';
 import { loadTags, addNewTag } from 'src/redux/modules/tag';
 import { logout } from '../../../redux/modules/user';
 import TagSelector from 'src/components/tags/TagSelector';
@@ -27,9 +29,10 @@ import './index.css';
 import { Link } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 import { unauthenticated, isBottom } from 'src/utils/utils';
+import mail_icon from './mail.svg';
 
 const mapStateToProps = (state: RootState) => ({
-  user: state.user,
+  session: state.session,
   tags: state.tags,
   orgContacts: state.orgContacts,
   filters: state.orgContacts.selectedFilters,
@@ -47,6 +50,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       deleteOrgContacts,
       addNewTag,
       editContactTags,
+      sendLetter,
     },
     dispatch,
   );
@@ -63,11 +67,12 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   loadOrgContacts,
   addFilter,
   removeFilter,
-  user,
+  session,
   logout,
   deleteOrgContacts,
   addNewTag,
   editContactTags,
+  sendLetter,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [countContacts, setCountContacts] = useState<number>(0);
@@ -78,11 +83,17 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
-  const { token } = user.user;
-  const { org } = user.user;
+  const [selectedContact, setselectedContact] = useState<OrgContact | null>(
+    null,
+  );
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+
+  const { token } = session.user;
+  const { org } = session.orgUser;
 
   useEffect(() => {
-    if (!hasFetchedData && org) {
+    if (!hasFetchedData) {
       loadOrgContacts(token, org.id, orgContacts.currPage);
       loadTags(token, org.id);
       setHasFetchedData(true);
@@ -170,7 +181,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             addTag={addFilter}
             removeTag={removeFilter}
             token={token}
-            orgId={org ? org.id : null}
+            orgId={org.id}
           />
         </div>
       </section>
@@ -234,6 +245,70 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
           </Modal.Footer>
         </Modal>
 
+        <Modal show={showSuccess}>
+          <Modal.Body>
+            {orgContacts.sentDirectLetter ? (
+              <h4>Your letter is on it's way!</h4>
+            ) : (
+              <div>
+                <h4>Oh no! There was an error sending your letter:</h4>
+                <p>{orgContacts.error.message}</p>
+                <p>{orgContacts.error.data}</p>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              onClick={() => {
+                setShowSuccess(false);
+              }}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={!!selectedContact}>
+          <Modal.Body>
+            <p>
+              {' '}
+              Send a message to {selectedContact?.first_name}{' '}
+              {selectedContact?.last_name}
+            </p>
+            <Form className="d-flex flex-column">
+              <Form.Group controlId="formDocdrop">
+                <Form.Label>Attach file</Form.Label>
+                <Docdrop
+                  uploadFile={(file) => setUploadedFile(file)}
+                  uploadedFile={uploadedFile}
+                  acceptedFormat="application/pdf/*"
+                  acceptedFormatLabel="PDF"
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              onClick={() => {
+                setselectedContact(null);
+              }}>
+              Close
+            </Button>
+            <Button
+              onClick={() => {
+                sendLetter(token, {
+                  contact_id: selectedContact ? selectedContact.id : null,
+                  file: uploadedFile,
+                });
+                setselectedContact(null);
+                setUploadedFile(null);
+                setShowSuccess(true);
+              }}
+              disabled={uploadedFile == null}>
+              Send
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <div
           id="tableDiv"
           className="vh-100 w-100 shadow-sm px-2 bg-white overflow-auto tableDiv"
@@ -275,6 +350,7 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                 <th>City</th>
                 <th>State</th>
                 <th>Tags</th>
+                <th>Send</th>
               </tr>
             </thead>
             <tbody>
@@ -305,6 +381,15 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
                         <Tag label={tag.label} />
                       </div>
                     ))}
+                  </td>
+                  <td>
+                    <Button
+                      title={'send mail to' + contact.first_name}
+                      onClick={() => {
+                        setselectedContact(contact);
+                      }}>
+                      <img src={mail_icon} alt="mail icon" />
+                    </Button>
                   </td>
                 </tr>
               ))}

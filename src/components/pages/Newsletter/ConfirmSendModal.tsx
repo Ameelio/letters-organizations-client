@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { ReactComponent as Illustration } from 'src/assets/mail.svg';
+import { track } from 'src/utils/segment';
 
 interface ConfirmSendModalProps {
   show: boolean;
@@ -18,6 +19,14 @@ const ConfirmSendModal: React.FC<ConfirmSendModalProps> = ({
   handleBackClick,
   handleSubmission,
 }) => {
+  const [hasClicked, setHasClicked] = useState<boolean>(false);
+
+  const onBtnClick = (e: React.MouseEvent) => {
+    setHasClicked(true);
+    track('Newsletter - Click on Send');
+    handleSubmission(e);
+  };
+
   return (
     <Modal show={show} onHide={handleClose}>
       <div className="blue-600-bg w-100 py-2"></div>
@@ -35,7 +44,11 @@ const ConfirmSendModal: React.FC<ConfirmSendModalProps> = ({
               variant="outline-secondary">
               Back
             </Button>
-            <Button className="ml-3" size="lg" onClick={handleSubmission}>
+            <Button
+              className="ml-3"
+              size="lg"
+              disabled={hasClicked}
+              onClick={onBtnClick}>
               Send
             </Button>
           </div>

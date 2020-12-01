@@ -14,7 +14,7 @@ import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import { Link } from 'react-router-dom';
 import Tag from 'src/components/tags/Tag';
-import { formatDate, unauthenticated } from 'src/utils/utils';
+import { unauthenticated } from 'src/utils/utils';
 import TagSelector from '../../tags/TagSelector';
 import { logout } from '../../../redux/modules/user';
 import { loadTags } from '../../../redux/modules/tag';
@@ -23,7 +23,7 @@ import { Container, Spinner } from 'react-bootstrap';
 const mapStateToProps = (state: RootState) => ({
   newsletters: state.newsletters,
   tags: state.tags,
-  user: state.user,
+  session: state.session,
   filters: state.newsletters.selectedFilters,
 });
 
@@ -46,7 +46,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
   newsletters,
   loadNewsletters,
-  user,
+  session,
   tags,
   filters,
   loadTags,
@@ -61,8 +61,8 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
     NewsletterLog[]
   >([]);
 
-  const token = user.user.token;
-  const org = user.user.org;
+  const token = session.user.token;
+  const org = session.orgUser.org;
 
   useEffect(() => {
     if (!hasFetched && org) {
@@ -164,13 +164,13 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
             <thead>
               <tr>
                 <th>Title</th>
-                <th>Total Sent</th>
-                <th>Delivered</th>
+                <th>Total</th>
+                <th>Processing</th>
                 <th>In Transit</th>
+                <th>Delivered</th>
                 <th>Returned</th>
-                <th>Estimated Arrival</th>
+                <th>Failed to Mail</th>
                 <th>Tags</th>
-                <th>File</th>
                 <th></th>
               </tr>
             </thead>
@@ -181,28 +181,18 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
                     <>
                       <td>{newsletter.title}</td>
                       <td>{newsletter.totalLettersCount}</td>
-                      <td>{newsletter.delivered}</td>
+                      <td>{newsletter.processingCount}</td>
                       <td>{newsletter.inTransit}</td>
+                      <td>{newsletter.delivered}</td>
+
                       <td>{newsletter.returned}</td>
-                      <td>
-                        {newsletter.estimatedArrival
-                          ? formatDate(newsletter.estimatedArrival)
-                          : 'There was a problem estimating the arrival date.'}
-                      </td>
+                      <td>{newsletter.nullCount}</td>
                       <td className="d-flex flex-column">
                         {newsletter.tags.map((tag, index) => (
                           <div className="mb-3" key={index}>
                             <Tag label={tag.label} />
                           </div>
                         ))}
-                      </td>
-                      <td>
-                        <a
-                          href={newsletter.fileLink}
-                          target="_blank"
-                          rel="noopener noreferrer">
-                          Link
-                        </a>
                       </td>
                       <td>
                         {newsletter.status === 'error' ? (

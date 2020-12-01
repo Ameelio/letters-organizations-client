@@ -1,18 +1,24 @@
+interface OrgUser {
+  role: string;
+  org: Org;
+}
+
 interface Org {
   id: number;
   name: string;
-  business_name: string;
+  businessName: string;
   ein: string;
   website: string;
-  address_line_1: string;
-  address_line_2: string | null;
+  addressLine1: string;
+  addressLine2: string;
   city: string;
   state: string;
   postal: string;
-  paid_balance: number;
-  color_first_page_price: number;
-  color_extra_page_price: number;
-  bw_first_page_price: number;
-  bw_extra_page_price: number;
-  share_link: string;
+  paidBalance: number;
+  shareLink: string;
+  colorFirstPagePrice: number;
+  colorExtraPagePrice: number;
+  bwFirstPagePrice: number;
+  bwExtraPagePrice: number;
+  isLegal: boolean;
 }

@@ -4,7 +4,9 @@ import {
   createContacts,
   deleteContacts,
   updateContacts,
+  createDirectLetter,
 } from 'src/services/Api/contacts';
+import { track } from 'src/utils/segment';
 import { loadTags } from './tag';
 
 const SET_ORG_CONTACTS = 'orgContacts/SET_ORG_CONTACTS';
@@ -22,6 +24,8 @@ const LOADING = 'orgContacts/LOADING';
 const ERROR = 'orgContacts/ERROR';
 const DELETE_CONTACTS = 'orgContacts/DELETE_CONTACTS';
 const UPDATE_CONTACTS = 'orgContacts/UPDATE_CONTACTS';
+const SEND_DIRECT_LETTER = 'orgContacts/SEND_DIRECT_LETTER';
+const SENT_DIRECT_LETTER = 'orgContacts/SENT_DIRECT_LETTER';
 
 interface SetOrgContactsAction {
   type: typeof SET_ORG_CONTACTS;
@@ -96,6 +100,14 @@ interface UpdateContactsAction {
   payload: OrgContact[]; // First element is contacts, second is tags
 }
 
+interface SendDirectLetter {
+  type: typeof SEND_DIRECT_LETTER;
+}
+
+interface SentDirectLetter {
+  type: typeof SENT_DIRECT_LETTER;
+}
+
 type OrgContactsActionTypes =
   | SetOrgContactsAction
   | AddOrgContactsAction
@@ -111,7 +123,9 @@ type OrgContactsActionTypes =
   | LoadingAction
   | ErrorAction
   | DeleteContactsAction
-  | UpdateContactsAction;
+  | UpdateContactsAction
+  | SendDirectLetter
+  | SentDirectLetter;
 
 export const setOrgContacts = (
   contacts: OrgContact[],
@@ -224,6 +238,20 @@ export const updateOrgContacts = (
   };
 };
 
+export const sendDirectLetter = (): OrgContactsActionTypes => {
+  return {
+    type: SEND_DIRECT_LETTER,
+    payload: null,
+  };
+};
+
+export const sentDirectLetter = (): OrgContactsActionTypes => {
+  return {
+    type: SENT_DIRECT_LETTER,
+    payload: null,
+  };
+};
+
 const initialState: OrgContactsState = {
   contacts: [],
   selectedFilters: [],
@@ -233,6 +261,7 @@ const initialState: OrgContactsState = {
   loading: false,
   error: {} as ErrorResponse,
   currPage: 1,
+  sentDirectLetter: false,
 };
 
 export function orgContactsReducer(
@@ -324,6 +353,8 @@ export function orgContactsReducer(
         loading: true,
       };
     case ERROR:
+      console.log('payload: ');
+      console.log(action.payload);
       return {
         ...state,
         loading: false,
@@ -339,6 +370,17 @@ export function orgContactsReducer(
       return {
         ...state,
         contacts: action.payload,
+      };
+    case SEND_DIRECT_LETTER:
+      return {
+        ...state,
+        loading: false,
+        sentDirectLetter: false,
+      };
+    case SENT_DIRECT_LETTER:
+      return {
+        ...state,
+        sentDirectLetter: true,
       };
     default:
       return state;
@@ -386,26 +428,9 @@ export const loadOrgContacts = (
 export const createOrgContacts = (
   token: string,
   org_id: number,
-  mapping: ContactFieldMap,
-  uploadedCsv: CSV,
+  contacts: OrgContact[],
   tags: Tag[],
 ): AppThunk => async (dispatch) => {
-  const contacts: OrgContact[] = uploadedCsv.data.map((row) => {
-    return {
-      first_name: row[mapping.firstName.index],
-      last_name: row[mapping.lastName.index],
-      inmate_number: row[mapping.inmateNumber.index],
-      facility_name: row[mapping.facilityName.index],
-      facility_state: row[mapping.facilityState.index],
-      facility_city: row[mapping.facilityCity.index],
-      facility_address: row[mapping.facilityAddress.index],
-      facility_postal: row[mapping.facilityPostal.index],
-      unit: row[mapping.unit.index],
-      dorm: row[mapping.dorm.index],
-      relationship: 'Org Contact',
-      selected: false,
-    } as OrgContact;
-  });
   const tag_ids: number[] = tags.map((tag) => {
     return tag.id;
   });
@@ -413,8 +438,27 @@ export const createOrgContacts = (
   createContacts(token, org_id, tag_ids, contacts)
     .then((contactsData) => dispatch(addOrgContacts(contactsData)))
     .then(() => {
+      track('Contacts - Upload Contacts Success');
       tags.forEach((tag) => dispatch(removeFilter(tag)));
     })
     .then(() => dispatch(loadTags(token, org_id)))
     .catch((error) => dispatch(handleError(error)));
+};
+
+export const sendLetter = (
+  token: string,
+  letter: DraftDirectLetter,
+): AppThunk => async (dispatch) => {
+  dispatch(loading());
+  createDirectLetter(token, letter)
+    .then(() => dispatch(sendDirectLetter()))
+    .then((success) => {
+      if (success) {
+        track('Contacts - Send Letter Success');
+        dispatch(sentDirectLetter());
+      }
+    })
+    .catch((error) => {
+      dispatch(handleError(error));
+    });
 };

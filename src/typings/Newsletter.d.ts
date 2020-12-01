@@ -7,13 +7,20 @@ interface DraftNewsletter {
   standardMail: boolean;
 }
 
+interface DraftDirectLetter {
+  file: File | null;
+  contact_id: number | null;
+}
+
 interface NewsletterLog {
   id: number;
   title: string;
   fileLink: string;
   totalLettersCount: number;
-  delivered: number;
+  nullCount: number;
+  processingCount: number;
   inTransit: number;
+  delivered: number;
   returned: number;
   creationDate: Date;
   estimatedArrival: Date | null;

@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RootState } from 'src/redux';
 import Docdrop from 'src/components/docdrop/Docdrop';
 import Form from 'react-bootstrap/Form';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import * as pdfjsLib from 'pdfjs-dist';
-import { pdfjsWorker } from 'pdfjs-dist/build/pdf.worker.entry';
 import { logout } from '../../../redux/modules/user';
 import {
   setName,
@@ -31,10 +29,16 @@ import FunnelButton from 'src/components/buttons/FunnelButton';
 import { Container, Spinner } from 'react-bootstrap';
 import { unauthenticated } from 'src/utils/utils';
 import Toggle from './Toggle';
+import { track } from 'src/utils/segment';
+import { Document, Page, pdfjs } from 'react-pdf';
+import './index.css';
+import ErrorAlert from 'src/components/alerts/ErrorAlert';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const mapStateToProps = (state: RootState) => ({
   tags: state.tags,
-  user: state.user,
+  session: state.session,
   newsletters: state.newsletters,
 });
 
@@ -63,6 +67,8 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
+const LETTER_ASPECT_RATIO = 1.3;
+
 const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   setName,
   uploadFile,
@@ -76,7 +82,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   removeAllUploadTags,
   sendNewsletter,
   newsletters,
-  user,
+  session,
   loading,
   logout,
   updateUploadColor,
@@ -86,29 +92,25 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   const [newsletter, setNewsletter] = useState<DraftNewsletter>(
     {} as DraftNewsletter,
   );
-  const [pageCount, setPageCount] = useState<number>(0);
+  const [isInvalidPDF, setISInvalidPDF] = useState(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
   const [toggle, setToggle] = useState<boolean>(false);
   const [hasFetchedTags, setHasFetchedTags] = useState<boolean>(false);
   const handleModalClose = () => setShowModal(false);
   const handleModalShow = () => setShowModal(true);
+  const [numPages, setNumPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
 
-  const token = user.user.token;
-  const org = user.user.org;
-
-  const getPageCount = useCallback(async (fileURL: string) => {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-    const loadPDF = await pdfjsLib.getDocument(fileURL).promise;
-    setPageCount(loadPDF.numPages);
-  }, []);
+  const { token } = session.user;
+  const { org } = session.orgUser;
 
   useEffect(() => {
     if (!hasFetchedTags && org) {
       loadTags(token, org.id);
       setHasFetchedTags(true);
     }
-    if (newsletters.uploadStep === 2 && newsletters.uploadedFile) {
+    if (newsletters.uploadStep === 3 && newsletters.uploadedFile) {
       setNewsletter({
         title: newsletters.newsletterName,
         file: newsletters.uploadedFile,
@@ -117,8 +119,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
         double_sided: newsletters.uploadDoubleSided,
         standardMail: newsletters.standardMail,
       });
-      const obj = URL.createObjectURL(newsletters.uploadedFile);
-      getPageCount(obj);
       handleModalShow();
     }
   }, [
@@ -127,7 +127,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     tags,
     loadTags,
     newsletters,
-    getPageCount,
     org,
     token,
   ]);
@@ -146,7 +145,12 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   };
 
   const handleSubmission = (event: React.MouseEvent) => {
-    sendNewsletter(token, newsletter, pageCount);
+    sendNewsletter(token, newsletter, numPages);
+    track('Newsletter - Send Newsletter Success', {
+      sheets: numPages / (Number(newsletters.uploadDoubleSided) + 1),
+      type: newsletters.standardMail ? 'Standard' : 'First Class',
+      color: newsletters.uploadColor ? 'Color' : 'Black and White',
+    });
     setShowSuccessModal(true);
     updateFileUploadStep(newsletters.uploadStep + 1);
   };
@@ -160,6 +164,29 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   if (unauthenticated([newsletters.error.message, tags.error.message])) {
     loading();
     logout();
+  }
+
+  async function onDocumentLoadSuccess(pdf: any): Promise<void> {
+    setISInvalidPDF(false);
+    setNumPages(pdf.numPages);
+    setPageNumber(1);
+  }
+
+  async function onPageLoadSuccess(page: any): Promise<void> {
+    if (Number((page.height / page.width).toFixed(1)) !== LETTER_ASPECT_RATIO)
+      setISInvalidPDF(true);
+  }
+
+  function changePage(offset: number) {
+    setPageNumber((prevPageNumber) => prevPageNumber + offset);
+  }
+
+  function previousPage() {
+    changePage(-1);
+  }
+
+  function nextPage() {
+    changePage(1);
   }
 
   const spinner = (
@@ -182,13 +209,24 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
           stepLabels={[
             'Upload file',
             'Select contacts',
+            'Printing settings',
             'Confirm to send',
             'Success',
           ]}
         />
+        {isInvalidPDF && (
+          <div className="mt-3">
+            <ErrorAlert
+              error={{
+                title: 'Your PDF dimensions are incorrect.',
+                body: 'All PDF pages must be Letter size (8.5 x 11 inches).',
+              }}
+            />
+          </div>
+        )}
 
         {newsletters.uploadStep === 0 && (
-          <div>
+          <div className="w-50">
             <div className="d-flex flex-column align-items-center mt-3">
               <span className="p2 black-500 mt-3">Newsletters</span>
               <span className="black-500">
@@ -214,12 +252,26 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                   acceptedFormatLabel="PDF"
                 />
               </Form.Group>
+              <div className="hidden">
+                <Document
+                  file={newsletters.uploadedFile}
+                  onLoadSuccess={onDocumentLoadSuccess}>
+                  {Array.from(Array(numPages).keys()).map((el, index) => (
+                    <Page
+                      onLoadSuccess={onPageLoadSuccess}
+                      key={`page_${index + 1}`}
+                      pageNumber={index + 1}
+                    />
+                  ))}
+                </Document>
+              </div>
               <FunnelButton
                 onNext={handleNextClick}
                 cta="Next"
                 enabled={
                   newsletters.uploadedFile != null &&
-                  newsletters.newsletterName !== ''
+                  newsletters.newsletterName !== '' &&
+                  !isInvalidPDF
                 }
               />
             </Form>
@@ -248,42 +300,86 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 label="Select all contacts"
               />
             </div>
-            <div className="d-flex flex-column mt-3 mw-50">
-              <span className="p5 font-weight-bold">Printing</span>
-              <Toggle
-                value={newsletters.uploadDoubleSided}
-                setValue={updateUploadDoublesided}
-                defaultLabel="Single-Sided"
-                otherLabel="Double-Sided"
-              />
-            </div>
-            <div className="d-flex flex-column mt-3 mw-50">
-              <span className="p5 font-weight-bold">Mail Class</span>
-              <Toggle
-                value={newsletters.standardMail}
-                setValue={updateMailClass}
-                defaultLabel="First Class"
-                otherLabel="Standard Mail"
-              />
-            </div>
-            <div className="d-flex flex-column my-3 mw-50">
-              <span className="p5 font-weight-bold">Color</span>
-              <Toggle
-                value={newsletters.uploadColor}
-                setValue={updateUploadColor}
-                defaultLabel="Black and White"
-                otherLabel="Colored"
-              />
+            <FunnelButton
+              onNext={handleNextClick}
+              onBack={handleBackClick}
+              cta="Next"
+              enabled={
+                newsletters.uploadSelectedTags.length > 0 && !isInvalidPDF
+              }
+            />
+          </div>
+        )}
+        {newsletters.uploadStep === 2 && (
+          <div className="d-flex flex-column mt-5">
+            <div className="d-flex flex-row">
+              <div className="d-flex flex-column p-3 shadow">
+                <Document
+                  file={newsletters.uploadedFile}
+                  onLoadSuccess={onDocumentLoadSuccess}
+                  className="d-flex flex-column align-items-center">
+                  <Page pageNumber={pageNumber} width={300} />
+                  <div className="page-controls">
+                    <button
+                      type="button"
+                      disabled={pageNumber <= 1}
+                      onClick={previousPage}>
+                      {'<'}
+                    </button>
+                    <span>
+                      Page {pageNumber || (numPages ? 1 : '--')} of{' '}
+                      {numPages || '--'}
+                    </span>
+                    <button
+                      type="button"
+                      disabled={pageNumber >= numPages}
+                      onClick={nextPage}>
+                      {'>'}
+                    </button>
+                  </div>
+                </Document>
+              </div>
+              <div className="d-flex flex-column ml-4">
+                <div className="d-flex flex-column mt-3 mw-50">
+                  <span className="p5 font-weight-bold">Printing</span>
+                  <Toggle
+                    value={newsletters.uploadDoubleSided}
+                    setValue={updateUploadDoublesided}
+                    defaultLabel="Single-Sided"
+                    otherLabel="Double-Sided"
+                  />
+                </div>
+                <div className="d-flex flex-column mt-3 mw-50">
+                  <span className="p5 font-weight-bold">Mail Class</span>
+                  <Toggle
+                    value={newsletters.standardMail}
+                    setValue={updateMailClass}
+                    defaultLabel="First Class"
+                    otherLabel="Standard Mail"
+                  />
+                </div>
+                <div className="d-flex flex-column my-3 mw-50">
+                  <span className="p5 font-weight-bold">Color</span>
+                  <Toggle
+                    value={newsletters.uploadColor}
+                    setValue={updateUploadColor}
+                    defaultLabel="Black and White"
+                    otherLabel="Colored"
+                  />
+                </div>
+              </div>
             </div>
             <FunnelButton
               onNext={handleNextClick}
               onBack={handleBackClick}
               cta="Next"
-              enabled={newsletters.uploadSelectedTags.length > 0}
+              enabled={
+                newsletters.uploadSelectedTags.length > 0 && !isInvalidPDF
+              }
             />
           </div>
         )}
-        {newsletters.uploadStep === 2 && (
+        {newsletters.uploadStep === 3 && (
           <ConfirmSendModal
             handleClose={handleModalClose}
             show={showModal}
@@ -292,7 +388,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             handleBackClick={handleBackClick}
           />
         )}
-        {newsletters.uploadStep === 3 && (
+        {newsletters.uploadStep === 4 && (
           <SuccessModal show={showSuccessModal} handleDone={handleDone} />
         )}
       </div>

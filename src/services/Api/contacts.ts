@@ -1,24 +1,16 @@
-import url from 'url';
-import { API_URL } from './base';
-import { genImageUri } from 'src/utils/utils';
+import { BASE_URL } from './base';
+import { genImageUri, getAuthJson } from 'src/utils/utils';
 
 export async function fetchContacts(
   token: string,
   org_id: number,
   page: number,
 ): Promise<OrgContact[]> {
-  const requestOptions: RequestInit = {
+  const response = await getAuthJson({
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await fetch(
-    url.resolve(API_URL, `contacts/org/${org_id}?page=${page}`),
-    requestOptions,
-  );
+    token: token,
+    endpoint: `contacts/org/${org_id}?page=${page}`,
+  });
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
@@ -68,23 +60,16 @@ export async function createContacts(
   tag_ids: number[],
   contacts: Contact[],
 ): Promise<OrgContact[]> {
-  const requestOptions: RequestInit = {
+  const response = await getAuthJson({
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    token: token,
+    endpoint: 'contacts/org',
     body: JSON.stringify({
       org_id: org_id,
       tags: tag_ids,
       contacts: contacts,
     }),
-  };
-  const response = await fetch(
-    url.resolve(API_URL, 'contacts/org'),
-    requestOptions,
-  );
+  });
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
@@ -134,13 +119,10 @@ export async function createVolunteerContact(
   user_id: number,
   contact: VolunteerContact,
 ): Promise<VolunteerContact> {
-  const requestOptions: RequestInit = {
+  const response = await getAuthJson({
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    token: token,
+    endpoint: `contact/${user_id}`,
     body: JSON.stringify({
       first_name: contact.first_name,
       middle_name: contact.middle_name,
@@ -155,11 +137,8 @@ export async function createVolunteerContact(
       org_id: org_id,
       s3_image_url: contact.profile_img_path,
     }),
-  };
-  const response = await fetch(
-    url.resolve(API_URL, 'contact/' + user_id),
-    requestOptions,
-  );
+  });
+
   const body = await response.json();
   if (body.status === 'ERROR') {
     throw body;
@@ -192,18 +171,11 @@ export async function deleteContacts(
   contacts: OrgContact[],
 ): Promise<void> {
   contacts.forEach(async (contact) => {
-    const requestOptions: RequestInit = {
+    const response = await getAuthJson({
       method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    const response = await fetch(
-      url.resolve(API_URL, `contact/${contact.id}`),
-      requestOptions,
-    );
+      token: token,
+      endpoint: `contact/${contact.id}`,
+    });
     const body = await response.json();
     if (body.status === 'ERROR') {
       throw body;
@@ -217,25 +189,98 @@ export async function updateContacts(
   tags: Tag[],
   orgId: number,
 ): Promise<void> {
-  const requestOptions: RequestInit = {
+  const response = await getAuthJson({
     method: 'PUT',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    token: token,
+    endpoint: `contacts/org/${orgId}`,
     body: JSON.stringify({
       contact_ids: contacts.map((contact) => contact.id),
       tags: tags.map((tag) => tag.id),
     }),
-  };
-  const response = await fetch(
-    url.resolve(API_URL, `contacts/org/${orgId}`),
-    requestOptions,
-  );
+  });
   const body = await response.json();
 
   if (body.status === 'ERROR') {
     throw body;
   }
+}
+
+export async function fetchDrafts(
+  token: string,
+  orgId: number,
+): Promise<LetterDraft[]> {
+  const response = await getAuthJson({
+    method: 'GET',
+    token: token,
+    endpoint: `org/${orgId}/drafts`,
+  });
+  const body = await response.json();
+  if (body.status === 'ERROR') {
+    throw body;
+  }
+  var draftsData: LetterDraft[] = [];
+  body.data.forEach(
+    (user: { user: RawDraftSender; drafts: RawLetterDraft[] }) => {
+      user.drafts.forEach((draft: RawLetterDraft) => {
+        const letterDraft: LetterDraft = {
+          user_id: user.user.id,
+          contact_id: draft.contact_id,
+          first_name: user.user.first_name,
+          last_name: user.user.last_name,
+          contact_name: draft.contact_name,
+          updated_at: draft.updated_at,
+          content: draft.content,
+        };
+        console.log(letterDraft);
+        draftsData = [...draftsData, letterDraft];
+      });
+    },
+  );
+  return draftsData;
+}
+
+export async function createDirectLetter(
+  token: string,
+  newsletter: DraftDirectLetter,
+): Promise<boolean> {
+  if (!newsletter.file) {
+    throw new Error('no file uploaded');
+  }
+  let formData = new FormData();
+  formData.append('type', 'pdf');
+  if (newsletter?.file) {
+    formData.append('file', newsletter.file);
+  }
+
+  const s3response = await getAuthJson({
+    method: 'POST',
+    token: token,
+    endpoint: 'file/upload',
+    baseUrl: BASE_URL,
+    body: formData,
+  });
+
+  const s3body = await s3response.json();
+  if (s3body.status === 'ERROR') {
+    throw s3body;
+  }
+  const s3_url = s3body.data;
+
+  const response = await getAuthJson({
+    method: 'POST',
+    token: token,
+    endpoint: 'letter',
+    body: JSON.stringify({
+      contact_id: newsletter.contact_id,
+      pdf_path: s3_url,
+      content: 'legal_mail',
+      type: 'letter',
+    }),
+  });
+
+  const body = await response.json();
+  if (body.status === 'ERROR') {
+    throw body;
+  }
+  return true;
 }

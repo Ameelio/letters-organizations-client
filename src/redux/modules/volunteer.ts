@@ -1,8 +1,6 @@
 import { AppThunk } from 'src/redux/helpers';
-import {
-  fetchVolunteerDetails,
-  fetchVolunteers,
-} from '../../services/Api/volunteers';
+import { fetchDrafts } from 'src/services/Api/contacts';
+import { fetchVolunteerDetails } from '../../services/Api/volunteers';
 
 // Action Constants & Shapes
 const SET_VOLUNTEERS = 'volunteer/SET_VOLUNTEERS';
@@ -10,6 +8,8 @@ const SELECT_VOLUNTEER = 'volunteer/SET_VOLUNTEER';
 const LOADING = 'volunteer/LOADING';
 const LOADING_DETAILS = 'volunteer/LOADING_DETAILS';
 const ERROR = 'volunteer/ERROR';
+const SET_DRAFTS = 'volunteer/SET_DRAFTS';
+const DELETE_VOLUNTEER = 'volunteer/DELETE_VOLUNTEER';
 
 interface SetVolunteersAction {
   type: typeof SET_VOLUNTEERS;
@@ -36,15 +36,28 @@ interface LoadingDetailsAction {
   payload: null;
 }
 
+interface SetDraftsAction {
+  type: typeof SET_DRAFTS;
+  payload: LetterDraft[];
+}
+
+interface DeleteVolunteerAction {
+  type: typeof DELETE_VOLUNTEER;
+  payload: Volunteer;
+}
 export type VolunteerActionTypes =
   | SetVolunteersAction
   | SelectVolunteerAction
   | LoadingAction
   | LoadingDetailsAction
-  | ErrorAction;
+  | ErrorAction
+  | SetDraftsAction
+  | DeleteVolunteerAction;
 
 // Action Creators
-const setVolunteers = (volunteers: Volunteer[]): VolunteerActionTypes => {
+export const setVolunteers = (
+  volunteers: Volunteer[],
+): VolunteerActionTypes => {
   return {
     type: SET_VOLUNTEERS,
     payload: volunteers,
@@ -65,7 +78,9 @@ export const handleError = (error: ErrorResponse): VolunteerActionTypes => {
   };
 };
 
-const setSelectedVolunteer = (volunteer: Volunteer): VolunteerActionTypes => {
+export const setSelectedVolunteer = (
+  volunteer: Volunteer,
+): VolunteerActionTypes => {
   return {
     type: SELECT_VOLUNTEER,
     payload: volunteer,
@@ -79,6 +94,20 @@ const loadingDetails = (): VolunteerActionTypes => {
   };
 };
 
+const setDrafts = (drafts: LetterDraft[]): VolunteerActionTypes => {
+  return {
+    type: SET_DRAFTS,
+    payload: drafts,
+  };
+};
+
+export const deleteVolunteer = (volunteer: Volunteer): VolunteerActionTypes => {
+  return {
+    type: DELETE_VOLUNTEER,
+    payload: volunteer,
+  };
+};
+
 // Reducer
 const initialState: VolunteerState = {
   all_volunteers: [],
@@ -86,6 +115,8 @@ const initialState: VolunteerState = {
   error: {} as ErrorResponse,
   loading_details: false,
   selected_volunteer: {} as Volunteer,
+  drafts: [] as LetterDraft[],
+  page: 1,
 };
 
 export function volunteersReducer(
@@ -114,7 +145,9 @@ export function volunteersReducer(
     case SET_VOLUNTEERS:
       return {
         ...state,
-        all_volunteers: action.payload,
+        all_volunteers: state.all_volunteers.concat(action.payload),
+        page: state.page + 1,
+        loading: false,
       };
     case LOADING_DETAILS:
       return {
@@ -134,25 +167,22 @@ export function volunteersReducer(
         loading_details: false,
         selected_volunteer: action.payload,
       };
+    case SET_DRAFTS:
+      return {
+        ...state,
+        drafts: action.payload,
+      };
+    case DELETE_VOLUNTEER:
+      return {
+        ...state,
+        all_volunteers: state.all_volunteers.filter(
+          (volunteer) => volunteer.id !== action.payload.id,
+        ),
+      };
     default:
       return state;
   }
 }
-
-export const loadVolunteers = (
-  token: string,
-  org_id: number,
-): AppThunk => async (dispatch) => {
-  dispatch(loading());
-  fetchVolunteers(token, org_id)
-    .then((volunteersData) => dispatch(setVolunteers(volunteersData)))
-    .then((action) => {
-      if (action.payload instanceof Array) {
-        dispatch(selectVolunteer(token, action.payload[0]));
-      }
-    })
-    .catch((error) => dispatch(handleError(error)));
-};
 
 export const selectVolunteer = (
   token: string,
@@ -162,7 +192,7 @@ export const selectVolunteer = (
     dispatch(setSelectedVolunteer(volunteer));
   } else {
     dispatch(loadingDetails());
-    fetchVolunteerDetails(token, volunteer)
+    fetchVolunteerDetails(volunteer)
       .then((volunteer) => dispatch(setSelectedVolunteer(volunteer)))
       .catch((error) => dispatch(handleError(error)));
   }
@@ -176,8 +206,17 @@ export const inviteVolunteer = (
   const action = await dispatch(
     setVolunteers([...state.all_volunteers, volunteer]),
   );
-  if (action.payload instanceof Array) {
+  if (action.type === 'volunteer/SET_VOLUNTEERS') {
     const length = action.payload.length;
     dispatch(selectVolunteer(token, action.payload[length - 1]));
   }
+};
+
+export const loadLetterDrafts = (
+  token: string,
+  orgId: number,
+): AppThunk => async (dispatch) => {
+  fetchDrafts(token, orgId)
+    .then((drafts: LetterDraft[]) => dispatch(setDrafts(drafts)))
+    .catch((error) => dispatch(handleError(error)));
 };

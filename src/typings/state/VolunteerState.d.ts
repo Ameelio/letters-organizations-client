@@ -4,4 +4,6 @@ interface VolunteerState {
   loading: boolean;
   error: ErrorResponse;
   loading_details: boolean;
+  drafts: LetterDrafts[];
+  page: number;
 }
