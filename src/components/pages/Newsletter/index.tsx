@@ -313,7 +313,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
         {newsletters.uploadStep === 2 && (
           <div className="d-flex flex-column mt-5">
             <div className="d-flex flex-row">
-              <div className="d-flex flex-column p-3 shadow">
+              <div className="d-flex flex-column p-3 shadow mr-3">
                 <Document
                   file={newsletters.uploadedFile}
                   onLoadSuccess={onDocumentLoadSuccess}
@@ -339,7 +339,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                   </div>
                 </Document>
               </div>
-              <div className="d-flex flex-column ml-4">
+              <div className="d-flex flex-column ml-5">
                 <div className="d-flex flex-row justify-content-between">
                   <div className="d-flex flex-column ">
                     <span className="black-400 mb-1">Contacts</span>
