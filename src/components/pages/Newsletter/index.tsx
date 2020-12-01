@@ -32,6 +32,7 @@ import Toggle from './Toggle';
 import { track } from 'src/utils/segment';
 import { Document, Page, pdfjs } from 'react-pdf';
 import './index.css';
+import ErrorAlert from 'src/components/alerts/ErrorAlert';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -66,6 +67,8 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
+const LETTER_ASPECT_RATIO = 1.3;
+
 const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   setName,
   uploadFile,
@@ -89,6 +92,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
   const [newsletter, setNewsletter] = useState<DraftNewsletter>(
     {} as DraftNewsletter,
   );
+  const [isInvalidPDF, setISInvalidPDF] = useState(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
   const [toggle, setToggle] = useState<boolean>(false);
@@ -106,7 +110,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
       loadTags(token, org.id);
       setHasFetchedTags(true);
     }
-    if (newsletters.uploadStep === 2 && newsletters.uploadedFile) {
+    if (newsletters.uploadStep === 3 && newsletters.uploadedFile) {
       setNewsletter({
         title: newsletters.newsletterName,
         file: newsletters.uploadedFile,
@@ -115,7 +119,6 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
         double_sided: newsletters.uploadDoubleSided,
         standardMail: newsletters.standardMail,
       });
-      const obj = URL.createObjectURL(newsletters.uploadedFile);
       handleModalShow();
     }
   }, [
@@ -163,9 +166,15 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
     logout();
   }
 
-  function onDocumentLoadSuccess(pdf: any) {
+  async function onDocumentLoadSuccess(pdf: any): Promise<void> {
+    setISInvalidPDF(false);
     setNumPages(pdf.numPages);
     setPageNumber(1);
+  }
+
+  async function onPageLoadSuccess(page: any): Promise<void> {
+    if (Number((page.height / page.width).toFixed(1)) !== LETTER_ASPECT_RATIO)
+      setISInvalidPDF(true);
   }
 
   function changePage(offset: number) {
@@ -200,13 +209,24 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
           stepLabels={[
             'Upload file',
             'Select contacts',
+            'Printing settings',
             'Confirm to send',
             'Success',
           ]}
         />
+        {isInvalidPDF && (
+          <div className="mt-3">
+            <ErrorAlert
+              error={{
+                title: 'Your PDF dimensions are incorrect.',
+                body: 'All PDF pages must be Letter size (8.5 x 11 inches).',
+              }}
+            />
+          </div>
+        )}
 
         {newsletters.uploadStep === 0 && (
-          <div>
+          <div className="w-50">
             <div className="d-flex flex-column align-items-center mt-3">
               <span className="p2 black-500 mt-3">Newsletters</span>
               <span className="black-500">
@@ -232,12 +252,26 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                   acceptedFormatLabel="PDF"
                 />
               </Form.Group>
+              <div className="hidden">
+                <Document
+                  file={newsletters.uploadedFile}
+                  onLoadSuccess={onDocumentLoadSuccess}>
+                  {Array.from(Array(numPages).keys()).map((el, index) => (
+                    <Page
+                      onLoadSuccess={onPageLoadSuccess}
+                      key={`page_${index + 1}`}
+                      pageNumber={index + 1}
+                    />
+                  ))}
+                </Document>
+              </div>
               <FunnelButton
                 onNext={handleNextClick}
                 cta="Next"
                 enabled={
                   newsletters.uploadedFile != null &&
-                  newsletters.newsletterName !== ''
+                  newsletters.newsletterName !== '' &&
+                  !isInvalidPDF
                 }
               />
             </Form>
@@ -266,6 +300,18 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                 label="Select all contacts"
               />
             </div>
+            <FunnelButton
+              onNext={handleNextClick}
+              onBack={handleBackClick}
+              cta="Next"
+              enabled={
+                newsletters.uploadSelectedTags.length > 0 && !isInvalidPDF
+              }
+            />
+          </div>
+        )}
+        {newsletters.uploadStep === 2 && (
+          <div className="d-flex flex-column mt-5">
             <div className="d-flex flex-row">
               <div className="d-flex flex-column p-3 shadow">
                 <Document
@@ -293,7 +339,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
                   </div>
                 </Document>
               </div>
-              <div className="d-flex flex-column">
+              <div className="d-flex flex-column ml-4">
                 <div className="d-flex flex-column mt-3 mw-50">
                   <span className="p5 font-weight-bold">Printing</span>
                   <Toggle
@@ -327,11 +373,13 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
               onNext={handleNextClick}
               onBack={handleBackClick}
               cta="Next"
-              enabled={newsletters.uploadSelectedTags.length > 0}
+              enabled={
+                newsletters.uploadSelectedTags.length > 0 && !isInvalidPDF
+              }
             />
           </div>
         )}
-        {newsletters.uploadStep === 2 && (
+        {newsletters.uploadStep === 3 && (
           <ConfirmSendModal
             handleClose={handleModalClose}
             show={showModal}
@@ -340,7 +388,7 @@ const UnconnectedNewsletter: React.FC<PropsFromRedux> = ({
             handleBackClick={handleBackClick}
           />
         )}
-        {newsletters.uploadStep === 3 && (
+        {newsletters.uploadStep === 4 && (
           <SuccessModal show={showSuccessModal} handleDone={handleDone} />
         )}
       </div>
