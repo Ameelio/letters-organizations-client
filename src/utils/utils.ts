@@ -96,6 +96,19 @@ export function isBottom(el: HTMLElement) {
   return el.scrollHeight - el.scrollTop === el.clientHeight;
 }
 
+export function fetchTimeout(
+  fetchUrl: string,
+  options: Record<string, unknown>,
+  timeout = 15000,
+): Promise<Response> {
+  return Promise.race([
+    fetch(fetchUrl, options),
+    new Promise<Response>((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), timeout),
+    ),
+  ]);
+}
+
 export async function getAuthJson({
   method,
   token,

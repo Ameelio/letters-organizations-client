@@ -1,0 +1,17 @@
+---
+name: New Feature
+about: Used to designate a new feature to be added.
+title: "[FLOW] Feature"
+labels: enhancement
+assignees: ''
+
+---
+
+<!--- Provide a short description of what the new feature is -->
+
+## Tasks
+<!--- What are the steps / distinct pieces required to implement this feature -->
+- [ ] 
+
+## Related Issues
+<!--- If applicable, link to related features / bugs -->

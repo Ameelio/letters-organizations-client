@@ -1,0 +1,18 @@
+---
+name: Cleanup
+about: Changes that aren't new features or bug fixes but make the project easier to
+  work with
+title: "[Cleanup] Improvement"
+labels: cleanup
+assignees: ''
+
+---
+
+<!--- Short and sweet description about what you want to improve about the code base -->
+
+## Motivation
+<!--- Why is this a good change to make? What inconveniences will it solve? -->
+
+## Proposed Solution
+<!--- What is the better way to organize the code? -->
+- [ ]

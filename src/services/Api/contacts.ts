@@ -1,5 +1,6 @@
-import { BASE_URL } from './base';
+import { BASE_URL, fetchTimeout } from './base';
 import { genImageUri, getAuthJson } from 'src/utils/utils';
+import url from 'url';
 
 export async function fetchContacts(
   token: string,
@@ -243,22 +244,20 @@ export async function createDirectLetter(
   token: string,
   newsletter: DraftDirectLetter,
 ): Promise<boolean> {
-  if (!newsletter.file) {
-    throw new Error('no file uploaded');
-  }
+  if (!newsletter.file) return false;
+
   let formData = new FormData();
   formData.append('type', 'pdf');
-  if (newsletter?.file) {
-    formData.append('file', newsletter.file);
-  }
+  formData.append('file', newsletter.file);
 
-  const s3response = await getAuthJson({
+  const s3requestOptions = {
     method: 'POST',
-    token: token,
-    endpoint: 'file/upload',
-    baseUrl: BASE_URL,
     body: formData,
-  });
+  };
+  const s3response = await fetch(
+    url.resolve(BASE_URL, 'file/upload'),
+    s3requestOptions,
+  );
 
   const s3body = await s3response.json();
   if (s3body.status === 'ERROR') {
@@ -273,7 +272,7 @@ export async function createDirectLetter(
     body: JSON.stringify({
       contact_id: newsletter.contact_id,
       pdf_path: s3_url,
-      content: 'legal_mail',
+      content: 'ORGS_DIRECT_MAIL_KEY',
       type: 'letter',
     }),
   });

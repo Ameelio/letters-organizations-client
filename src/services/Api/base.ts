@@ -41,6 +41,7 @@ export async function initializeSession(body: any) {
 
   const orgUser = (camelizeKeys(bodyOrg.data) as unknown) as OrgUser;
 
+  console.log(orgUser);
   if (orgUser.role === 'member') {
     throw new Error(
       'Invalid access. Must be registered as an organization admin.',

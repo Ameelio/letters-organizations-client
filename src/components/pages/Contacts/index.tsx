@@ -247,13 +247,13 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
 
         <Modal show={showSuccess}>
           <Modal.Body>
-            {orgContacts.sentDirectLetter ? (
-              <h4>Your letter is on it's way!</h4>
+            {orgContacts.sentDirectLetter || !orgContacts.error.data ? (
+              <h4>Your letter is being processed!</h4>
             ) : (
               <div>
                 <h4>Oh no! There was an error sending your letter:</h4>
-                <p>{orgContacts.error.message}</p>
-                <p>{orgContacts.error.data}</p>
+                <p>{JSON.stringify(orgContacts.error.message)}</p>
+                <p>{JSON.stringify(orgContacts.error.data)}</p>
               </div>
             )}
           </Modal.Body>
@@ -276,7 +276,9 @@ const UnconnectedContacts: React.FC<PropsFromRedux> = ({
             </p>
             <Form className="d-flex flex-column">
               <Form.Group controlId="formDocdrop">
-                <Form.Label>Attach file</Form.Label>
+                <Form.Label>
+                  Attach Letter-size file (Must be 8.5 x 11 inches)
+                </Form.Label>
                 <Docdrop
                   uploadFile={(file) => setUploadedFile(file)}
                   uploadedFile={uploadedFile}

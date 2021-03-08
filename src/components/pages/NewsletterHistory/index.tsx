@@ -165,10 +165,10 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
               <tr>
                 <th>Title</th>
                 <th>Total</th>
-                <th>Processing</th>
+                {/* <th>Processing</th>
                 <th>In Transit</th>
                 <th>Delivered</th>
-                <th>Returned</th>
+                <th>Returned</th> */}
                 <th>Failed to Mail</th>
                 <th>Tags</th>
                 <th></th>
@@ -181,11 +181,11 @@ const UnconnectedNewsletterHistory: React.FC<PropsFromRedux> = ({
                     <>
                       <td>{newsletter.title}</td>
                       <td>{newsletter.totalLettersCount}</td>
-                      <td>{newsletter.processingCount}</td>
+                      {/* <td>{newsletter.processingCount}</td>
                       <td>{newsletter.inTransit}</td>
                       <td>{newsletter.delivered}</td>
 
-                      <td>{newsletter.returned}</td>
+                      <td>{newsletter.returned}</td> */}
                       <td>{newsletter.nullCount}</td>
                       <td className="d-flex flex-column">
                         {newsletter.tags.map((tag, index) => (
