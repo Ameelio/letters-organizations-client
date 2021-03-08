@@ -224,18 +224,35 @@ const getAddtlPageCost = (isColor: boolean): number => {
   return isColor ? ADDT_PAGE_COLOR : ADDT_PAGE_BW;
 };
 
+const getAddtlSheetCost = (isColor: boolean): number => {
+  return isColor ? ADDT_PAGE_COLOR * 2 : ADDT_PAGE_BW * 2;
+};
+
+const getFirstSheetCost = (isStandard: boolean, isColor: boolean): number => {
+  if (isStandard) {
+    return isColor
+      ? STANDARD_COLOR + ADDT_PAGE_COLOR
+      : STANDARD_BW + ADDT_PAGE_BW;
+  } else {
+    return isColor
+      ? FIRST_CLASS_COLOR + ADDT_PAGE_COLOR
+      : FIRST_CLASS_BW + ADDT_PAGE_BW;
+  }
+};
+
 export function calculateNewsletterCost(
   isStandard: boolean,
   isColor: boolean,
   numPages: number,
   numSheets: number,
 ) {
-  console.log(getFirstPageCost(isStandard, isColor));
-  console.log(getAddtlPageCost(isColor) * (numPages - 1));
+  console.log(getFirstSheetCost(isStandard, isColor));
+  console.log(getAddtlSheetCost(isColor) * (numPages - 1));
+  console.log(numSheets);
   return Number(
     (
-      getFirstPageCost(isStandard, isColor) +
-      getAddtlPageCost(isColor) * (numPages - 1) +
+      getFirstSheetCost(isStandard, isColor) +
+      getAddtlSheetCost(isColor) * (numSheets - 1) +
       getExtraPostageFee(numSheets)
     ).toFixed(2),
   );
