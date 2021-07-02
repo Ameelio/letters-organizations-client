@@ -14,9 +14,12 @@ export async function login(email: string, password: string): Promise<void> {
     }),
   };
 
-  const response = await fetch(url.resolve(API_URL, 'login'), requestOptions);
+  const response = await fetch(
+    `${process.env.REACT_APP_API_URL}v1/login`,
+    requestOptions,
+  );
   const body = await response.json();
-  if (body.status !== 'OK') throw body;
+  if (body.status !== 200) throw body;
 
   await initializeSession(body);
 }

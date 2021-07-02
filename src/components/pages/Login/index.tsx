@@ -29,6 +29,7 @@ const UnconnectedLogin: React.FC<PropsFromRedux> = ({ isAuthenticated }) => {
       await login(email, password);
       setLoading(false);
     } catch (error) {
+      console.log(error);
       setEmailError(error.message || JSON.stringify(error));
       setLoading(false);
     }

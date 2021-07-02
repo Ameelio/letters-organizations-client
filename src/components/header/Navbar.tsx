@@ -51,12 +51,16 @@ const NavBar: React.FC<PropsFromRedux> = ({ session, logout }) => {
                 Drafts{' '}
               </NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link as={Link} to="/contacts">
-              Contacts
-            </Nav.Link>
-            <Nav.Link as={Link} to="/newsletter">
-              Newsletter
-            </Nav.Link>
+            {session.user.email === 'acarloslama@gmail.com' && (
+              <Nav.Link as={Link} to="/contacts">
+                Contacts
+              </Nav.Link>
+            )}
+            {session.user.email === 'acarloslama@gmail.com' && (
+              <Nav.Link as={Link} to="/newsletter">
+                Newsletter
+              </Nav.Link>
+            )}
             <Nav.Link as={Link} to="/login" onClick={onLogout}>
               Log Out
             </Nav.Link>
